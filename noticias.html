@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notícias — Morning do Trader</title>
+<meta name="description" content="As últimas notícias de mercado, empresas e commodities, direto da Investing.com, organizadas em um só lugar.">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --red: #e5484d;
+    --amber: #f5a623;
+    --green: #3ecf8e;
+    --accent: #4da3ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width: 1180px; margin:0 auto; padding: 0 16px;}
+
+  .nav{background: var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px;}
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .links{display:flex; gap:18px; font-size:0.88rem;}
+  .nav .links a{color:var(--muted); text-decoration:none;}
+  .nav .links a.active{color:var(--accent);}
+  .nav .links a:hover{color:var(--text);}
+
+  header{padding:28px 0 20px;}
+  header h1{font-size:1.6rem; margin:0 0 6px;}
+  header p{color:var(--muted); font-size:0.95rem; margin:0;}
+
+  .filtros{display:flex; gap:8px; flex-wrap:wrap; margin:20px 0;}
+  .filtro-btn{
+    background:var(--card); border:1px solid var(--border); color:var(--muted);
+    border-radius:99px; padding:6px 16px; font-size:0.82rem; cursor:pointer;
+  }
+  .filtro-btn.active{background:var(--accent); border-color:var(--accent); color:#0b0f14; font-weight:700;}
+
+  .news-grid{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+    gap:20px; padding-bottom:40px;
+  }
+  .news-card{
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    overflow:hidden; text-decoration:none; color:var(--text); display:flex; flex-direction:column;
+    transition: border-color 0.15s;
+  }
+  .news-card:hover{border-color:var(--accent);}
+  .news-card .thumb{width:100%; aspect-ratio: 16/10; object-fit:cover; background:var(--bg-alt); display:block;}
+  .news-card .body{padding:12px 14px 16px;}
+  .news-card .cat{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--accent); margin-bottom:6px; display:block;
+  }
+  .news-card .titulo{font-size:0.92rem; line-height:1.35; font-weight:600; margin:0;}
+  .news-card .meta{font-size:0.72rem; color:var(--muted); margin-top:8px;}
+
+  .estado{color:var(--muted); font-size:0.9rem; padding:30px 0; text-align:center;}
+
+  .destaque-urgente{
+    display:block; text-decoration:none; color:var(--text);
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
+    border:1px solid var(--amber); border-radius:12px;
+    padding:18px 20px; margin-bottom:22px;
+  }
+  .destaque-urgente .tag-urgente{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--amber); display:block; margin-bottom:6px;
+  }
+  .destaque-urgente .titulo-urgente{font-size:1.15rem; font-weight:700; margin:0; line-height:1.35;}
+
+  footer{border-top:1px solid var(--border); padding:24px 0; margin-top:20px;}
+  footer .wrap{color:var(--muted); font-size:0.8rem;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">Morning do Trader</a>
+    <div class="links">
+      <a href="index.html">Morning Call</a>
+      <a href="ormuz.html">Crise do Ormuz</a>
+      <a href="noticias.html" class="active">Notícias</a>
+      <a href="glossario.html">Glossário</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header>
+    <h1>Notícias</h1>
+    <p>As últimas manchetes de mercado, empresas e commodities. Clique em qualquer card para ler a matéria completa na fonte original.</p>
+  </header>
+
+  <div class="filtros" id="filtros">
+    <button class="filtro-btn active" data-cat="todas">Todas</button>
+    <button class="filtro-btn" data-cat="Mercado">Mercado</button>
+    <button class="filtro-btn" data-cat="Empresas">Empresas</button>
+    <button class="filtro-btn" data-cat="Commodities">Commodities</button>
+    <button class="filtro-btn" data-cat="Economia">Economia</button>
+  </div>
+
+  <div id="destaqueUrgente"></div>
+
+  <div class="news-grid" id="newsGrid">
+    <div class="estado">Carregando notícias...</div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    Morning do Trader — manchetes fornecidas pela Investing.com. Todo o conteúdo pertence aos respectivos autores; clique para ler a matéria completa na fonte.
+  </div>
+</footer>
+
+<script>
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+  let __todasNoticias = [];
+  let __filtroAtual = "todas";
+
+  function formatarData(pubDate) {
+    if (!pubDate) return "";
+    const d = new Date(pubDate);
+    if (isNaN(d)) return "";
+    return d.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById("newsGrid");
+    const itens = __filtroAtual === "todas"
+      ? __todasNoticias
+      : __todasNoticias.filter(n => n.categoria === __filtroAtual);
+    if (!itens.length) {
+      grid.innerHTML = '<div class="estado">Nenhuma notícia encontrada nessa categoria no momento.</div>';
+      return;
+    }
+    grid.innerHTML = itens.map(n => `
+      <a class="news-card" href="${n.link}" target="_blank" rel="noopener">
+        ${n.imagem ? `<img class="thumb" src="${n.imagem}" alt="" loading="lazy">` : ''}
+        <div class="body">
+          <span class="cat">${n.categoria}</span>
+          <p class="titulo">${n.title}</p>
+          <div class="meta">${formatarData(n.pubDate)} · Investing.com</div>
+        </div>
+      </a>
+    `).join("");
+  }
+
+  document.getElementById("filtros").addEventListener("click", (e) => {
+    const btn = e.target.closest(".filtro-btn");
+    if (!btn) return;
+    document.querySelectorAll(".filtro-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    __filtroAtual = btn.dataset.cat;
+    renderGrid();
+  });
+
+  async function carregarNoticias() {
+    const grid = document.getElementById("newsGrid");
+    try {
+      const resp = await fetch(WORKER_URL + "/api/news-all");
+      const items = await resp.json();
+      if (!items || !items.length) throw new Error("vazio");
+      __todasNoticias = items;
+      renderGrid();
+    } catch (e) {
+      grid.innerHTML = '<div class="estado">Não foi possível carregar as notícias agora. Tenta recarregar a página.</div>';
+      console.warn("noticias: falha ao carregar", e);
+    }
+  }
+  carregarNoticias();
+
+  // Noticia urgente cadastrada a mao no painel do site principal (opcional):
+  // se existir, aparece fixada aqui no topo, com destaque visual proprio.
+  async function carregarDestaqueUrgente() {
+    const wrap = document.getElementById("destaqueUrgente");
+    try {
+      const resp = await fetch(WORKER_URL + "/api/manual-data");
+      const data = await resp.json();
+      if (data && data.featured_news_title && data.featured_news_url) {
+        wrap.innerHTML = `
+          <a class="destaque-urgente" href="${data.featured_news_url}" target="_blank" rel="noopener">
+            <span class="tag-urgente">Destaque do Trader</span>
+            <p class="titulo-urgente">${data.featured_news_title}</p>
+          </a>
+        `;
+      }
+    } catch (e) {
+      console.warn("noticias: falha ao carregar destaque urgente", e);
+    }
+  }
+  carregarDestaqueUrgente();
+</script>
+
+</body>
+</html>

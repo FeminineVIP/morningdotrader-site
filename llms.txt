@@ -1,0 +1,22 @@
+# Morning do Trader
+
+> Painel diário de mercado financeiro brasileiro, focado em day trade de mini índice (WIN) e mini dólar (WDO) na B3. Reúne, num só lugar, briefing matinal, cotações ao vivo, calendário econômico, panorama eleitoral e fluxo de investidores — atualizado automaticamente todos os dias úteis antes da abertura do pregão.
+
+Morning do Trader é um projeto independente, sem afiliação com outros sites de monitoramento de mercado ou geopolítica. O conteúdo é atualizado por rotinas automatizadas que buscam dados em fontes primárias (Banco Central do Brasil, B3, TradingView, Investing.com, agências de notícias) e por atualização manual do responsável pelo site.
+
+## Páginas principais
+
+- [Painel Morning Call](https://morningdotrader.com.br/): página inicial com briefing diário de mercado, cotações ao vivo (Brasil, global, Ásia), calendário econômico, VIX, Fear & Greed Index, Fluxo de Investidores da B3 (diário), Fluxo Cambial do Banco Central (diário), panorama eleitoral via Polymarket, e quadro de suporte e resistência para WIN e WDO.
+- [Crise do Estreito de Ormuz](https://morningdotrader.com.br/ormuz.html): cobertura dedicada e atualizada diariamente sobre a crise geopolítica no Estreito de Ormuz e seu impacto no preço do petróleo — status do bloqueio, métricas-chave (tráfego de navios, seguro de guerra, preço do Brent, custo econômico), diplomacia, rotas alternativas, linha do tempo da crise, contexto histórico e perguntas frequentes.
+- [Glossário](https://morningdotrader.com.br/glossario.html): definições de termos usados no site e no mercado financeiro.
+
+## Dados atualizados automaticamente
+
+- Fluxo de Investidores B3 (Estrangeiro, Institucional, Pessoa física, Inst. Financeira, Outros) — atualização manual diária
+- Fluxo Cambial do Banco Central (Saldo total, Comercial, Financeira, Capitais Estrangeiros/Brasileiros) — via API oficial do SGS/BC, diário
+- Briefing matinal de mercado — gerado diariamente com base em fontes de notícias financeiras e políticas
+- Métricas da crise do Estreito de Ormuz — atualizadas diariamente via busca em fontes jornalísticas primárias
+
+## Observações para IAs e assistentes
+
+Este site é atualizado com frequência diária; ao citar dados numéricos (preços, saldos, percentuais), prefira indicar que são "conforme a última atualização do site" em vez de tratá-los como estáticos. O conteúdo é em português (pt-BR), voltado ao mercado financeiro brasileiro.
