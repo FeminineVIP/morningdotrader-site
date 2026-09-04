@@ -263,6 +263,34 @@
     background: rgba(245,166,35,0.12); border:1px solid rgba(245,166,35,0.4);
     border-radius:10px; padding:14px 16px; margin-bottom:18px; font-size:0.85rem; color:var(--amber);
   }
+
+  /* Alerta do Dia: bloco opcional pra eventos/notícias de alto impacto
+     (Payroll, FOMC, Copom, etc). Só aparece quando o campo é preenchido no
+     painel manual; some sozinho nos dias sem nada especial. */
+  .alert-banner{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:22px;
+    padding:18px 20px;
+    border-radius:12px;
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
+    border:1px solid var(--amber);
+  }
+  .alert-banner .alert-icon{
+    width:56px; height:56px; border-radius:12px; object-fit:cover; flex-shrink:0;
+    background:var(--bg-alt);
+  }
+  .alert-banner .alert-content{min-width:0;}
+  .alert-banner .alert-tag{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--amber); display:block; margin-bottom:6px;
+  }
+  .alert-banner .alert-titulo{font-size:1.15rem; font-weight:700; margin:0 0 6px; line-height:1.35; color:var(--text);}
+  .alert-banner .alert-texto{font-size:0.92rem; color:#c9d4de; margin:0; white-space:pre-wrap;}
+  @media (max-width:480px){
+    .alert-banner .alert-icon{width:44px; height:44px;}
+  }
   .edit-form{display:grid; gap:12px; margin-top:10px;}
   .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
   .edit-form input, .edit-form textarea{
@@ -312,6 +340,15 @@
   .ad-thin{margin:16px 0;}
   .ad-thin-img{width:100%; display:block; border-radius:10px;}
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1020">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
 </head>
 <body>
 
@@ -323,6 +360,7 @@
       <a href="ormuz.html">Crise do Ormuz</a>
       <a href="noticias.html">Notícias</a>
       <a href="glossario.html">Glossário</a>
+      <a href="painel-internacional.html">Painel Internacional</a>
     </div>
   </div>
 </nav>
@@ -370,6 +408,19 @@
 <div class="layout-grid">
 <div class="main-col">
 
+  <div class="alert-banner" id="alertaDia" style="display:none;">
+    <a id="alertaImagemLink" style="display:none; flex-shrink:0;">
+      <img class="alert-icon" id="alertaImagem" src="" alt="">
+    </a>
+    <div class="alert-content">
+      <a id="alertaTagLink" style="text-decoration:none;">
+        <span class="alert-tag" id="alertaTag">Alerta do Dia</span>
+      </a>
+      <p class="alert-titulo" id="alertaTitulo"></p>
+      <p class="alert-texto" id="alertaTexto"></p>
+    </div>
+  </div>
+
   <section id="briefing-do-dia">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap;">
       <div>
@@ -385,7 +436,6 @@
       <div id="briefingTexto" class="briefing-text empty">Aguardando atualização.</div>
       <div class="manual-updated" id="upd-briefing" style="margin-top:10px;"></div>
     </div>
-    <p class="section-note" style="margin-top:6px;">Investing.com (via RSS)</p>
   </section>
 
   <section>
@@ -451,7 +501,7 @@
   </section>
 
   <section id="fluxo-cambial-bc">
-    <h2><span class="tag">Quantzed / XP (manual)</span>Fluxo por Investidor — B3</h2>
+    <h2><span class="tag">Quantzed / XP</span>Fluxo por Investidor — B3</h2>
     <p class="section-note">Saldo por tipo de investidor, separado por mercado à vista e futuro — Estrangeiro, Institucional, Inst. Financeira, Pessoa física e Outros (R$ milhões).</p>
     <div class="fcb-board">
       <img src="fluxo-cambial-bg.webp" alt="Fluxo por Investidor do Dia" class="fcb-board-img">
@@ -848,80 +898,8 @@
   <section>
     <h2><span class="tag">CME FedWatch</span>Probabilidade Fed Funds</h2>
     <img class="fedwatch-banner" src="fed-header.webp" alt="Decisão da taxa de juros do Fed — veja o que o mercado está precificando" loading="lazy">
-    <div class="fedwatch-grid">
-
-      <div class="pm-card">
-        <div class="pm-title">Reunião de 16/set/2026 — faixa atual 350–375 bps</div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Sem mudança (350–375)</span><span class="pm-row-pct">63,5%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:63.5%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 375–400</span><span class="pm-row-pct">36,5%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:36.5%"></div></div>
-        </div>
-      </div>
-
-      <div class="pm-card">
-        <div class="pm-title">Reunião de 28/out/2026 — faixa atual 350–375 bps</div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Sem mudança (350–375)</span><span class="pm-row-pct">47,3%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:47.3%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 375–400</span><span class="pm-row-pct">43,4%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:43.4%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 400–425</span><span class="pm-row-pct">9,3%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:9.3%"></div></div>
-        </div>
-      </div>
-
-      <div class="pm-card">
-        <div class="pm-title">Reunião de 09/dez/2026 — faixa atual 350–375 bps</div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Sem mudança (350–375)</span><span class="pm-row-pct">27,3%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:27.3%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 375–400</span><span class="pm-row-pct">45,0%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:45.0%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 400–425</span><span class="pm-row-pct">23,7%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:23.7%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 425–450</span><span class="pm-row-pct">3,9%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:3.9%"></div></div>
-        </div>
-      </div>
-
-      <div class="pm-card">
-        <div class="pm-title">Reunião de 27/jan/2027 — faixa atual 350–375 bps</div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Sem mudança (350–375)</span><span class="pm-row-pct">21,6%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:21.6%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 375–400</span><span class="pm-row-pct">41,4%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:41.4%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 400–425</span><span class="pm-row-pct">28,1%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:28.1%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 425–450</span><span class="pm-row-pct">8,0%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:8.0%"></div></div>
-        </div>
-        <div class="pm-row">
-          <div class="pm-row-top"><span class="pm-row-label">Alta para 450–475</span><span class="pm-row-pct">0,8%</span></div>
-          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:0.8%"></div></div>
-        </div>
-      </div>
-
+    <div class="fedwatch-grid" id="fedwatchGrid">
+      <div class="pm-card"><div class="pm-title">Carregando...</div></div>
     </div>
   </section>
 
@@ -1002,6 +980,14 @@
           <input type="text" id="input-featured_news_url" placeholder="https://..." style="margin-top:6px;">
         </div>
         <div style="grid-column:1 / -1;">
+          <label>Alerta do Dia (evento/notícia de alto impacto, ex: Payroll, FOMC, Copom — ou espaço de propaganda com ícone. Opcional, some sozinho se ficar em branco. Com imagem, a etiqueta vira "Um oferecimento de Painel do Trader"; sem imagem, vira "Alerta do Dia")</label>
+          <label style="font-size:0.85rem; margin-top:2px;">Imagem/ícone (opcional)</label>
+          <input type="file" id="input-alerta_imagem" accept="image/*">
+          <span id="alertaImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-alerta_titulo" placeholder="Título, ex: Payroll hoje às 9:30" style="margin-top:6px;">
+          <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
+        </div>
+        <div style="grid-column:1 / -1;">
           <label>Fluxo por Investidor — Quantzed/XP (R$ milhões, à vista / futuro / total)</label>
           <p style="font-size:0.8rem; color:var(--muted); margin:2px 0 8px;">Cole aqui o bloco de texto que o Claude te devolver — os 14 campos abaixo se preenchem sozinhos.</p>
           <textarea id="input-fluxo_colar" rows="6" placeholder="Cole aqui o bloco de texto..." style="width:100%; font-family:monospace; font-size:0.85rem; margin-bottom:8px;"></textarea>
@@ -1053,7 +1039,6 @@
       <span>Notícias em tempo real</span>
       <button id="popNewsBtn" class="pop-btn" title="Abrir em janela flutuante" onclick="popNewsWindow()">⤢</button>
     </div>
-    <p class="sidebar-note">Canal público de mercado (Telegram) — atualiza automaticamente a cada 60 segundos.</p>
     <div class="chat-feed" id="chatFeed">
       <div class="chat-msg">Carregando...</div>
     </div>
@@ -1224,6 +1209,52 @@
     const featUrlInput = document.getElementById("input-featured_news_url");
     if (featUrlInput && !featUrlInput.value) featUrlInput.value = data.featured_news_url || "";
 
+    // Alerta do Dia: bloco opcional pra evento/noticia de alto impacto
+    // (Payroll, FOMC, Copom...) ou espaço de propaganda (ex: "Um oferecimento
+    // de Painel do Trader" + ícone). So aparece quando o titulo esta
+    // preenchido; some sozinho quando o campo volta a ficar em branco.
+    const alertaBox = document.getElementById("alertaDia");
+    if (data.alerta_titulo && data.alerta_titulo.trim()) {
+      const temImagem = !!(data.alerta_imagem && data.alerta_imagem.trim());
+      // Etiqueta automatica: com imagem, vira propaganda ("Um oferecimento de
+      // Painel do Trader"); sem imagem, vira alerta de mercado comum.
+      document.getElementById("alertaTag").textContent = temImagem ? "Um oferecimento de Painel do Trader" : "Alerta do Dia";
+      document.getElementById("alertaTitulo").textContent = data.alerta_titulo;
+      document.getElementById("alertaTexto").textContent = data.alerta_texto || "";
+      const alertaImgEl = document.getElementById("alertaImagem");
+      const alertaImagemLink = document.getElementById("alertaImagemLink");
+      const alertaTagLink = document.getElementById("alertaTagLink");
+      if (temImagem) {
+        alertaImgEl.src = data.alerta_imagem;
+        alertaImgEl.style.display = "block";
+        alertaImagemLink.style.display = "block";
+        // Modo propaganda: imagem e etiqueta viram link pro Painel do Trader.
+        alertaImagemLink.href = "https://paineldotrader.com.br/";
+        alertaImagemLink.target = "_blank";
+        alertaImagemLink.rel = "noopener";
+        alertaTagLink.href = "https://paineldotrader.com.br/";
+        alertaTagLink.target = "_blank";
+        alertaTagLink.rel = "noopener";
+      } else {
+        alertaImgEl.style.display = "none";
+        alertaImgEl.src = "";
+        alertaImagemLink.style.display = "none";
+        alertaImagemLink.removeAttribute("href");
+        alertaImagemLink.removeAttribute("target");
+        alertaImagemLink.removeAttribute("rel");
+        alertaTagLink.removeAttribute("href");
+        alertaTagLink.removeAttribute("target");
+        alertaTagLink.removeAttribute("rel");
+      }
+      alertaBox.style.display = "flex";
+    } else {
+      alertaBox.style.display = "none";
+    }
+    const alertaTituloInput = document.getElementById("input-alerta_titulo");
+    if (alertaTituloInput && !alertaTituloInput.value) alertaTituloInput.value = data.alerta_titulo || "";
+    const alertaTextoInput = document.getElementById("input-alerta_texto");
+    if (alertaTextoInput && !alertaTextoInput.value) alertaTextoInput.value = data.alerta_texto || "";
+
     if (data.atualizado_em) {
       const upd = new Date(data.atualizado_em).toLocaleString("pt-BR");
       document.getElementById("upd-suporte").textContent = "Atualizado em " + upd;
@@ -1288,6 +1319,23 @@
       });
       body.featured_news_title = document.getElementById("input-featured_news_title").value;
       body.featured_news_url = document.getElementById("input-featured_news_url").value;
+      body.alerta_titulo = document.getElementById("input-alerta_titulo").value;
+      body.alerta_texto = document.getElementById("input-alerta_texto").value;
+
+      const alertaImagemInput = document.getElementById("input-alerta_imagem");
+      const alertaImagemStatus = document.getElementById("alertaImagemStatus");
+      if (alertaImagemInput.files && alertaImagemInput.files[0]) {
+        alertaImagemStatus.textContent = "Convertendo imagem...";
+        body.alerta_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(alertaImagemInput.files[0]);
+        });
+        alertaImagemStatus.textContent = "";
+      } else {
+        body.alerta_imagem = (window.__lastManualData && window.__lastManualData.alerta_imagem) || "";
+      }
 
       const graficoInput = document.getElementById("input-fluxo_b3_grafico");
       const graficoStatus = document.getElementById("fluxoB3GraficoStatus");
@@ -1440,10 +1488,55 @@
     }
   }
 
+  async function carregarFedWatch() {
+    const grid = document.getElementById("fedwatchGrid");
+    try {
+      const resp = await fetch(WORKER_URL + "/api/fedwatch-data");
+      const data = await resp.json();
+      const reunioes = data.reunioes || [];
+
+      if (reunioes.length === 0) {
+        grid.innerHTML = `<div class="pm-card"><div class="pm-title">Sem dados ainda — aguardando primeira atualização.</div></div>`;
+        return;
+      }
+
+      const meses = { Jan: "jan", Feb: "fev", Mar: "mar", Apr: "abr", May: "mai", Jun: "jun", Jul: "jul", Aug: "ago", Sep: "set", Oct: "out", Nov: "nov", Dec: "dez" };
+
+      function formatarData(dataStr) {
+        // Ex.: "Sep 16, 2026 02:00PM ET" -> "16/set/2026"
+        const m = dataStr.match(/([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})/);
+        if (!m) return dataStr;
+        const mes = meses[m[1]] || m[1].toLowerCase();
+        return `${m[2].padStart(2, "0")}/${mes}/${m[3]}`;
+      }
+
+      grid.innerHTML = reunioes.map(r => {
+        const linhas = r.faixas.map(f => `
+          <div class="pm-row">
+            <div class="pm-row-top"><span class="pm-row-label">${f.faixa.replace("-", "–")}</span><span class="pm-row-pct">${f.probabilidade.toFixed(1).replace(".", ",")}%</span></div>
+            <div class="pm-bar-track"><div class="pm-bar-fill" style="width:${f.probabilidade}%"></div></div>
+          </div>
+        `).join("");
+
+        return `
+          <div class="pm-card">
+            <div class="pm-title">Reunião de ${formatarData(r.data)}</div>
+            ${linhas}
+          </div>
+        `;
+      }).join("");
+
+    } catch (e) {
+      grid.innerHTML = `<div class="pm-card"><div class="pm-title">Indisponível no momento.</div></div>`;
+      console.warn("FedWatch: erro ao carregar", e);
+    }
+  }
+
   carregarPainelManual();
   iniciarModoEdicao();
   carregarPolymarket();
   carregarFearGreed();
+  carregarFedWatch();
 
   // Noticias via RSS (Investing.com), lidas pelo Worker
   let __newsMarketItems = [];
