@@ -6,8 +6,10 @@
  *
  * O que ele faz:
  *  1. Registra o service worker (/sw.js).
- *  2. Mostra um botão flutuante "Instalar App" quando o navegador
- *     permite instalar (Chrome/Edge/Android).
+ *  2. Mostra um botão "Instalar App" no cabeçalho (ao lado do título do
+ *     site, dentro de <span id="pwa-nav-slot"></span>) quando o navegador
+ *     permite instalar (Chrome/Edge/Android). Se a página não tiver esse
+ *     slot, cai de volta no botão flutuante no canto da tela.
  *  3. No Safari/iOS (que não tem o prompt automático de instalação),
  *     mostra o mesmo botão mas, ao clicar, explica o passo manual
  *     (Compartilhar > Adicionar à Tela de Início).
@@ -36,32 +38,44 @@
   if (isStandalone()) return; // já é app instalado, não mostra nada
 
   var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var navSlot = document.getElementById("pwa-nav-slot");
 
-  // 2) Botão flutuante
+  // 2) Botão — encaixado no cabeçalho quando existir o slot, senão flutuante
   var style = document.createElement("style");
   style.textContent =
-    "#pwa-install-btn{position:fixed;right:18px;bottom:18px;z-index:9999;" +
-    "display:none;align-items:center;gap:8px;padding:12px 18px;" +
-    "border-radius:999px;border:none;cursor:pointer;font-family:inherit;" +
-    "font-size:14px;font-weight:600;color:#fff;" +
-    "background:#10b981;box-shadow:0 6px 20px rgba(0,0,0,.35);" +
+    "#pwa-install-btn{display:none;align-items:center;justify-content:center;" +
+    "gap:6px;border:none;cursor:pointer;font-family:inherit;font-weight:600;" +
+    "color:#fff;background:#10b981;box-shadow:0 2px 8px rgba(0,0,0,.35);" +
     "transition:transform .15s ease, box-shadow .15s ease;}" +
-    "#pwa-install-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.45);}" +
-    "#pwa-install-btn svg{width:18px;height:18px;flex:none;}" +
+    "#pwa-install-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.45);}" +
+    "#pwa-install-btn svg{width:16px;height:16px;flex:none;}" +
+    /* Estilo padrão (sem slot no cabeçalho): botão flutuante, canto da tela */
+    "body:not(.pwa-has-nav-slot) #pwa-install-btn{position:fixed;right:18px;bottom:18px;" +
+    "z-index:9999;padding:12px 18px;border-radius:999px;font-size:14px;}" +
+    /* Estilo no cabeçalho: ícone pequeno e redondo, ao lado do título */
+    "body.pwa-has-nav-slot #pwa-install-btn{position:static;width:30px;height:30px;" +
+    "border-radius:50%;padding:0;font-size:0;flex:none;}" +
+    "body.pwa-has-nav-slot #pwa-install-btn span{display:none;}" +
     "#pwa-ios-tip{position:fixed;left:12px;right:12px;bottom:78px;z-index:9999;" +
     "display:none;background:#111;color:#fff;padding:14px 16px;border-radius:14px;" +
     "font-family:inherit;font-size:13.5px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.4);}" +
     "#pwa-ios-tip b{color:#10b981;}" +
     "#pwa-ios-tip .pwa-close{position:absolute;top:6px;right:10px;cursor:pointer;opacity:.7;font-size:16px;}" +
-    "@media (min-width:640px){#pwa-ios-tip{left:auto;width:300px;bottom:78px;right:18px;}}";
+    "@media (min-width:640px){#pwa-ios-tip{left:auto;width:300px;bottom:78px;right:18px;}}" +
+    "body.pwa-has-nav-slot #pwa-ios-tip{bottom:auto;top:64px;}" +
+    "@media (min-width:640px){body.pwa-has-nav-slot #pwa-ios-tip{left:16px;right:auto;top:64px;}}";
   document.head.appendChild(style);
+
+  if (navSlot) document.body.classList.add("pwa-has-nav-slot");
 
   var btn = document.createElement("button");
   btn.id = "pwa-install-btn";
+  btn.title = "Instalar App";
+  btn.setAttribute("aria-label", "Instalar App");
   btn.innerHTML =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
     "<span>Instalar App</span>";
-  document.body.appendChild(btn);
+  (navSlot || document.body).appendChild(btn);
 
   var tip = document.createElement("div");
   tip.id = "pwa-ios-tip";
