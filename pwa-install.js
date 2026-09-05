@@ -52,10 +52,9 @@
     /* Estilo padrão (sem slot no cabeçalho): botão flutuante, canto da tela */
     "body:not(.pwa-has-nav-slot) #pwa-install-btn{position:fixed;right:18px;bottom:18px;" +
     "z-index:9999;padding:12px 18px;border-radius:999px;font-size:14px;}" +
-    /* Estilo no cabeçalho: ícone pequeno e redondo, ao lado do título */
-    "body.pwa-has-nav-slot #pwa-install-btn{position:static;width:30px;height:30px;" +
-    "border-radius:50%;padding:0;font-size:0;flex:none;}" +
-    "body.pwa-has-nav-slot #pwa-install-btn span{display:none;}" +
+    /* Estilo no cabeçalho: pill pequena com ícone + texto, ao lado do título */
+    "body.pwa-has-nav-slot #pwa-install-btn{position:static;height:30px;" +
+    "padding:0 12px 0 10px;border-radius:999px;font-size:0.78rem;flex:none;white-space:nowrap;}" +
     "#pwa-ios-tip{position:fixed;left:12px;right:12px;bottom:78px;z-index:9999;" +
     "display:none;background:#111;color:#fff;padding:14px 16px;border-radius:14px;" +
     "font-family:inherit;font-size:13.5px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.4);}" +
