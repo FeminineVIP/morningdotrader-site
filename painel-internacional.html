@@ -15,6 +15,7 @@
     --muted: #8fa1b3;
     --accent: #4da3ff;
     --green: #3ecf8e;
+    --red: #ff6b6b;
   }
   *{box-sizing:border-box;}
   body{
@@ -89,6 +90,30 @@
 
   .note{color:var(--muted); font-size:0.8rem; margin-top:14px;}
 
+  /* --- Ranking de Moedas vs Real (lista customizada, estilo Profit) --- */
+  .ranking-card{
+    background: var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden;
+  }
+  .ranking-status{ padding:14px 16px; font-size:0.82rem; color:var(--muted); }
+  .rank-row{
+    display:grid; grid-template-columns: 24px 1fr 90px 70px 140px;
+    align-items:center; gap:10px; padding:9px 16px; font-size:0.85rem;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .rank-row:last-child{ border-bottom:none; }
+  .rank-row .pos{ color:var(--muted); font-weight:700; }
+  .rank-row .name{ color:var(--text); }
+  .rank-row .name b{ display:block; font-size:0.7rem; color:var(--muted); font-weight:400; }
+  .rank-row .value{ color:var(--muted); font-variant-numeric:tabular-nums; text-align:right; }
+  .rank-row .pct{ font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+  .rank-row .pct.pos{ color:var(--green); }
+  .rank-row .pct.neg{ color:var(--red); }
+  .rank-bar-track{ background:rgba(255,255,255,0.05); border-radius:4px; height:14px; position:relative; overflow:hidden; }
+  .rank-bar-fill{ position:absolute; top:0; bottom:0; border-radius:4px; }
+  .rank-bar-fill.pos{ background:var(--green); left:50%; }
+  .rank-bar-fill.neg{ background:var(--red); right:50%; }
+  .ranking-updated{ padding:8px 16px; font-size:0.72rem; color:var(--muted); border-top:1px solid var(--border); }
+
   footer{padding:24px 0 40px; text-align:center; color:var(--muted); font-size:0.8rem;}
 </style>
 <link rel="manifest" href="/manifest.json">
@@ -137,12 +162,7 @@
   <div id="intlQuotesParent">
   <div id="intlQuotesBlock">
     <div class="embed-card" style="padding:8px;">
-      <!--
-        Grade de cotações resumida (equivalente ao painel BlackArrow, até a "linha amarela").
-        Alguns símbolos de índice via CAPITALCOM (ESP35, EU50, US2000, UK100, FRA40) seguem o
-        mesmo padrão dos que já funcionam no site (US500/US30/US100/HK50) — confira se todos
-        carregam certo; se algum aparecer "invalid symbol", ajuste o código do símbolo.
-      -->
+      <!-- Grade de cotações resumida (equivalente ao painel BlackArrow, até a "linha amarela"). -->
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
         <div class="tradingview-widget-copyright"></div>
@@ -154,7 +174,7 @@
           "locale": "br",
           "isTransparent": true,
           "width": "100%",
-          "height": "560",
+          "height": "900",
           "tabs": [
             {
               "title": "Cotações",
@@ -168,18 +188,15 @@
                 { "s": "OANDA:EURUSD", "d": "EUR/USD" },
                 { "s": "FX_IDC:USDJPY", "d": "USD/JPY" },
                 { "s": "OANDA:GBPUSD", "d": "GBP/USD" },
-                { "s": "CAPITALCOM:FRA40", "d": "FRA40" },
                 { "s": "NASDAQ:GOOGL", "d": "GOOG" },
                 { "s": "NASDAQ:AAPL", "d": "AAPL" },
                 { "s": "NASDAQ:AMZN", "d": "AMZN" },
                 { "s": "NASDAQ:TSLA", "d": "TSLA" },
                 { "s": "NASDAQ:MSFT", "d": "MSFT" },
                 { "s": "NASDAQ:NVDA", "d": "NVDA" },
-                { "s": "CAPITALCOM:ESP35", "d": "ESP35" },
                 { "s": "CAPITALCOM:EU50", "d": "EURO50" },
                 { "s": "FOREXCOM:JP225", "d": "JP225" },
                 { "s": "CAPITALCOM:US30", "d": "USAIND" },
-                { "s": "CAPITALCOM:US2000", "d": "USARUS" },
                 { "s": "CAPITALCOM:US100", "d": "USATEC" },
                 { "s": "CAPITALCOM:UK100", "d": "UK100" }
               ]
@@ -298,6 +315,57 @@
     </div>
   </div>
 
+  <div class="sidebar-header" style="margin-top:28px;">
+    <span class="sidebar-dot"></span>
+    <span>Ranking de Moedas — Global</span>
+    <button id="popRankingBtn" class="pop-btn" title="Abrir em janela flutuante" onclick="popOutBlock('#rankingBlock', 'popRankingBtn', '#rankingParent', 480, 500)">⤢</button>
+  </div>
+  <div id="rankingParent">
+  <div id="rankingBlock">
+  <div class="embed-card">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <div class="tradingview-widget-copyright"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-heat-map.js" async>
+      {
+        "width": "100%",
+        "height": "400",
+        "currencies": [
+          "EUR",
+          "USD",
+          "JPY",
+          "GBP",
+          "CHF",
+          "AUD",
+          "CAD",
+          "NZD"
+        ],
+        "isTransparent": true,
+        "colorTheme": "dark",
+        "locale": "br"
+      }
+      </script>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <div class="sidebar-header" style="margin-top:28px;">
+    <span class="sidebar-dot"></span>
+    <span>Ranking de Moedas — Real (BRL)</span>
+    <button id="popRankingBrlBtn" class="pop-btn" title="Abrir em janela flutuante" onclick="popOutBlock('#rankingBrlBlock', 'popRankingBrlBtn', '#rankingBrlParent', 420, 480)">⤢</button>
+  </div>
+  <div id="rankingBrlParent">
+  <div id="rankingBrlBlock">
+  <div class="ranking-card">
+    <div id="rankingBrlBody">
+      <div class="ranking-status">Carregando cotações…</div>
+    </div>
+    <div class="ranking-updated" id="rankingBrlUpdated"></div>
+  </div>
+  </div>
+  </div>
+
   <p class="note">Cotações via TradingView (fontes CAPITALCOM / TVC / FX_IDC / OANDA), atualizadas em tempo real. Pequenas variações em relação a outras plataformas são normais — são provedores de liquidez diferentes.</p>
 
 </main>
@@ -355,6 +423,81 @@
       alert("Seu navegador não suporta janela flutuante (funciona no Chrome e no Edge).");
     }
   }
+</script>
+
+<script>
+  // Ranking de Moedas — Real (BRL): lista ordenada por variação % do dia,
+  // usando a AwesomeAPI (economia.awesomeapi.com.br), que cobre pares
+  // moeda-x-Real de graça (sem chave obrigatória, com limite de uso).
+  (function () {
+    const PAIRS = ['USD-BRL', 'EUR-BRL', 'GBP-BRL', 'JPY-BRL', 'AUD-BRL', 'CAD-BRL', 'CHF-BRL', 'NZD-BRL'];
+    const API_URL = 'https://economia.awesomeapi.com.br/json/last/' + PAIRS.join(',');
+    const REFRESH_MS = 60000; // a própria API já cacheia por ~1min sem token
+
+    const body = document.getElementById('rankingBrlBody');
+    const updatedEl = document.getElementById('rankingBrlUpdated');
+    if (!body) return;
+
+    function fmtValue(n) {
+      return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    }
+
+    function render(list) {
+      const maxAbs = Math.max.apply(null, list.map(i => Math.abs(i.pct))) || 1;
+
+      body.innerHTML = '';
+      list.forEach((item, idx) => {
+        const isPos = item.pct >= 0;
+        const barPct = Math.min(100, Math.abs(item.pct) / maxAbs * 50);
+
+        const row = document.createElement('div');
+        row.className = 'rank-row';
+        row.innerHTML =
+          '<div class="pos">' + (idx + 1) + '</div>' +
+          '<div class="name">' + item.name + ' <b>' + item.code + '/BRL</b></div>' +
+          '<div class="value">' + fmtValue(item.bid) + '</div>' +
+          '<div class="pct ' + (isPos ? 'pos' : 'neg') + '">' + (isPos ? '+' : '') + item.pct.toFixed(2) + '%</div>' +
+          '<div class="rank-bar-track"><div class="rank-bar-fill ' + (isPos ? 'pos' : 'neg') + '" style="width:' + barPct + '%;"></div></div>';
+        body.appendChild(row);
+      });
+    }
+
+    function renderError(msg) {
+      body.innerHTML = '<div class="ranking-status">' + msg + '</div>';
+    }
+
+    async function load() {
+      try {
+        const res = await fetch(API_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        const list = Object.keys(data).map(key => {
+          const d = data[key];
+          return {
+            code: d.code,
+            name: d.name.split('/')[0].trim(),
+            bid: parseFloat(d.bid),
+            pct: parseFloat(d.pctChange)
+          };
+        }).filter(i => !isNaN(i.bid) && !isNaN(i.pct));
+
+        if (!list.length) { renderError('Sem dados no momento.'); return; }
+
+        list.sort((a, b) => b.pct - a.pct);
+        render(list);
+        if (updatedEl) {
+          updatedEl.textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR');
+        }
+      } catch (e) {
+        console.warn('Ranking BRL: falha ao buscar cotações.', e);
+        renderError('Não foi possível carregar as cotações agora. Tentando de novo em instantes…');
+      }
+    }
+
+    load();
+    setInterval(load, REFRESH_MS);
+  })();
 </script>
 
 </body>
