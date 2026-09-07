@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Morning Call — Morning do Trader</title>
+<meta name="description" content="Painel diário de mercado: índices globais, VIX, Bitcoin, calendário econômico, probabilidades do Polymarket e dados manuais — tudo em um só lugar antes do morning call.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://morningdotrader.com.br/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Morning do Trader">
+<meta property="og:title" content="Painel Morning Call — Morning do Trader">
+<meta property="og:description" content="Painel diário de mercado: índices globais, VIX, calendário econômico, fluxo de investidores B3, probabilidades do Polymarket e mais — tudo em um só lugar antes do pregão.">
+<meta property="og:url" content="https://morningdotrader.com.br/">
+<meta property="og:image" content="https://morningdotrader.com.br/hero-bg.webp">
+<meta property="og:locale" content="pt_BR">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Painel Morning Call — Morning do Trader">
+<meta name="twitter:description" content="Painel diário de mercado para day trade em mini índice e mini dólar, com probabilidades do Polymarket, atualizado todo dia útil antes da abertura.">
+<meta name="twitter:image" content="https://morningdotrader.com.br/hero-bg.webp">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Morning do Trader",
+  "url": "https://morningdotrader.com.br/",
+  "description": "Painel diário de mercado financeiro brasileiro para day trade em mini índice e mini dólar, com briefing, cotações, calendário econômico, fluxo de investidores e probabilidades de mercados preditivos como o Polymarket.",
+  "inLanguage": "pt-BR"
+}
+</script>
+
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --red: #e5484d;
+    --amber: #f5a623;
+    --green: #3ecf8e;
+    --accent: #4da3ff;
+    --purple: #a86ef5;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height:1.55;
+  }
+
+  a{color:var(--accent);}
+
+  .nav{
+    background: var(--bg-alt);
+    border-bottom:1px solid var(--border);
+    padding:12px 16px;
+    position:sticky;
+    top:0;
+    z-index:51;
+  }
+
+  .nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    max-width:1180px;
+    margin:0 auto;
+  }
+
+  .nav .brand{
+    font-weight:700;
+    color:var(--text);
+    text-decoration:none;
+    font-size:1rem;
+  }
+
+  .nav .brand-group{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .nav .links{
+    display:flex;
+    gap:18px;
+    font-size:0.88rem;
+  }
+
+  .nav .links a{
+    color:var(--muted);
+    text-decoration:none;
+  }
+
+  .nav .links a.active{
+    color:var(--accent);
+  }
+
+  .nav .links a:hover{
+    color:var(--text);
+  }
+
+  .ticker-sticky{
+    position:sticky;
+    top:var(--nav-h, 48px);
+    z-index:50;
+    background:var(--bg-alt);
+    border-bottom:1px solid var(--border);
+    padding:6px 16px;
+  }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 16px;
+  }
+
+  header{
+    position:relative;
+    min-height:620px;
+    display:flex;
+    align-items:flex-end;
+    padding:40px 0 36px;
+    border-bottom:1px solid var(--border);
+    background:
+      linear-gradient(180deg, rgba(11,15,20,0.15) 0%, rgba(11,15,20,0.35) 55%, rgba(11,15,20,0.92) 100%),
+      url('hero-bg.webp');
+    background-size:cover;
+    background-position:center center;
+  }
+
+  header .wrap{
+    width:100%;
+  }
+
+  @media (max-width:700px){
+    header{
+      min-height:420px;
+    }
+  }
+
+  header .wrap{
+    padding:0 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:14px;
+  }
+
+  .greeting{
+    font-size:0.95rem;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+
+  h1{
+    font-size:2.6rem;
+    margin:0 0 8px;
+  }
+
+  .subtitle{
+    color:var(--muted);
+    font-size:1.1rem;
+    margin:0;
+    max-width:520px;
+  }
+
+  .hero-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:10px;
+  }
+
+  .market-status{
+    position:absolute;
+    top:20px;
+    right:16px;
+    z-index:5;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 14px;
+    border-radius:999px;
+    background:rgba(62,207,142,0.12);
+    border:1px solid rgba(62,207,142,0.4);
+    font-size:0.82rem;
+    color:var(--green);
+    font-weight:600;
+    white-space:nowrap;
+  }
+
+  .market-status .dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+  }
+
+  .market-status.closed{
+    background:rgba(229,72,77,0.12);
+    border-color:rgba(229,72,77,0.4);
+    color:var(--red);
+  }
+
+  .market-status.closed .dot{
+    background:var(--red);
+  }
+
+  .ormuz-btn{
+    position:absolute;
+    top:20px;
+    left:16px;
+    z-index:5;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 16px;
+    border-radius:999px;
+    background:rgba(11,15,20,0.55);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    border:1px solid rgba(229,72,77,0.55);
+    font-size:0.85rem;
+    color:#ff9599;
+    font-weight:600;
+    white-space:nowrap;
+    text-decoration:none;
+    transition:background 0.15s,border-color 0.15s;
+  }
+
+  .ormuz-btn .pulse{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--red);
+    flex-shrink:0;
+    box-shadow:0 0 0 0 rgba(229,72,77,0.6);
+    animation:pulseglow 2s infinite;
+  }
+
+  @keyframes pulseglow{
+    0%{box-shadow:0 0 0 0 rgba(229,72,77,0.55);}
+    70%{box-shadow:0 0 0 7px rgba(229,72,77,0);}
+    100%{box-shadow:0 0 0 0 rgba(229,72,77,0);}
+  }
+
+  .ormuz-btn:hover{
+    background:rgba(11,15,20,0.75);
+    border-color:rgba(229,72,77,0.9);
+  }
+
+  .ormuz-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    flex-shrink:0;
+    width:220px;
+  }
+
+  .ormuz-card img{
+    width:100%;
+    border-radius:12px;
+    display:block;
+    transition:transform 0.2s;
+  }
+
+  .ormuz-card:hover img{
+    transform:scale(1.03);
+  }
+
+  .ormuz-card span{
+    font-size:0.82rem;
+    font-weight:600;
+    color:#ff9599;
+  }
+
+  @media (max-width:600px){
+    .ormuz-card{width:100%;}
+  }
+
+  @media (max-width:700px){
+    h1{font-size:1.7rem;}
+    .subtitle{font-size:0.95rem;}
+  }
+
+  section{
+    padding:30px 0;
+    border-bottom:1px solid var(--border);
+  }
+
+  section:last-of-type{
+    border-bottom:none;
+  }
+
+  h2{
+    font-size:1.2rem;
+    margin:0 0 4px;
+    color:var(--text);
+  }
+
+  h2 .tag{
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--muted);
+    font-weight:normal;
+    display:block;
+    margin-bottom:4px;
+  }
+
+  .section-note{
+    font-size:0.82rem;
+    color:var(--muted);
+    margin:0 0 18px;
+  }
+
+  p{
+    color:#c9d4de;
+    font-size:0.95rem;
+  }
+
+  .widget-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .widget-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    min-height:230px;
+  }
+
+  .widget-card .wtitle{
+    font-size:0.8rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:10px;
+  }
+
+  .tradingview-widget-container{
+    width:100%;
+  }
+
+  .tradingview-widget-copyright{
+    font-size:0.7rem;
+    color:var(--muted);
+    text-align:right;
+    padding-top:2px;
+  }
+
+  .tradingview-widget-copyright a{
+    color:var(--muted);
+  }
+
+  .embed-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    overflow:hidden;
+  }
+
+  .embed-placeholder{
+    border:1px dashed var(--border);
+    border-radius:10px;
+    padding:24px;
+    color:var(--muted);
+    font-size:0.85rem;
+    text-align:center;
+  }
+
+  .fedcal-zoom-wrap{
+    width:100%;
+    overflow:hidden;
+    border-radius:8px;
+  }
+
+  .fedcal-zoom-frame{
+    display:block;
+    width:100%;
+    height:750px;
+    border:0;
+    border-radius:8px;
+  }
+
+  @supports (zoom:1){
+    .fedcal-zoom-frame{
+      width:87%;
+      height:950px;
+      zoom:1.15;
+    }
+  }
+
+  @media (max-width:560px){
+    .fedcal-zoom-frame{
+      width:100%!important;
+      height:700px!important;
+      zoom:1!important;
+    }
+  }
+
+  .fg-grid{
+    display:grid;
+    grid-template-columns:200px 1fr 200px;
+    align-items:center;
+    gap:28px;
+    padding:20px;
+  }
+
+  .fg-side{
+    font-size:0.85rem;
+    color:#c9d4de;
+    line-height:1.5;
+  }
+
+  .fg-gauge-col{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+  }
+
+  .fg-gauge-col svg{
+    width:100%;
+    max-width:480px;
+    display:block;
+  }
+
+  @media (max-width:820px){
+    .fg-grid{
+      grid-template-columns:1fr;
+      justify-items:center;
+      text-align:center;
+    }
+
+    .fg-gauge-col{
+      order:-1;
+    }
+  }
+
+  .election-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:14px;
+  }
+
+  .election-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px;
+  }
+
+  .election-name{
+    font-size:0.95rem;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+
+  .election-odds{
+    font-size:1.6rem;
+    font-weight:800;
+    color:var(--accent);
+  }
+
+  .election-note{
+    font-size:0.75rem;
+    color:var(--muted);
+    margin-top:4px;
+  }
+
+  .pm-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px;
+  }
+
+  .pm-title{
+    font-size:0.98rem;
+    font-weight:700;
+    margin-bottom:14px;
+  }
+
+  .pm-row{
+    margin-bottom:10px;
+  }
+
+  .pm-row:last-child{
+    margin-bottom:0;
+  }
+
+  .pm-row-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.85rem;
+    margin-bottom:4px;
+  }
+
+  .pm-row-label{
+    color:#c9d4de;
+  }
+
+  .pm-row-pct{
+    font-weight:700;
+    color:var(--accent);
+  }
+
+  .pm-bar-track{
+    background:var(--bg-alt);
+    border-radius:999px;
+    height:8px;
+    overflow:hidden;
+  }
+
+  .pm-bar-fill{
+    background:var(--accent);
+    height:100%;
+    border-radius:999px;
+  }
+
+  .fedwatch-banner{
+    width:100%;
+    height:auto;
+    display:block;
+    margin-bottom:18px;
+    border-radius:14px;
+  }
+
+  .fedwatch-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+  }
+
+  @media (max-width:1050px){
+    .fedwatch-grid{
+      grid-template-columns:repeat(2,1fr);
+    }
+  }
+
+  @media (max-width:560px){
+    .fedwatch-grid{
+      grid-template-columns:1fr;
+    }
+  }
+
+  .sr-board{
+    position:relative;
+    max-width:600px;
+    margin:0 auto;
+  }
+
+  .sr-board-img{
+    width:100%;
+    display:block;
+    border-radius:12px;
+  }
+
+  .sr-value{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    font-size:3.2vw;
+    font-weight:800;
+    color:#fff;
+    text-shadow:0 2px 6px rgba(0,0,0,0.8);
+    max-width:600px;
+  }
+
+  @media (min-width:600px){
+    .sr-value{
+      font-size:19px;
+    }
+  }
+
+  .sr-value:empty::after{
+    content:"—";
+    color:rgba(255,255,255,0.35);
+    font-weight:400;
+  }
+
+  .fcb-board{
+    position:relative;
+    max-width:100%;
+    margin:0 auto;
+  }
+
+  .fcb-board-img{
+    width:100%;
+    display:block;
+    border-radius:12px;
+  }
+
+  .wrap-wide{
+    max-width:1450px;
+  }
+
+  .layout-grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:32px;
+  }
+
+  .main-col{
+    min-width:0;
+  }
+
+  .sidebar-col{
+    min-width:0;
+  }
+
+  .sidebar-sticky{
+    position:sticky;
+    top:calc(var(--nav-h,48px) + var(--ticker-h,60px) + 16px);
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    max-height:calc(100vh - var(--nav-h,48px) - var(--ticker-h,60px) - 32px);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  .sidebar-header{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.85rem;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+
+  .sidebar-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--green);
+    flex-shrink:0;
+    box-shadow:0 0 0 3px rgba(62,207,142,0.2);
+  }
+
+  .pop-btn{
+    margin-left:auto;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    border-radius:6px;
+    width:24px;
+    height:24px;
+    font-size:0.85rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+
+  .pop-btn:hover{
+    color:var(--text);
+    border-color:var(--accent);
+  }
+
+  .sidebar-note{
+    font-size:0.72rem;
+    color:var(--muted);
+    margin:0 0 12px;
+  }
+
+  .chat-feed{
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-right:4px;
+    flex:1;
+    min-height:0;
+  }
+
+  .chat-msg{
+    font-size:0.82rem;
+    color:#c9d4de;
+    line-height:1.4;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--border);
+  }
+
+  .chat-msg:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+  }
+
+  .chat-time{
+    color:var(--accent);
+    font-weight:700;
+    margin-right:6px;
+  }
+
+  .briefing-text{
+    white-space:pre-wrap;
+    font-size:0.95rem;
+    color:#c9d4de;
+    line-height:1.6;
+  }
+
+  .briefing-text.empty{
+    color:var(--muted);
+    font-style:italic;
+  }
+
+  @media (max-width:1000px){
+    .layout-grid{
+      grid-template-columns:1fr;
+    }
+
+    .sidebar-sticky{
+      position:static;
+      max-height:none;
+    }
+  }
+
+  .manual-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .manual-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-top:3px solid var(--amber);
+    border-radius:12px;
+    padding:18px;
+  }
+
+  .manual-label{
+    font-size:0.78rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    margin-bottom:8px;
+  }
+
+  .manual-value{
+    font-size:1.6rem;
+    font-weight:800;
+    margin-bottom:4px;
+    word-break:break-word;
+  }
+
+  .manual-value.negative{
+    color:var(--red);
+  }
+
+  .manual-value.positive{
+    color:var(--green);
+  }
+
+  .manual-value.empty{
+    color:var(--muted);
+    font-size:1rem;
+    font-weight:400;
+    font-style:italic;
+  }
+
+  .manual-updated{
+    font-size:0.72rem;
+    color:var(--muted);
+  }
+
+  .manual-text{
+    font-size:1rem;
+    color:#c9d4de;
+    white-space:pre-wrap;
+  }
+
+  .manual-subrow{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px;
+    padding:5px 0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .manual-subrow:last-child{
+    border-bottom:none;
+  }
+
+  .manual-subrow .manual-sublabel{
+    font-size:0.78rem;
+    color:var(--muted);
+  }
+
+  .manual-subrow .manual-value{
+    font-size:1rem;
+    font-weight:700;
+    margin-bottom:0;
+  }
+
+  .manual-subrow.total{
+    margin-top:2px;
+    padding-top:8px;
+    border-top:1px solid var(--border);
+  }
+
+  .manual-subrow.total .manual-sublabel{
+    font-weight:700;
+    color:var(--text);
+  }
+
+  .manual-subrow.total .manual-value{
+    font-size:1.15rem;
+  }
+
+  .edit-banner{
+    background:rgba(245,166,35,0.12);
+    border:1px solid rgba(245,166,35,0.4);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    font-size:0.85rem;
+    color:var(--amber);
+  }
+
+  .alert-banner{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:22px;
+    padding:18px 20px;
+    border-radius:12px;
+    background:linear-gradient(135deg,rgba(245,166,35,0.14),var(--card));
+    border:1px solid var(--amber);
+  }
+
+  .alert-banner .alert-icon{
+    width:56px;
+    height:56px;
+    border-radius:12px;
+    object-fit:cover;
+    flex-shrink:0;
+    background:var(--bg-alt);
+  }
+
+  .alert-banner .alert-content{
+    min-width:0;
+  }
+
+  .alert-banner .alert-tag{
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    font-weight:700;
+    color:var(--amber);
+    display:block;
+    margin-bottom:6px;
+  }
+
+  .alert-banner .alert-titulo{
+    font-size:1.15rem;
+    font-weight:700;
+    margin:0 0 6px;
+    line-height:1.35;
+    color:var(--text);
+  }
+
+  .alert-banner .alert-texto{
+    font-size:0.92rem;
+    color:#c9d4de;
+    margin:0;
+    white-space:pre-wrap;
+  }
+
+  @media (max-width:480px){
+    .alert-banner .alert-icon{
+      width:44px;
+      height:44px;
+    }
+  }
+
+  .edit-form{
+    display:grid;
+    gap:12px;
+    margin-top:10px;
+  }
+
+  .edit-form label{
+    font-size:0.78rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+    display:block;
+    margin-bottom:4px;
+  }
+
+  .edit-form input,
+  .edit-form textarea{
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:8px;
+    color:var(--text);
+    padding:10px 12px;
+    font-size:0.95rem;
+    font-family:inherit;
+  }
+
+  .edit-form textarea{
+    min-height:90px;
+    resize:vertical;
+  }
+
+  .edit-save-btn{
+    background:var(--accent);
+    color:#0b0f14;
+    border:none;
+    border-radius:8px;
+    padding:10px 18px;
+    font-size:0.9rem;
+    font-weight:700;
+    cursor:pointer;
+    justify-self:start;
+  }
+
+  .edit-save-btn:hover{
+    opacity:0.9;
+  }
+
+  .save-status{
+    font-size:0.8rem;
+    margin-top:4px;
+  }
+
+  .save-status.ok{
+    color:var(--green);
+  }
+
+  .save-status.err{
+    color:var(--red);
+  }
+
+  .methodology{
+    background:var(--bg-alt);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:16px 18px;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+
+  .methodology strong{
+    color:var(--text);
+  }
+
+  #newsMarketList li,
+  #newsCorpList li{
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+    font-size:0.92rem;
+  }
+
+  #newsMarketList li:last-child,
+  #newsCorpList li:last-child{
+    border-bottom:none;
+  }
+
+  #newsMarketList a,
+  #newsCorpList a{
+    color:var(--text);
+    text-decoration:none;
+  }
+
+  #newsMarketList a:hover,
+  #newsCorpList a:hover{
+    color:var(--accent);
+  }
+
+  footer{
+    padding:24px 0 40px;
+    text-align:center;
+    color:var(--muted);
+    font-size:0.8rem;
+  }
+
+  @media (max-width:600px){
+    h1{
+      font-size:1.35rem;
+    }
+
+    header .wrap{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+  }
+
+  .ad-carousel{
+    position:relative;
+    max-width:100%;
+    margin:8px 0;
+    border-radius:12px;
+    overflow:hidden;
+    aspect-ratio:3.1 / 1;
+  }
+
+  .ad-carousel-label{
+    position:absolute;
+    top:8px;
+    left:8px;
+    z-index:2;
+    font-size:0.65rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:rgba(255,255,255,0.85);
+    background:rgba(0,0,0,0.45);
+    padding:2px 8px;
+    border-radius:999px;
+  }
+
+  .ad-carousel-link{
+    display:block;
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+
+  .ad-carousel-img{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:0;
+    transition:opacity 1s ease;
+  }
+
+  .ad-carousel-img.active{
+    opacity:1;
+  }
+
+  .amazon-promo{
+    margin:16px 0;
+  }
+
+  .amazon-promo-header{
+    width:100%;
+    display:block;
+    border-radius:12px 12px 0 0;
+  }
+
+  .amazon-promo-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+    border-radius:0 0 12px 12px;
+    overflow:hidden;
+  }
+
+  @media (max-width:700px){
+    .amazon-promo-grid{
+      grid-template-columns:repeat(2,1fr);
+    }
+  }
+
+  .amazon-promo-card{
+    display:block;
+    line-height:0;
+    transition:filter 0.15s ease;
+  }
+
+  .amazon-promo-card:hover{
+    filter:brightness(1.06);
+  }
+
+  .amazon-promo-img{
+    width:100%;
+    display:block;
+  }
+
+  .ad-thin{
+    margin:16px 0;
+  }
+
+  .ad-thin-img{
+    width:100%;
+    display:block;
+    border-radius:10px;
+  }
+
+  .ad-thin-mp{
+    margin:16px 0;
+  }
+
+  .ad-thin-mp .crop-box img{
+    width:100%;
+    display:block;
+    border-radius:10px;
+  }
+</style>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1020">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
+
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+
+    <div class="brand-group">
+      <span id="pwa-nav-slot"></span>
+      <a class="brand" href="index.html">Morning do Trader</a>
+    </div>
+
+    <div class="links">
+      <a href="index.html" class="active">Morning Call</a>
+      <a href="ormuz.html">Crise do Ormuz</a>
+      <a href="noticias.html">Notícias</a>
+      <a href="glossario.html">Glossário</a>
+      <a href="painel-internacional.html">Painel Internacional</a>
+      <a href="futuro.html">Futuro</a>
+    </div>
+
+  </div>
+</nav>
+
+<div class="ticker-sticky">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <div class="tradingview-widget-copyright"></div>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+      "symbols": [
+        { "proName": "CAPITALCOM:DXY", "title": "DXY" },
+        { "proName": "FX_IDC:USDBRL", "title": "USD/BRL" },
+        { "proName": "FX_IDC:USDMXN", "title": "USD/MXN" },
+        { "proName": "FX_IDC:USDCNH", "title": "USD/CNH" },
+        { "proName": "FX_IDC:USDARS", "title": "USD/ARS" },
+        { "proName": "FX_IDC:USDTRY", "title": "USD/TRY" },
+        { "proName": "FX_IDC:USDJPY", "title": "USD/JPY" },
+        { "proName": "OANDA:EURUSD", "title": "EUR/USD" },
+        { "proName": "OANDA:AUDUSD", "title": "AUD/USD" }
+      ],
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "showSymbolLogo": true,
+      "displayMode": "compact",
+      "locale": "br"
+    }
+    </script>
+
+  </div>
+</div>
+
+<header>
+
+  <a href="ormuz.html" class="ormuz-btn">
+    <span class="pulse"></span>
+    Crise do Ormuz →
+  </a>
+
+  <span class="market-status" id="marketStatus">
+    <span class="dot"></span>
+    Pré-mercado
+  </span>
+
+  <div class="wrap">
+    <div>
+
+      <p class="greeting" id="greetingDate">
+        Bom dia
+      </p>
+
+      <h1>
+        Painel Morning Call
+      </h1>
+
+      <p class="subtitle">
+        Tudo o que você precisa saber do Mercado Financeiro antes da abertura, em um só painel.
+      </p>
+
+    </div>
+  </div>
+
+</header>
+
+<div class="wrap wrap-wide">
+<div class="layout-grid">
+<div class="main-col">
+
+  <div class="alert-banner" id="alertaDia" style="display:none;">
+
+    <a id="alertaImagemLink" style="display:none; flex-shrink:0;">
+      <img class="alert-icon" id="alertaImagem" src="" alt="">
+    </a>
+
+    <div class="alert-content">
+
+      <a id="alertaTagLink" style="text-decoration:none;">
+        <span class="alert-tag" id="alertaTag">
+          Alerta do Dia
+        </span>
+      </a>
+
+      <p class="alert-titulo" id="alertaTitulo"></p>
+      <p class="alert-texto" id="alertaTexto"></p>
+
+    </div>
+
+  </div>
+
+  <section id="briefing-do-dia">
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+
+      <div>
+
+        <h2>
+          <span class="tag">Análise</span>
+          Briefing do Dia
+        </h2>
+
+        <p class="section-note">
+          Leitura do pregão de hoje, atualizada antes de cada morning call.
+        </p>
+
+      </div>
+
+      <a href="ormuz.html" class="ormuz-card">
+
+        <img
+          src="ormuz-card.webp"
+          alt="Crise do Estreito de Ormuz"
+        >
+
+        <span>
+          Crise do Ormuz →
+        </span>
+
+      </a>
+
+    </div>
+
+    <div class="embed-card">
+
+      <div id="briefingTexto" class="briefing-text empty">
+        Aguardando atualização.
+      </div>
+
+      <div
+        class="manual-updated"
+        id="upd-briefing"
+        style="margin-top:10px;"
+      ></div>
+
+    </div>
+
+  </section>
+
+  <section>
+
+    <h2>
+      Notícias que podem mover o mercado hoje
+    </h2>
+
+    <div class="embed-card">
+
+      <ul
+        id="newsMarketList"
+        style="list-style:none; margin:0; padding:0;"
+      >
+        <li style="color:var(--muted); font-size:0.9rem;">
+          Carregando...
+        </li>
+      </ul>
+
+    </div>
+
+  </section>
+
+  <div class="ad-carousel">
+
+    <span class="ad-carousel-label">
+      Publicidade
+    </span>
+
+    <a
+      href="https://meli.la/1mhaTka"
+      target="_blank"
+      rel="noopener sponsored"
+      class="ad-carousel-link"
+    >
+
+      <img
+        src="ml-banner1.webp"
+        alt="Mercado Livre — Ferramentas para quem faz"
+        class="ad-carousel-img active"
+        data-slide="0"
+      >
+
+      <img
+        src="ml-banner2.webp"
+        alt="Mercado Livre — Oficina, até 40% off"
+        class="ad-carousel-img"
+        data-slide="1"
+      >
+
+    </a>
+
+  </div>
+
+  <section>
+
+    <h2>
+      Notícias corporativas — Ações brasileiras
+    </h2>
+
+    <div class="embed-card">
+
+      <ul
+        id="newsCorpList"
+        style="list-style:none; margin:0; padding:0;"
+      >
+        <li style="color:var(--muted); font-size:0.9rem;">
+          Carregando...
+        </li>
+      </ul>
+
+    </div>
+
+  </section>
+
+  <div class="amazon-promo">
+
+    <span
+      class="ad-carousel-label"
+      style="position:static; display:inline-block; margin-bottom:6px;"
+    >
+      Publicidade
+    </span>
+
+    <img
+      src="amazon-header.webp"
+      alt="Um benefício especial para você — 30 dias grátis do melhor da Amazon"
+      class="amazon-promo-header"
+    >
+
+    <div class="amazon-promo-grid">
+
+      <a
+        href="https://link.amazon/B08y4TsG4"
+        target="_blank"
+        rel="noopener sponsored"
+        class="amazon-promo-card"
+      >
+        <img
+          src="ap-prime.webp"
+          alt="Amazon Prime — Filmes, séries, frete e muito mais"
+          class="amazon-promo-img"
+        >
+      </a>
+
+      <a
+        href="https://link.amazon/A0d8N12SL"
+        target="_blank"
+        rel="noopener sponsored"
+        class="amazon-promo-card"
+      >
+        <img
+          src="ap-kindle.webp"
+          alt="Kindle Unlimited — Milhões de livros para ler onde quiser"
+          class="amazon-promo-img"
+        >
+      </a>
+
+      <a
+        href="https://link.amazon/A07ptQXjL"
+        target="_blank"
+        rel="noopener sponsored"
+        class="amazon-promo-card"
+      >
+        <img
+          src="ap-music.webp"
+          alt="Amazon Music — Música sem anúncios e milhões de músicas"
+          class="amazon-promo-img"
+        >
+      </a>
+
+      <a
+        href="https://link.amazon/B0iAD7eby"
+        target="_blank"
+        rel="noopener sponsored"
+        class="amazon-promo-card"
+      >
+        <img
+          src="ap-video.webp"
+          alt="Prime Video — Filmes, séries e originais exclusivos"
+          class="amazon-promo-img"
+        >
+      </a>
+
+    </div>
+
+  </div>
+
+  <section>
+
+    <h2>VIX</h2>
+
+    <div class="widget-grid">
+
+      <div class="widget-card">
+
+        <div class="wtitle">
+          VIX
+        </div>
+
+        <div class="tradingview-widget-container">
+
+          <div class="tradingview-widget-container__widget"></div>
+
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {
+            "symbol": "CAPITALCOM:VIX",
+            "width": "100%",
+            "height": 200,
+            "locale": "br",
+            "dateRange": "1D",
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "autosize": true
+          }
+          </script>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="fluxo-cambial-bc">
+
+    <h2>
+      <span class="tag">Quantzed / XP</span>
+      Fluxo por Investidor — B3
+    </h2>
+
+    <p class="section-note">
+      Saldo por tipo de investidor, separado por mercado à vista e futuro — Estrangeiro, Institucional, Inst. Financeira, Pessoa física e Outros (R$ milhões).
+    </p>
+
+    <div class="fcb-board">
+
+      <img
+        src="fluxo-cambial-bg.webp"
+        alt="Fluxo por Investidor do Dia"
+        class="fcb-board-img"
+      >
+
+    </div>
+
+    <div class="manual-grid" style="margin-top:16px;">
+
+      <div class="manual-card">
+
+        <div class="manual-label">
+          Estrangeiro
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">À vista</span>
+          <span class="manual-value empty" id="val-fluxo_estrangeiro_vista">—</span>
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">Futuro</span>
+          <span class="manual-value empty" id="val-fluxo_estrangeiro_futuro">—</span>
+        </div>
+
+        <div class="manual-subrow total">
+          <span class="manual-sublabel">Total</span>
+          <span class="manual-value empty" id="val-fluxo_estrangeiro_total">—</span>
+        </div>
+
+      </div>
+
+      <div class="manual-card">
+
+        <div class="manual-label">
+          Institucional
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">À vista</span>
+          <span class="manual-value empty" id="val-fluxo_institucional_vista">—</span>
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">Futuro</span>
+          <span class="manual-value empty" id="val-fluxo_institucional_futuro">—</span>
+        </div>
+
+        <div class="manual-subrow total">
+          <span class="manual-sublabel">Total</span>
+          <span class="manual-value empty" id="val-fluxo_institucional_total">—</span>
+        </div>
+
+      </div>
+
+      <div class="manual-card">
+
+        <div class="manual-label">
+          Inst. Financeira
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">À vista</span>
+          <span class="manual-value empty" id="val-fluxo_instfin_vista">—</span>
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">Futuro</span>
+          <span class="manual-value empty" id="val-fluxo_instfin_futuro">—</span>
+        </div>
+
+        <div class="manual-subrow total">
+          <span class="manual-sublabel">Total</span>
+          <span class="manual-value empty" id="val-fluxo_instfin_total">—</span>
+        </div>
+
+      </div>
+
+      <div class="manual-card">
+
+        <div class="manual-label">
+          Pessoa física
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">À vista</span>
+          <span class="manual-value empty" id="val-fluxo_pf_vista">—</span>
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">Futuro</span>
+          <span class="manual-value empty" id="val-fluxo_pf_futuro">—</span>
+        </div>
+
+        <div class="manual-subrow total">
+          <span class="manual-sublabel">Total</span>
+          <span class="manual-value empty" id="val-fluxo_pf_total">—</span>
+        </div>
+
+      </div>
+
+      <div class="manual-card">
+
+        <div class="manual-label">
+          Outros
+        </div>
+
+        <div class="manual-subrow">
+          <span class="manual-sublabel">À vista</span>
+          <span class="manual-value empty" id="val-fluxo_outros_vista">—</span>
+        </div>
+
+        <div class="manual-subrow total">
+          <span class="manual-sublabel">Total</span>
+          <span class="manual-value empty" id="val-fluxo_outros_total">—</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div
+      class="manual-updated"
+      id="upd-fluxo-cambial"
+      style="margin-top:10px;"
+    ></div>
+
+  </section>
+
+  <!-- DAQUI PARA BAIXO MANTENHA EXATAMENTE O RESTANTE DO SEU ARQUIVO ATUAL -->
+
+</div>
+</div>
+</div>
+
+</body>
+</html>
