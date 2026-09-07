@@ -1,0 +1,2375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Simulador do Seu Futuro Financeiro — Morning do Trader</title>
+
+<meta
+  name="description"
+  content="Distribua seu capital, simule aportes mensais e visualize o impacto dos juros compostos no seu patrimônio."
+>
+
+<style>
+:root{
+  --bg:#05090e;
+  --card:#0c141e;
+  --border:#1d3043;
+  --text:#f5f7fa;
+  --muted:#8fa0b4;
+
+  --gold:#f5b63c;
+  --green:#21d987;
+  --blue:#248cf4;
+  --orange:#ff7a24;
+  --purple:#9a4df3;
+  --yellow:#f8cd42;
+  --positive:#5dde9c;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(46,103,151,.12),transparent 35%),
+    radial-gradient(circle at 90% 30%,rgba(245,182,60,.05),transparent 25%),
+    linear-gradient(180deg,#05090e,#07101a 60%,#05090e);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+a{
+  color:inherit;
+}
+
+.wrap{
+  width:min(1220px,calc(100% - 32px));
+  margin:auto;
+}
+
+/* =========================================================
+   TOPO
+========================================================= */
+
+.topbar{
+  border-bottom:1px solid var(--border);
+  background:rgba(5,9,14,.9);
+  backdrop-filter:blur(16px);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.topbar-inner{
+  min-height:64px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.brand{
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.04em;
+  font-size:1.05rem;
+}
+
+.brand span{
+  color:var(--gold);
+}
+
+.nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  font-size:.78rem;
+  font-weight:700;
+}
+
+.nav a{
+  text-decoration:none;
+  color:var(--muted);
+}
+
+.nav a:hover,
+.nav .active{
+  color:var(--gold);
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+  padding:42px 0 26px;
+}
+
+.hero-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+}
+
+.hero-kicker{
+  color:var(--gold);
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+
+.hero h1{
+  margin:8px 0 10px;
+  font-size:clamp(2rem,4vw,3.4rem);
+  line-height:1.04;
+}
+
+.hero h1 span{
+  color:var(--gold);
+}
+
+.hero p{
+  color:var(--muted);
+  max-width:700px;
+  line-height:1.6;
+  margin:0;
+}
+
+.hero-quote{
+  color:#a9b4c2;
+  max-width:340px;
+  text-align:right;
+  font-style:italic;
+  font-size:.92rem;
+  line-height:1.6;
+  padding-top:14px;
+}
+
+/* =========================================================
+   PAINEL PRINCIPAL
+========================================================= */
+
+.main-panel{
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14,24,35,.97),
+      rgba(6,12,19,.97)
+    );
+  box-shadow:0 30px 80px rgba(0,0,0,.24);
+  overflow:hidden;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr .60fr;
+}
+
+.module{
+  padding:30px;
+}
+
+.module + .module{
+  border-left:1px solid var(--border);
+}
+
+.section-label{
+  color:var(--gold);
+  font-weight:900;
+  font-size:.8rem;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+
+.module h2{
+  font-size:2rem;
+  margin:8px 0 10px;
+}
+
+.module h2 span{
+  color:var(--gold);
+}
+
+.module p{
+  color:var(--muted);
+  line-height:1.55;
+  margin-top:0;
+}
+
+/* =========================================================
+   FORMULÁRIO
+========================================================= */
+
+.form-group{
+  margin-top:20px;
+}
+
+label{
+  display:block;
+  font-size:.78rem;
+  color:#d4dce5;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.money-input{
+  width:100%;
+  background:#08111a;
+  border:1px solid #2a4258;
+  color:#fff;
+  font-size:1.1rem;
+  font-weight:700;
+  padding:15px 16px;
+  border-radius:11px;
+  outline:none;
+}
+
+.money-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(245,182,60,.08);
+}
+
+.invest-button{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:15px;
+  margin-top:18px;
+  background:
+    linear-gradient(
+      180deg,
+      #ffd45e,
+      #eaa323
+    );
+  color:#241801;
+  font-weight:900;
+  font-size:.88rem;
+  cursor:pointer;
+  box-shadow:0 8px 30px rgba(245,182,60,.15);
+}
+
+.invest-button:active{
+  transform:translateY(1px);
+}
+
+.fixed-note{
+  margin-top:18px;
+  padding:14px 15px;
+  border:1px solid var(--border);
+  background:#0b1520;
+  border-radius:11px;
+}
+
+.fixed-note strong{
+  display:block;
+  font-size:.8rem;
+  margin-bottom:4px;
+}
+
+.fixed-note span{
+  color:var(--muted);
+  font-size:.72rem;
+  line-height:1.5;
+}
+
+/* =========================================================
+   DONUT
+========================================================= */
+
+.chart-module{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  min-height:450px;
+}
+
+.donut{
+  width:315px;
+  height:315px;
+  border-radius:50%;
+  position:relative;
+
+  background:conic-gradient(
+    var(--green) 0 50%,
+    var(--blue) 50% 70%,
+    var(--orange) 70% 80%,
+    var(--purple) 80% 90%,
+    var(--yellow) 90% 100%
+  );
+
+  box-shadow:
+    0 0 45px rgba(36,140,244,.035),
+    inset 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.donut:after{
+  content:"";
+  position:absolute;
+  inset:77px;
+  background:#07101a;
+  border-radius:50%;
+  box-shadow:
+    inset 0 0 35px rgba(0,0,0,.35);
+}
+
+/* ÍCONE CENTRAL */
+
+.donut-center{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.center-icon{
+  color:var(--gold);
+  font-size:3rem;
+  font-weight:900;
+  line-height:1;
+}
+
+/* =========================================================
+   PERCENTUAIS DO DONUT
+   POSICIONAMENTO PROPORCIONAL
+========================================================= */
+
+.pct{
+  position:absolute;
+  z-index:5;
+
+  font-weight:900;
+  font-size:1rem;
+  line-height:1;
+
+  transform:translate(-50%,-50%);
+
+  text-shadow:
+    0 2px 8px rgba(0,0,0,.30);
+
+  pointer-events:none;
+}
+
+/* RENDA FIXA */
+
+.pct-50{
+  left:87%;
+  top:50%;
+  color:#fff;
+}
+
+/* DIVIDENDOS */
+
+.pct-20{
+  left:28%;
+  top:81%;
+  color:#fff;
+}
+
+/* CRIPTOMOEDAS */
+
+.pct-crypto{
+  left:12%;
+  top:50%;
+  color:#fff;
+}
+
+/* DAY TRADE */
+
+.pct-trade{
+  left:19%;
+  top:28%;
+  color:#fff;
+}
+
+/* RESERVA */
+
+.pct-reserve{
+  left:38%;
+  top:14%;
+  color:#081018;
+  text-shadow:none;
+}
+
+/* =========================================================
+   TOTAL INVESTIDO ABAIXO DO DONUT
+========================================================= */
+
+.donut-total{
+  width:100%;
+  text-align:center;
+  margin-top:24px;
+}
+
+.donut-total-label{
+  color:#91a3b9;
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.donut-total-value{
+  margin-top:7px;
+  color:var(--gold);
+
+  font-size:clamp(
+    1.65rem,
+    3vw,
+    2.45rem
+  );
+
+  font-weight:900;
+  line-height:1.08;
+
+  overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   RESUMO DA CARTEIRA
+========================================================= */
+
+.summary{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.summary-title{
+  color:#dbe4ec;
+  font-size:.8rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.summary-total{
+  color:var(--gold);
+  font-size:2rem;
+  font-weight:900;
+  margin:22px 0 5px;
+
+  overflow-wrap:anywhere;
+}
+
+.summary-sub{
+  color:var(--muted);
+  font-size:.82rem;
+}
+
+.summary-line{
+  height:1px;
+  background:#314458;
+  margin:22px 0;
+}
+
+.summary-copy{
+  color:var(--muted);
+  line-height:1.6;
+  font-size:.8rem;
+}
+
+.summary-bottom{
+  border-top:1px solid var(--border);
+  padding-top:22px;
+  margin-top:30px;
+}
+
+.summary-bottom strong{
+  color:var(--gold);
+  font-size:.76rem;
+  text-transform:uppercase;
+}
+
+.summary-bottom p{
+  color:#98a7b7;
+  font-size:.72rem;
+  margin-top:6px;
+}
+
+/* =========================================================
+   CARDS DE ALOCAÇÃO
+========================================================= */
+
+.alloc-section{
+  margin-top:18px;
+}
+
+.alloc-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+.alloc-card{
+  min-height:250px;
+  border-radius:15px;
+  padding:20px 16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--bg-card),
+      rgba(7,13,20,.96)
+    );
+
+  border:1px solid var(--color);
+
+  position:relative;
+  overflow:hidden;
+}
+
+.alloc-card:before{
+  content:"";
+  position:absolute;
+  inset:0;
+
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      var(--glow),
+      transparent 52%
+    );
+
+  pointer-events:none;
+}
+
+.alloc-content{
+  position:relative;
+  z-index:2;
+}
+
+.alloc-icon{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin-bottom:20px;
+
+  color:var(--color);
+  border:1px solid var(--color);
+
+  font-weight:900;
+}
+
+.alloc-name{
+  min-height:44px;
+  font-size:.82rem;
+  font-weight:900;
+  line-height:1.25;
+}
+
+.alloc-percent{
+  margin-top:14px;
+  color:var(--color);
+  font-size:2rem;
+  font-weight:900;
+}
+
+.alloc-value{
+  margin-top:8px;
+  color:var(--color);
+  font-size:1.12rem;
+  font-weight:900;
+
+  overflow-wrap:anywhere;
+}
+
+.alloc-desc{
+  color:#9ba9b9;
+  font-size:.75rem;
+  line-height:1.5;
+  min-height:58px;
+  margin-top:16px;
+}
+
+.alloc-rate{
+  border-top:1px solid rgba(255,255,255,.09);
+  margin-top:16px;
+  padding-top:13px;
+
+  font-size:.70rem;
+  color:var(--muted);
+}
+
+.alloc-rate strong{
+  display:block;
+  color:#fff;
+  margin-top:4px;
+  font-size:.85rem;
+}
+
+/* CORES */
+
+.rf{
+  --color:var(--green);
+  --bg-card:#08251c;
+  --glow:rgba(33,217,135,.11);
+}
+
+.div{
+  --color:var(--blue);
+  --bg-card:#071e34;
+  --glow:rgba(36,140,244,.12);
+}
+
+.crypto{
+  --color:var(--orange);
+  --bg-card:#2a1609;
+  --glow:rgba(255,122,36,.12);
+}
+
+.trade{
+  --color:var(--purple);
+  --bg-card:#1d0f31;
+  --glow:rgba(154,77,243,.13);
+}
+
+.reserve{
+  --color:var(--yellow);
+  --bg-card:#2a2209;
+  --glow:rgba(248,205,66,.12);
+}
+
+/* =========================================================
+   FRASE
+========================================================= */
+
+.quote-bar{
+  margin-top:18px;
+
+  border:1px solid var(--border);
+  background:#0b141e;
+  border-radius:14px;
+
+  padding:22px 24px;
+
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.quote-symbol{
+  font-size:3rem;
+  line-height:.7;
+  color:#75869a;
+}
+
+.quote-text{
+  color:#aab7c5;
+  font-style:italic;
+  font-size:.85rem;
+  line-height:1.5;
+}
+
+/* =========================================================
+   JUROS COMPOSTOS
+========================================================= */
+
+.future-section{
+  padding:54px 0 30px;
+}
+
+.future-header{
+  text-align:center;
+  max-width:800px;
+  margin:auto;
+}
+
+.future-header small{
+  color:var(--gold);
+  text-transform:uppercase;
+  font-size:.74rem;
+  letter-spacing:.16em;
+  font-weight:900;
+}
+
+.future-header h2{
+  margin:9px 0 8px;
+  font-size:clamp(2rem,4vw,3.15rem);
+}
+
+.future-header h2 span{
+  color:var(--gold);
+}
+
+.future-header p{
+  color:var(--muted);
+  line-height:1.6;
+}
+
+/* PERÍODOS */
+
+.periods{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  margin:27px 0 23px;
+}
+
+.period{
+  background:#0a121c;
+  color:#91a0b1;
+
+  border:1px solid #243649;
+  border-radius:999px;
+
+  padding:10px 22px;
+
+  font-weight:900;
+  cursor:pointer;
+}
+
+.period.active{
+  background:
+    linear-gradient(
+      180deg,
+      #ffd45d,
+      #eca628
+    );
+
+  color:#251900;
+  border-color:var(--gold);
+}
+
+/* KPIs */
+
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.kpi{
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:#0b141e;
+  padding:20px;
+
+  min-width:0;
+}
+
+.kpi span{
+  display:block;
+  color:#8e9daf;
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.06em;
+}
+
+.kpi strong{
+  display:block;
+  margin-top:8px;
+
+  font-size:clamp(
+    1.35rem,
+    2.6vw,
+    2.25rem
+  );
+
+  overflow-wrap:anywhere;
+}
+
+.kpi.projected strong{
+  color:var(--gold);
+}
+
+.kpi.growth strong{
+  color:var(--positive);
+}
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+.future-card{
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#09121b;
+  padding:22px;
+  margin-top:16px;
+}
+
+.chart{
+  height:360px;
+
+  border:1px solid #1d3043;
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(139,158,180,.05) 1px,
+      transparent 1px
+    );
+
+  background-size:100% 20%;
+
+  overflow:hidden;
+}
+
+.chart svg{
+  width:100%;
+  height:100%;
+}
+
+.legend{
+  display:flex;
+  gap:24px;
+
+  color:#94a2b2;
+  font-size:.74rem;
+
+  margin-top:12px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.legend-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+}
+
+.legend-gray{
+  background:#91a0b2;
+}
+
+.legend-gold{
+  background:var(--gold);
+}
+
+/* =========================================================
+   IMPACTO
+========================================================= */
+
+.impact{
+  margin-top:18px;
+  padding:20px;
+
+  border:
+    1px solid
+    rgba(245,182,60,.28);
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(245,182,60,.08),
+      rgba(245,182,60,.02)
+    );
+}
+
+.impact-label{
+  color:var(--gold);
+  font-size:.72rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+
+.impact p{
+  color:#b6c0cc;
+  line-height:1.55;
+  margin-bottom:0;
+}
+
+/* =========================================================
+   AVISO
+========================================================= */
+
+.disclaimer{
+  margin:26px auto 0;
+  max-width:900px;
+
+  text-align:center;
+
+  color:#68798c;
+  font-size:.68rem;
+  line-height:1.55;
+}
+
+/* =========================================================
+   RODAPÉ
+========================================================= */
+
+footer{
+  margin-top:40px;
+  border-top:1px solid var(--border);
+
+  padding:26px 0 38px;
+
+  color:#738295;
+  font-size:.72rem;
+}
+
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(max-width:1000px){
+
+  .main-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .summary{
+    grid-column:1 / -1;
+    border-top:1px solid var(--border);
+  }
+
+  .module + .module{
+    border-left:0;
+  }
+
+  .chart-module{
+    border-left:
+      1px solid
+      var(--border)!important;
+  }
+
+  .alloc-grid{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .alloc-card:last-child{
+    grid-column:1 / -1;
+  }
+}
+
+/* =========================================================
+   CELULAR
+========================================================= */
+
+@media(max-width:700px){
+
+  .wrap{
+    width:min(
+      100% - 22px,
+      1220px
+    );
+  }
+
+  .topbar{
+    position:relative;
+  }
+
+  .topbar-inner{
+    justify-content:center;
+    padding:12px 0;
+  }
+
+  .brand{
+    width:100%;
+    text-align:center;
+  }
+
+  .nav{
+    justify-content:center;
+    gap:11px;
+  }
+
+  .hero{
+    padding-top:28px;
+  }
+
+  .hero-line{
+    display:block;
+  }
+
+  .hero-quote{
+    display:none;
+  }
+
+  .main-grid{
+    grid-template-columns:1fr;
+  }
+
+  .module{
+    padding:22px;
+  }
+
+  .chart-module{
+    border-left:0!important;
+    border-top:
+      1px solid
+      var(--border);
+
+    min-height:410px;
+  }
+
+  .summary{
+    grid-column:auto;
+  }
+
+  /*
+     O donut diminui, mas os percentuais
+     permanecem no lugar porque suas
+     posições são proporcionais.
+  */
+
+  .donut{
+    width:280px;
+    height:280px;
+  }
+
+  .donut:after{
+    inset:69px;
+  }
+
+  .pct{
+    font-size:.88rem;
+  }
+
+  .center-icon{
+    font-size:2.4rem;
+  }
+
+  .donut-total{
+    margin-top:21px;
+  }
+
+  .donut-total-label{
+    font-size:.68rem;
+  }
+
+  .donut-total-value{
+    font-size:2rem;
+  }
+
+  .summary-total{
+    font-size:1.85rem;
+  }
+
+  .alloc-grid{
+    grid-template-columns:1fr;
+  }
+
+  .alloc-card:last-child{
+    grid-column:auto;
+  }
+
+  .alloc-card{
+    min-height:auto;
+  }
+
+  .alloc-desc{
+    min-height:auto;
+  }
+
+  .kpis{
+    grid-template-columns:1fr;
+  }
+
+  .periods{
+    display:grid;
+    grid-template-columns:
+      repeat(4,1fr);
+  }
+
+  .period{
+    padding:10px 4px;
+  }
+
+  .chart{
+    height:300px;
+  }
+
+  .future-card{
+    padding:14px;
+  }
+
+  .legend{
+    gap:15px;
+    flex-wrap:wrap;
+  }
+
+  .quote-bar{
+    align-items:flex-start;
+  }
+
+  .footer-inner{
+    display:block;
+    text-align:center;
+  }
+
+  .footer-inner div + div{
+    margin-top:8px;
+  }
+}
+
+</style>
+
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#05090e">
+
+<link
+  rel="icon"
+  href="/icons/favicon-32.png"
+  sizes="32x32"
+>
+
+<link
+  rel="icon"
+  href="/icons/favicon-16.png"
+  sizes="16x16"
+>
+
+<link
+  rel="apple-touch-icon"
+  href="/icons/apple-touch-icon-180.png"
+>
+
+<meta
+  name="apple-mobile-web-app-capable"
+  content="yes"
+>
+
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="black-translucent"
+>
+
+<meta
+  name="apple-mobile-web-app-title"
+  content="Morning Trader"
+>
+
+<script
+  src="/pwa-install.js"
+  defer
+></script>
+
+</head>
+
+<body>
+
+<!-- ======================================================
+     NAVEGAÇÃO
+====================================================== -->
+
+<div class="topbar">
+
+  <div class="wrap topbar-inner">
+
+    <a
+      class="brand"
+      href="index.html"
+    >
+      MORNING <span>DO TRADER</span>
+    </a>
+
+    <nav class="nav">
+
+      <a href="index.html">
+        Morning Call
+      </a>
+
+      <a href="ormuz.html">
+        Crise do Ormuz
+      </a>
+
+      <a href="noticias.html">
+        Notícias
+      </a>
+
+      <a href="glossario.html">
+        Glossário
+      </a>
+
+      <a href="painel-internacional.html">
+        Painel Internacional
+      </a>
+
+      <a
+        href="futuro.html"
+        class="active"
+      >
+        Futuro
+      </a>
+
+    </nav>
+
+  </div>
+
+</div>
+
+<!-- ======================================================
+     HERO
+====================================================== -->
+
+<header class="hero">
+
+  <div class="wrap hero-line">
+
+    <div>
+
+      <div class="hero-kicker">
+        Planejamento • Diversificação • Futuro
+      </div>
+
+      <h1>
+        SIMULADOR DO SEU
+        <span>FUTURO FINANCEIRO</span>
+      </h1>
+
+      <p>
+        Distribua seu capital em diferentes estratégias,
+        faça aportes mensais e visualize como o tempo pode
+        transformar o seu patrimônio.
+      </p>
+
+    </div>
+
+    <div class="hero-quote">
+      “Investir bem não é sobre ganhar mais,
+      e sim sobre decidir melhor.”
+    </div>
+
+  </div>
+
+</header>
+
+<main class="wrap">
+
+<!-- ======================================================
+     PAINEL PRINCIPAL
+====================================================== -->
+
+<section class="main-panel">
+
+<div class="main-grid">
+
+<!-- ALOCADOR -->
+
+<div class="module">
+
+  <div class="section-label">
+    Alocador de Capital
+  </div>
+
+  <h2>
+    Seu dinheiro trabalhando
+    <span>em 5 frentes.</span>
+  </h2>
+
+  <p>
+    Informe o valor disponível e o aporte mensal.
+    O simulador distribuirá automaticamente o capital
+    entre as cinco estratégias.
+  </p>
+
+  <div class="form-group">
+
+    <label>
+      VALOR DISPONÍVEL PARA INVESTIR
+    </label>
+
+    <input
+      id="initial"
+      class="money-input"
+      type="number"
+      min="0"
+      step="100"
+      value="10000"
+    >
+
+  </div>
+
+  <div class="form-group">
+
+    <label>
+      APORTE MENSAL
+    </label>
+
+    <input
+      id="monthly"
+      class="money-input"
+      type="number"
+      min="0"
+      step="50"
+      value="500"
+    >
+
+  </div>
+
+  <button
+    class="invest-button"
+    onclick="simulate()"
+  >
+    DISTRIBUIR E SIMULAR MEU CAPITAL
+  </button>
+
+  <div class="fixed-note">
+
+    <strong>
+      Distribuição estratégica pré-definida
+    </strong>
+
+    <span>
+      Os percentuais foram fixados para facilitar
+      a visualização e comparação dos cenários.
+    </span>
+
+  </div>
+
+</div>
+
+<!-- DONUT -->
+
+<div class="module chart-module">
+
+  <div class="donut">
+
+    <div class="pct pct-50">
+      50%
+    </div>
+
+    <div class="pct pct-20">
+      20%
+    </div>
+
+    <div class="pct pct-crypto">
+      10%
+    </div>
+
+    <div class="pct pct-trade">
+      10%
+    </div>
+
+    <div class="pct pct-reserve">
+      10%
+    </div>
+
+    <div class="donut-center">
+
+      <div class="center-icon">
+        ↗
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="donut-total">
+
+    <div class="donut-total-label">
+      TOTAL INVESTIDO
+    </div>
+
+    <div
+      id="donutTotal"
+      class="donut-total-value"
+    >
+      R$ 10.000
+    </div>
+
+  </div>
+
+</div>
+
+<!-- RESUMO -->
+
+<div class="module summary">
+
+  <div>
+
+    <div class="summary-title">
+      RESUMO DA CARTEIRA
+    </div>
+
+    <div
+      id="summaryTotal"
+      class="summary-total"
+    >
+      R$ 10.000
+    </div>
+
+    <div class="summary-sub">
+      100% alocado
+    </div>
+
+    <div class="summary-line"></div>
+
+    <div class="summary-copy">
+      Diversificação hoje.<br>
+      Mais possibilidades amanhã.
+    </div>
+
+  </div>
+
+  <div class="summary-bottom">
+
+    <strong>
+      Estratégia inteligente
+    </strong>
+
+    <p>
+      Distribuição automática com foco em
+      diversificação e visão de longo prazo.
+    </p>
+
+  </div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ======================================================
+     CARDS
+====================================================== -->
+
+<section class="alloc-section">
+
+<div class="alloc-grid">
+
+<!-- RENDA FIXA -->
+
+<div class="alloc-card rf">
+
+<div class="alloc-content">
+
+  <div class="alloc-icon">
+    ✓
+  </div>
+
+  <div class="alloc-name">
+    RENDA FIXA
+  </div>
+
+  <div class="alloc-percent">
+    50%
+  </div>
+
+  <div
+    id="rf"
+    class="alloc-value"
+  >
+    R$ 5.000
+  </div>
+
+  <div class="alloc-desc">
+    Segurança e estabilidade para
+    formar a base do patrimônio.
+  </div>
+
+  <div class="alloc-rate">
+    Rentabilidade Média
+    <strong>
+      12% a.a.
+    </strong>
+  </div>
+
+</div>
+
+</div>
+
+<!-- DIVIDENDOS -->
+
+<div class="alloc-card div">
+
+<div class="alloc-content">
+
+  <div class="alloc-icon">
+    ↑
+  </div>
+
+  <div class="alloc-name">
+    DIVIDENDOS<br>
+    Ações / FIIs
+  </div>
+
+  <div class="alloc-percent">
+    20%
+  </div>
+
+  <div
+    id="div"
+    class="alloc-value"
+  >
+    R$ 2.000
+  </div>
+
+  <div class="alloc-desc">
+    Renda recorrente e potencial
+    de crescimento no longo prazo.
+  </div>
+
+  <div class="alloc-rate">
+    Rentabilidade Média
+    <strong>
+      12% a.a.
+    </strong>
+  </div>
+
+</div>
+
+</div>
+
+<!-- CRIPTO -->
+
+<div class="alloc-card crypto">
+
+<div class="alloc-content">
+
+  <div class="alloc-icon">
+    ₿
+  </div>
+
+  <div class="alloc-name">
+    CRIPTOMOEDAS
+  </div>
+
+  <div class="alloc-percent">
+    10%
+  </div>
+
+  <div
+    id="crypto"
+    class="alloc-value"
+  >
+    R$ 1.000
+  </div>
+
+  <div class="alloc-desc">
+    Exposição a um mercado global
+    de alto potencial e maior risco.
+  </div>
+
+  <div class="alloc-rate">
+    Rentabilidade Média
+    <strong>
+      15% a.a.
+    </strong>
+  </div>
+
+</div>
+
+</div>
+
+<!-- DAY TRADE -->
+
+<div class="alloc-card trade">
+
+<div class="alloc-content">
+
+  <div class="alloc-icon">
+    ↗
+  </div>
+
+  <div class="alloc-name">
+    DAY TRADE
+  </div>
+
+  <div class="alloc-percent">
+    10%
+  </div>
+
+  <div
+    id="trade"
+    class="alloc-value"
+  >
+    R$ 1.000
+  </div>
+
+  <div class="alloc-desc">
+    Capital destinado a operações
+    de curto prazo e oportunidades.
+  </div>
+
+  <div class="alloc-rate">
+    Rentabilidade Média
+    <strong>
+      120% a.a.
+    </strong>
+  </div>
+
+</div>
+
+</div>
+
+<!-- RESERVA -->
+
+<div class="alloc-card reserve">
+
+<div class="alloc-content">
+
+  <div class="alloc-icon">
+    $
+  </div>
+
+  <div class="alloc-name">
+    RESERVA DE<br>
+    OPORTUNIDADES
+  </div>
+
+  <div class="alloc-percent">
+    10%
+  </div>
+
+  <div
+    id="reserve"
+    class="alloc-value"
+  >
+    R$ 1.000
+  </div>
+
+  <div class="alloc-desc">
+    Liquidez disponível para
+    aproveitar boas oportunidades.
+  </div>
+
+  <div class="alloc-rate">
+    Rentabilidade
+    <strong>
+      Não projetada
+    </strong>
+  </div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- FRASE -->
+
+<div class="quote-bar">
+
+  <div class="quote-symbol">
+    “
+  </div>
+
+  <div class="quote-text">
+    Uma carteira bem alocada não elimina os riscos,
+    mas coloca o investidor em posição de aproveitar
+    melhor as oportunidades ao longo do tempo.
+  </div>
+
+</div>
+
+<!-- ======================================================
+     JUROS COMPOSTOS
+====================================================== -->
+
+<section class="future-section">
+
+<div class="future-header">
+
+  <small>
+    O tempo trabalha junto com você
+  </small>
+
+  <h2>
+    O PODER DOS
+    <span>JUROS COMPOSTOS</span>
+  </h2>
+
+  <p>
+    Veja como o patrimônio pode evoluir quando
+    capital inicial, aportes recorrentes e tempo
+    trabalham juntos.
+  </p>
+
+</div>
+
+<!-- PERÍODOS -->
+
+<div class="periods">
+
+  <button
+    class="period"
+    data-y="1"
+  >
+    1 ano
+  </button>
+
+  <button
+    class="period"
+    data-y="5"
+  >
+    5 anos
+  </button>
+
+  <button
+    class="period active"
+    data-y="10"
+  >
+    10 anos
+  </button>
+
+  <button
+    class="period"
+    data-y="20"
+  >
+    20 anos
+  </button>
+
+</div>
+
+<!-- KPIs -->
+
+<div class="kpis">
+
+<div class="kpi">
+
+  <span>
+    TOTAL APORTADO
+  </span>
+
+  <strong id="contributed">
+    R$ 0
+  </strong>
+
+</div>
+
+<div class="kpi projected">
+
+  <span>
+    PATRIMÔNIO PROJETADO
+  </span>
+
+  <strong id="future">
+    R$ 0
+  </strong>
+
+</div>
+
+<div class="kpi growth">
+
+  <span>
+    CRESCIMENTO DO CAPITAL
+  </span>
+
+  <strong id="gain">
+    R$ 0
+  </strong>
+
+</div>
+
+</div>
+
+<!-- GRÁFICO -->
+
+<div class="future-card">
+
+  <div class="chart">
+
+    <svg
+      id="chart"
+      viewBox="0 0 1000 340"
+      preserveAspectRatio="none"
+    ></svg>
+
+  </div>
+
+  <div class="legend">
+
+    <div class="legend-item">
+
+      <div
+        class="legend-dot legend-gray"
+      ></div>
+
+      Total aportado
+
+    </div>
+
+    <div class="legend-item">
+
+      <div
+        class="legend-dot legend-gold"
+      ></div>
+
+      Patrimônio projetado
+
+    </div>
+
+  </div>
+
+  <div class="impact">
+
+    <div class="impact-label">
+      O efeito do tempo
+    </div>
+
+    <p id="insight"></p>
+
+  </div>
+
+</div>
+
+<!-- AVISO -->
+
+<div class="disclaimer">
+
+  Esta ferramenta possui finalidade exclusivamente educativa
+  e ilustrativa. As rentabilidades utilizadas são referências
+  hipotéticas para simulação e não representam promessa,
+  recomendação ou garantia de resultados futuros.
+  Investimentos e operações de mercado envolvem riscos,
+  inclusive possibilidade de perdas.
+
+</div>
+
+</section>
+
+</main>
+
+<!-- ======================================================
+     RODAPÉ
+====================================================== -->
+
+<footer>
+
+<div class="wrap footer-inner">
+
+  <div>
+    PLANEJE • DIVERSIFIQUE • EXECUTE • EVOLUA
+  </div>
+
+  <div>
+    MORNING DO TRADER
+  </div>
+
+</div>
+
+</footer>
+
+<script>
+
+/* =========================================================
+   FORMATAÇÃO
+========================================================= */
+
+function brl(value){
+
+  return Number(value).toLocaleString(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL",
+      maximumFractionDigits:0
+    }
+  );
+
+}
+
+/* =========================================================
+   CONFIGURAÇÕES
+========================================================= */
+
+let years = 10;
+
+const portfolio = [
+
+  {
+    key:"rf",
+    weight:.50,
+    annualRate:.12
+  },
+
+  {
+    key:"div",
+    weight:.20,
+    annualRate:.12
+  },
+
+  {
+    key:"crypto",
+    weight:.10,
+    annualRate:.15
+  },
+
+  {
+    key:"trade",
+    weight:.10,
+    annualRate:1.20
+  }
+
+];
+
+const reserveWeight = .10;
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+function getInitial(){
+
+  return Math.max(
+    0,
+    Number(
+      document
+        .getElementById("initial")
+        .value
+    ) || 0
+  );
+
+}
+
+function getMonthly(){
+
+  return Math.max(
+    0,
+    Number(
+      document
+        .getElementById("monthly")
+        .value
+    ) || 0
+  );
+
+}
+
+/* =========================================================
+   DISTRIBUIÇÃO
+========================================================= */
+
+function allocation(){
+
+  const initial =
+    getInitial();
+
+  document
+    .getElementById("donutTotal")
+    .textContent =
+    brl(initial);
+
+  document
+    .getElementById("summaryTotal")
+    .textContent =
+    brl(initial);
+
+  document
+    .getElementById("rf")
+    .textContent =
+    brl(initial * .50);
+
+  document
+    .getElementById("div")
+    .textContent =
+    brl(initial * .20);
+
+  document
+    .getElementById("crypto")
+    .textContent =
+    brl(initial * .10);
+
+  document
+    .getElementById("trade")
+    .textContent =
+    brl(initial * .10);
+
+  document
+    .getElementById("reserve")
+    .textContent =
+    brl(initial * .10);
+
+}
+
+/* =========================================================
+   SIMULAÇÃO
+========================================================= */
+
+function simulate(){
+
+  allocation();
+
+  const initial =
+    getInitial();
+
+  const monthly =
+    getMonthly();
+
+  /*
+     Capital inicial de cada
+     estratégia projetada
+  */
+
+  const balances =
+    portfolio.map(
+      item =>
+      initial * item.weight
+    );
+
+  /*
+     Conversão da taxa anual
+     para taxa mensal equivalente
+  */
+
+  const monthlyRates =
+    portfolio.map(
+      item =>
+      Math.pow(
+        1 + item.annualRate,
+        1 / 12
+      ) - 1
+    );
+
+  /*
+     Cada aporte mensal respeita:
+     50% renda fixa
+     20% dividendos
+     10% cripto
+     10% day trade
+     10% reserva
+  */
+
+  const monthlyAllocations =
+    portfolio.map(
+      item =>
+      monthly * item.weight
+    );
+
+  /*
+     Reserva não recebe
+     rentabilidade projetada
+  */
+
+  let reserve =
+    initial * reserveWeight;
+
+  const reserveMonthly =
+    monthly * reserveWeight;
+
+  const series = [];
+
+  /*
+     Simulação mês a mês
+  */
+
+  for(
+    let month = 0;
+    month <= years * 12;
+    month++
+  ){
+
+    if(month > 0){
+
+      balances.forEach(
+        (balance,index) => {
+
+          balances[index] =
+            balance *
+            (
+              1 +
+              monthlyRates[index]
+            )
+            +
+            monthlyAllocations[index];
+
+        }
+      );
+
+      reserve +=
+        reserveMonthly;
+
+    }
+
+    /*
+       Um ponto por ano
+       para o gráfico
+    */
+
+    if(month % 12 === 0){
+
+      const contributed =
+        initial +
+        monthly * month;
+
+      const invested =
+        balances.reduce(
+          (sum,value) =>
+          sum + value,
+          0
+        );
+
+      const future =
+        invested +
+        reserve;
+
+      series.push({
+
+        year:
+          month / 12,
+
+        contributed:
+          contributed,
+
+        future:
+          future
+
+      });
+
+    }
+
+  }
+
+  const end =
+    series[
+      series.length - 1
+    ];
+
+  const gain =
+    end.future -
+    end.contributed;
+
+  document
+    .getElementById("contributed")
+    .textContent =
+    brl(
+      end.contributed
+    );
+
+  document
+    .getElementById("future")
+    .textContent =
+    brl(
+      end.future
+    );
+
+  document
+    .getElementById("gain")
+    .textContent =
+    brl(
+      gain
+    );
+
+  document
+    .getElementById("insight")
+    .textContent =
+    `Em ${years} ${years === 1 ? "ano" : "anos"}, ` +
+    `o total aportado seria ${brl(end.contributed)}. ` +
+    `Pelas premissas utilizadas nesta simulação, ` +
+    `o patrimônio projetado alcançaria ${brl(end.future)}, ` +
+    `representando ${brl(gain)} de crescimento ` +
+    `sobre o capital aportado.`;
+
+  draw(series);
+
+}
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+function draw(series){
+
+  const svg =
+    document
+      .getElementById("chart");
+
+  const maxValue =
+    Math.max(
+      ...series.map(
+        item =>
+        Math.max(
+          item.contributed,
+          item.future
+        )
+      )
+    ) * 1.08;
+
+  const left = 70;
+  const top = 25;
+  const width = 875;
+  const height = 255;
+
+  function makePath(key){
+
+    return series
+      .map(
+        (item,index) => {
+
+          const x =
+            left +
+            (
+              index /
+              Math.max(
+                1,
+                series.length - 1
+              )
+            ) *
+            width;
+
+          const y =
+            top +
+            height -
+            (
+              item[key] /
+              maxValue
+            ) *
+            height;
+
+          return `
+            ${index ? "L" : "M"}
+            ${x}
+            ${y}
+          `;
+
+        }
+      )
+      .join(" ");
+
+  }
+
+  let labels = "";
+
+  series.forEach(
+    (item,index) => {
+
+      const x =
+        left +
+        (
+          index /
+          Math.max(
+            1,
+            series.length - 1
+          )
+        ) *
+        width;
+
+      labels += `
+        <text
+          x="${x}"
+          y="320"
+          fill="#738295"
+          font-size="11"
+          text-anchor="middle"
+        >
+          ${item.year}a
+        </text>
+      `;
+
+    }
+  );
+
+  svg.innerHTML = `
+
+    <path
+      d="${makePath("contributed")}"
+      fill="none"
+      stroke="#93a3b5"
+      stroke-width="3"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <path
+      d="${makePath("future")}"
+      fill="none"
+      stroke="#f5b63c"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    ${labels}
+
+  `;
+
+}
+
+/* =========================================================
+   BOTÕES 1 / 5 / 10 / 20 ANOS
+========================================================= */
+
+document
+  .querySelectorAll(".period")
+  .forEach(
+    button => {
+
+      button
+        .addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(".period")
+              .forEach(
+                item =>
+                item
+                  .classList
+                  .remove("active")
+              );
+
+            button
+              .classList
+              .add("active");
+
+            years =
+              Number(
+                button.dataset.y
+              );
+
+            simulate();
+
+          }
+        );
+
+    }
+  );
+
+/* =========================================================
+   ATUALIZAÇÃO DOS VALORES
+========================================================= */
+
+document
+  .getElementById("initial")
+  .addEventListener(
+    "input",
+    allocation
+  );
+
+document
+  .getElementById("monthly")
+  .addEventListener(
+    "input",
+    simulate
+  );
+
+/* =========================================================
+   PRIMEIRA EXECUÇÃO
+========================================================= */
+
+simulate();
+
+</script>
+
+</body>
+</html>
