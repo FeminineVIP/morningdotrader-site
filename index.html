@@ -117,6 +117,36 @@
   .ormuz-card span{font-size:0.82rem; font-weight:600; color:#ff9599;}
   @media (max-width:600px){ .ormuz-card{width:100%;} }
 
+  .pdt-ad{
+    position:relative; display:block; border-radius:14px; overflow:hidden;
+    margin-bottom:22px; text-decoration:none; min-height:210px;
+    border:1px solid var(--border); transition:border-color 0.15s;
+  }
+  .pdt-ad:hover{border-color:var(--accent);}
+  .pdt-ad > img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:0;
+  }
+  .pdt-ad::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background: linear-gradient(90deg, rgba(6,10,16,0.94) 0%, rgba(6,10,16,0.8) 40%, rgba(6,10,16,0.3) 72%, rgba(6,10,16,0) 100%);
+  }
+  .pdt-ad-content{
+    position:relative; z-index:2; padding:26px 28px; max-width:480px;
+    height:100%; display:flex; flex-direction:column; justify-content:center;
+  }
+  .pdt-ad-title{ font-size:1.5rem; margin:0 0 8px; color:#fff; font-weight:800; }
+  .pdt-ad-text{ font-size:0.92rem; color:#c9d4de; margin:0 0 16px; line-height:1.5; }
+  .pdt-ad-cta{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    padding:10px 20px; border-radius:8px; font-size:0.88rem; align-self:flex-start;
+  }
+  .pdt-ad-note{ font-size:0.72rem; color:var(--muted); margin-top:10px; }
+  @media (max-width:700px){
+    .pdt-ad{ min-height:280px; }
+    .pdt-ad::after{ background: linear-gradient(180deg, rgba(6,10,16,0.2) 0%, rgba(6,10,16,0.92) 55%, rgba(6,10,16,0.98) 100%); }
+    .pdt-ad-content{ max-width:100%; justify-content:flex-end; padding:20px; }
+  }
+
   .brinde-promo{
     display:flex; align-items:center; gap:10px; flex-wrap:wrap;
     background: var(--card); border:1px solid var(--border); border-radius:10px;
@@ -431,6 +461,16 @@
 <div class="wrap wrap-wide">
 <div class="layout-grid">
 <div class="main-col">
+
+  <a href="https://paineldotrader.com.br" target="_blank" rel="noopener" class="pdt-ad">
+    <img src="painel-trader-ad-bg.webp" alt="Painel do Trader — cotações internacionais em um único lugar">
+    <div class="pdt-ad-content">
+      <h3 class="pdt-ad-title">Painel do Trader</h3>
+      <p class="pdt-ad-text">Cotações internacionais que estão movendo o mercado agora, em um único painel exclusivo — sem precisar de vários monitores.</p>
+      <span class="pdt-ad-cta">Conhecer o Painel →</span>
+      <span class="pdt-ad-note">Assinatura segura via Mercado Pago</span>
+    </div>
+  </a>
 
   <div class="alert-banner" id="alertaDia" style="display:none;">
     <a id="alertaImagemLink" style="display:none; flex-shrink:0;">
