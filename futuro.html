@@ -208,6 +208,13 @@ label{
   border-color:var(--gold);
   box-shadow:0 0 0 3px rgba(245,182,60,.08);
 }
+.field-hint{
+  display:block;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:.7rem;
+  line-height:1.5;
+}
 .invest-button{
   width:100%;
   border:0;
@@ -261,6 +268,10 @@ label{
   height:315px;
   border-radius:50%;
   position:relative;
+  /* background (conic-gradient) é definido dinamicamente
+     pelo JS em updateDonut(), conforme os percentuais reais
+     de cada frente. O valor abaixo é só o estado inicial
+     antes do primeiro simulate() rodar. */
   background:conic-gradient(
     var(--green) 0 50%,
     var(--blue) 50% 70%,
@@ -298,7 +309,9 @@ label{
 }
 /* =========================================================
    PERCENTUAIS DO DONUT
-   POSICIONAMENTO PROPORCIONAL
+   POSICIONAMENTO DINÂMICO (calculado via JS conforme os
+   percentuais reais de cada frente — ver updateDonut() no
+   script). left/top são setados inline pelo JS.
 ========================================================= */
 .pct{
   position:absolute;
@@ -310,35 +323,11 @@ label{
   text-shadow:
     0 2px 8px rgba(0,0,0,.30);
   pointer-events:none;
-}
-/* RENDA FIXA */
-.pct-50{
-  left:87%;
-  top:50%;
   color:#fff;
 }
-/* DIVIDENDOS */
-.pct-20{
-  left:28%;
-  top:81%;
-  color:#fff;
-}
-/* CRIPTOMOEDAS */
-.pct-crypto{
-  left:12%;
-  top:50%;
-  color:#fff;
-}
-/* DAY TRADE */
-.pct-trade{
-  left:19%;
-  top:28%;
-  color:#fff;
-}
-/* RESERVA */
-.pct-reserve{
-  left:38%;
-  top:14%;
+/* Fica em cima da fatia amarela (Reserva) — precisa de
+   texto escuro pra manter contraste. */
+.pct-dark{
   color:#081018;
   text-shadow:none;
 }
@@ -1058,6 +1047,23 @@ footer{
       value="500"
     >
   </div>
+  <div class="form-group">
+    <label for="tradeValue">
+      VALOR ALOCADO NO DAY TRADE
+    </label>
+    <input
+      id="tradeValue"
+      class="money-input"
+      type="number"
+      min="0"
+      step="100"
+      value="1000"
+    >
+    <span class="field-hint" id="tradeHint">
+      Sugestão: 10% do valor disponível. Você conhece
+      seu perfil — pode ajustar esse valor livremente.
+    </span>
+  </div>
   <button
     class="invest-button"
     onclick="simulate()"
@@ -1066,30 +1072,31 @@ footer{
   </button>
   <div class="fixed-note">
     <strong>
-      Distribuição estratégica pré-definida
+      Day Trade é o valor que você escolhe
     </strong>
     <span>
-      Os percentuais foram fixados para facilitar
-      a visualização e comparação dos cenários.
+      As outras quatro frentes (Renda Fixa, Dividendos,
+      Cripto e Reserva) mantêm a proporção entre si
+      sobre o restante do capital.
     </span>
   </div>
 </div>
 <!-- DONUT -->
 <div class="module chart-module">
   <div class="donut">
-    <div class="pct pct-50">
+    <div id="pctRfDonut" class="pct">
       50%
     </div>
-    <div class="pct pct-20">
+    <div id="pctDivDonut" class="pct">
       20%
     </div>
-    <div class="pct pct-crypto">
+    <div id="pctCryptoDonut" class="pct">
       10%
     </div>
-    <div class="pct pct-trade">
+    <div id="pctTradeDonut" class="pct">
       10%
     </div>
-    <div class="pct pct-reserve">
+    <div id="pctReserveDonut" class="pct pct-dark">
       10%
     </div>
     <div class="donut-center">
@@ -1157,7 +1164,7 @@ footer{
   <div class="alloc-name">
     RENDA FIXA
   </div>
-  <div class="alloc-percent">
+  <div id="pctRfCard" class="alloc-percent">
     50%
   </div>
   <div
@@ -1188,7 +1195,7 @@ footer{
     DIVIDENDOS<br>
     Ações / FIIs
   </div>
-  <div class="alloc-percent">
+  <div id="pctDivCard" class="alloc-percent">
     20%
   </div>
   <div
@@ -1218,7 +1225,7 @@ footer{
   <div class="alloc-name">
     CRIPTOMOEDAS
   </div>
-  <div class="alloc-percent">
+  <div id="pctCryptoCard" class="alloc-percent">
     10%
   </div>
   <div
@@ -1248,7 +1255,7 @@ footer{
   <div class="alloc-name">
     DAY TRADE
   </div>
-  <div class="alloc-percent">
+  <div id="pctTradeCard" class="alloc-percent">
     10%
   </div>
   <div
@@ -1279,7 +1286,7 @@ footer{
     RESERVA DE<br>
     OPORTUNIDADES
   </div>
-  <div class="alloc-percent">
+  <div id="pctReserveCard" class="alloc-percent">
     10%
   </div>
   <div
@@ -1457,6 +1464,14 @@ function brl(value){
    CONFIGURAÇÕES
 ========================================================= */
 let years = 10;
+/*
+   Day Trade sai deste array: ele não se comporta como as
+   outras frentes (não fica composto lá dentro — ver mais
+   abaixo em SIMULAÇÃO / CAPACIDADE DO DAY TRADE). Além
+   disso, agora o valor alocado nele não é mais um percentual
+   fixo: é um valor em R$ que o próprio usuário escolhe (ver
+   INPUTS / getTradeValue).
+*/
 const portfolio = [
   {
     key:"rf",
@@ -1472,17 +1487,39 @@ const portfolio = [
     key:"crypto",
     weight:.10,
     annualRate:.15
-  },
-  {
-    key:"trade",
-    weight:.10,
-    annualRate:1.20
   }
 ];
+/*
+   tradeSuggestionWeight só serve pra sugerir um valor
+   inicial no campo "Valor alocado no Day Trade" (10% do
+   capital disponível) — depois que o usuário editar esse
+   campo, a sugestão para de ser recalculada.
+*/
+const tradeSuggestionWeight = .10;
+const tradeAnnualRate = 1.20;
 const reserveWeight = .10;
+/*
+   Peso relativo de Renda Fixa / Dividendos / Cripto entre
+   si (50/20/10 → normalizado pra somar 1). É com essa
+   proporção que se divide tanto o capital "restante"
+   (depois de tirar Day Trade e Reserva) quanto qualquer
+   valor redistribuído do Day Trade (lucro mensal ou reforço
+   de capacidade) — nunca entra na Reserva.
+*/
+const portfolioWeightSum =
+  portfolio.reduce(
+    (sum,item) => sum + item.weight,
+    0
+  );
+const redistWeights =
+  portfolio.map(
+    item =>
+    item.weight / portfolioWeightSum
+  );
 /* =========================================================
    INPUTS
 ========================================================= */
+let tradeValueTouched = false;
 function getInitial(){
   return Math.max(
     0,
@@ -1503,12 +1540,80 @@ function getMonthly(){
     ) || 0
   );
 }
+/*
+   Valor "bruto" digitado no campo de Day Trade, sem
+   nenhuma trava — só não deixa ser negativo.
+*/
+function getTradeValueRaw(){
+  return Math.max(
+    0,
+    Number(
+      document
+        .getElementById("tradeValue")
+        .value
+    ) || 0
+  );
+}
+/*
+   Valor de Day Trade realmente usado nos cálculos: nunca
+   pode ultrapassar o capital disponível menos a Reserva
+   (senão sobraria capital negativo pras outras frentes).
+*/
+function getTradeValue(){
+  const initial = getInitial();
+  const reserve = initial * reserveWeight;
+  const maxTrade = Math.max(0, initial - reserve);
+  return Math.min(
+    getTradeValueRaw(),
+    maxTrade
+  );
+}
+/*
+   Enquanto o usuário não mexer manualmente no campo de Day
+   Trade, ele acompanha a sugestão de 10% do capital
+   disponível sempre que "Valor disponível" mudar.
+*/
+function updateTradeSuggestion(){
+  if(tradeValueTouched){
+    return;
+  }
+  const initial = getInitial();
+  document
+    .getElementById("tradeValue")
+    .value =
+    Math.round(
+      initial * tradeSuggestionWeight
+    );
+}
 /* =========================================================
    DISTRIBUIÇÃO
 ========================================================= */
+/*
+   Calcula como o capital disponível se divide entre as 5
+   frentes, a partir do valor de Day Trade escolhido pelo
+   usuário. Reserva continua fixa em 10%; Renda Fixa,
+   Dividendos e Cripto dividem o que sobra, na proporção
+   50/20/10 entre si.
+*/
+function computeSplit(initial, trade){
+  const reserve = initial * reserveWeight;
+  const remaining =
+    Math.max(
+      0,
+      initial - reserve - trade
+    );
+  const rf = remaining * redistWeights[0];
+  const div = remaining * redistWeights[1];
+  const crypto = remaining * redistWeights[2];
+  return { reserve, rf, div, crypto };
+}
 function allocation(){
   const initial =
     getInitial();
+  const trade =
+    getTradeValue();
+  const split =
+    computeSplit(initial, trade);
   document
     .getElementById("donutTotal")
     .textContent =
@@ -1520,23 +1625,140 @@ function allocation(){
   document
     .getElementById("rf")
     .textContent =
-    brl(initial * .50);
+    brl(split.rf);
   document
     .getElementById("div")
     .textContent =
-    brl(initial * .20);
+    brl(split.div);
   document
     .getElementById("crypto")
     .textContent =
-    brl(initial * .10);
+    brl(split.crypto);
   document
     .getElementById("trade")
     .textContent =
-    brl(initial * .10);
+    brl(trade);
   document
     .getElementById("reserve")
     .textContent =
-    brl(initial * .10);
+    brl(split.reserve);
+  const pct =
+    value =>
+    initial > 0
+      ? (value / initial) * 100
+      : 0;
+  const pcts = {
+    rf: pct(split.rf),
+    div: pct(split.div),
+    crypto: pct(split.crypto),
+    trade: pct(trade),
+    reserve: pct(split.reserve)
+  };
+  document
+    .getElementById("pctRfCard")
+    .textContent =
+    Math.round(pcts.rf) + "%";
+  document
+    .getElementById("pctDivCard")
+    .textContent =
+    Math.round(pcts.div) + "%";
+  document
+    .getElementById("pctCryptoCard")
+    .textContent =
+    Math.round(pcts.crypto) + "%";
+  document
+    .getElementById("pctTradeCard")
+    .textContent =
+    Math.round(pcts.trade) + "%";
+  document
+    .getElementById("pctReserveCard")
+    .textContent =
+    Math.round(pcts.reserve) + "%";
+  document
+    .getElementById("tradeHint")
+    .textContent =
+    `Isso equivale a ${Math.round(pcts.trade)}% do ` +
+    `seu capital disponível. Sugestão inicial: 10% — ` +
+    `você pode ajustar livremente.`;
+  updateDonut(pcts);
+}
+/* =========================================================
+   DONUT DINÂMICO
+========================================================= */
+/*
+   Converte um ângulo (0% = topo, sentido horário, igual ao
+   conic-gradient padrão do CSS) numa posição left/top em %
+   dentro da caixa do donut. R=37 foi calibrado pra
+   reproduzir exatamente o layout original quando a divisão
+   é 50/20/10/10/10 (a divisão padrão).
+*/
+function positionOnDonut(el, midPercent){
+  const angle =
+    (midPercent / 100) *
+    2 * Math.PI;
+  const R = 37;
+  const left =
+    50 + R * Math.sin(angle);
+  const top =
+    50 - R * Math.cos(angle);
+  el.style.left = left + "%";
+  el.style.top = top + "%";
+}
+function updateDonut(pcts){
+  const p1 = pcts.rf;
+  const p2 = p1 + pcts.div;
+  const p3 = p2 + pcts.crypto;
+  const p4 = p3 + pcts.trade;
+  const donut =
+    document.querySelector(".donut");
+  donut.style.background =
+    `conic-gradient(` +
+    `var(--green) 0 ${p1}%, ` +
+    `var(--blue) ${p1}% ${p2}%, ` +
+    `var(--orange) ${p2}% ${p3}%, ` +
+    `var(--purple) ${p3}% ${p4}%, ` +
+    `var(--yellow) ${p4}% 100%` +
+    `)`;
+  const labels = [
+    {
+      id:"pctRfDonut",
+      text:pcts.rf,
+      mid:p1 / 2
+    },
+    {
+      id:"pctDivDonut",
+      text:pcts.div,
+      mid:(p1 + p2) / 2
+    },
+    {
+      id:"pctCryptoDonut",
+      text:pcts.crypto,
+      mid:(p2 + p3) / 2
+    },
+    {
+      id:"pctTradeDonut",
+      text:pcts.trade,
+      mid:(p3 + p4) / 2
+    },
+    {
+      id:"pctReserveDonut",
+      text:pcts.reserve,
+      mid:(p4 + 100) / 2
+    }
+  ];
+  labels.forEach(item => {
+    const el =
+      document.getElementById(item.id);
+    const rounded =
+      Math.round(item.text);
+    if(rounded <= 0){
+      el.style.display = "none";
+      return;
+    }
+    el.style.display = "";
+    el.textContent = rounded + "%";
+    positionOnDonut(el, item.mid);
+  });
 }
 /* =========================================================
    SIMULAÇÃO
@@ -1547,15 +1769,22 @@ function simulate(){
     getInitial();
   const monthly =
     getMonthly();
+  const trade =
+    getTradeValue();
   /*
      Capital inicial de cada
      estratégia projetada
+     (Renda Fixa, Dividendos, Cripto),
+     a partir do que sobra depois de
+     Day Trade e Reserva
   */
-  const balances =
-    portfolio.map(
-      item =>
-      initial * item.weight
-    );
+  const initialSplit =
+    computeSplit(initial, trade);
+  const balances = [
+    initialSplit.rf,
+    initialSplit.div,
+    initialSplit.crypto
+  ];
   /*
      Conversão da taxa anual
      para taxa mensal equivalente
@@ -1569,26 +1798,67 @@ function simulate(){
       ) - 1
     );
   /*
-     Cada aporte mensal respeita:
-     50% renda fixa
-     20% dividendos
-     10% cripto
-     10% day trade
-     10% reserva
-  */
-  const monthlyAllocations =
-    portfolio.map(
-      item =>
-      monthly * item.weight
-    );
-  /*
-     Reserva não recebe
-     rentabilidade projetada
+     O aporte mensal também respeita a mesma lógica: a
+     Reserva fica com seus 10% fixos, e o restante do
+     aporte é dividido entre Renda Fixa / Dividendos /
+     Cripto na mesma proporção 50/20/10 entre si. O Day
+     Trade não recebe nenhuma parte do aporte mensal — o
+     valor alocado nele é só o que o usuário define
+     manualmente no campo.
   */
   let reserve =
     initial * reserveWeight;
   const reserveMonthly =
     monthly * reserveWeight;
+  const monthlyRemaining =
+    Math.max(
+      0,
+      monthly - reserveMonthly
+    );
+  const monthlyAllocations =
+    redistWeights.map(
+      weight =>
+      monthlyRemaining * weight
+    );
+  /*
+     =====================================================
+     CAPACIDADE DO DAY TRADE
+     =====================================================
+     Day Trade não é tratado como um ativo que "fica
+     comprado e composto" por anos: o valor alocado nele
+     (dayTradeBase, escolhido pelo usuário no campo "Valor
+     alocado no Day Trade") fica FIXO mês a mês. O lucro
+     mensal gerado sobre esse valor (à taxa de 120% a.a.) é
+     redistribuído todo mês para as outras 3 frentes, na
+     mesma proporção relativa entre elas — exatamente como
+     um trader profissional faria ao realocar o resultado
+     do mês em vez de deixá-lo "comprado" indefinidamente.
+
+     O valor alocado no Day Trade só aumenta (5x) quando o
+     patrimônio total investido também cresce 5x em relação
+     ao último patamar — e esse reforço de capacidade é
+     financiado puxando capital das outras 3 frentes na
+     mesma proporção (o patrimônio total não muda, só a
+     divisão interna).
+  */
+  const tradeMonthlyRate =
+    Math.pow(
+      1 + tradeAnnualRate,
+      1 / 12
+    ) - 1;
+  let dayTradeBase = trade;
+  let referencia = initial;
+  function totalPatrimonio(){
+    return (
+      balances.reduce(
+        (sum,value) =>
+        sum + value,
+        0
+      ) +
+      reserve +
+      dayTradeBase
+    );
+  }
   const series = [];
   /*
      Simulação mês a mês
@@ -1599,8 +1869,14 @@ function simulate(){
     month++
   ){
     if(month > 0){
+      const pool =
+        dayTradeBase *
+        tradeMonthlyRate;
       balances.forEach(
         (balance,index) => {
+          const redistShare =
+            pool *
+            redistWeights[index];
           balances[index] =
             balance *
             (
@@ -1608,11 +1884,56 @@ function simulate(){
               monthlyRates[index]
             )
             +
-            monthlyAllocations[index];
+            monthlyAllocations[index] +
+            redistShare;
         }
       );
       reserve +=
         reserveMonthly;
+      /*
+         "while" (e não "if") porque, em tese, mais de um
+         reforço de capacidade poderia acontecer no mesmo
+         mês se o patrimônio saltasse muito rápido — na
+         prática isso quase nunca ocorre com essas taxas.
+      */
+      /*
+         Guarda de segurança: se "referencia" for 0 (ex.:
+         valor inicial 0), "referencia * 5" também é 0 e
+         qualquer total >= 0 é sempre verdadeiro — sem a
+         checagem "referencia > 0" isso travaria o
+         navegador num loop infinito. O limite de 20
+         repetições é uma segunda trava, só por precaução.
+      */
+      let total =
+        totalPatrimonio();
+      let safety = 0;
+      while(
+        referencia > 0 &&
+        total >=
+        referencia * 5 &&
+        safety < 20
+      ){
+        const oldBase =
+          dayTradeBase;
+        const newBase =
+          oldBase * 5;
+        const delta =
+          newBase - oldBase;
+        balances.forEach(
+          (balance,index) => {
+            balances[index] =
+              balance -
+              delta *
+              redistWeights[index];
+          }
+        );
+        dayTradeBase = newBase;
+        referencia =
+          referencia * 5;
+        total =
+          totalPatrimonio();
+        safety++;
+      }
     }
     /*
        Um ponto por ano
@@ -1622,15 +1943,8 @@ function simulate(){
       const contributed =
         initial +
         monthly * month;
-      const invested =
-        balances.reduce(
-          (sum,value) =>
-          sum + value,
-          0
-        );
       const future =
-        invested +
-        reserve;
+        totalPatrimonio();
       series.push({
         year:
           month / 12,
@@ -1817,13 +2131,25 @@ document
   .getElementById("initial")
   .addEventListener(
     "input",
-    simulate
+    () => {
+      updateTradeSuggestion();
+      simulate();
+    }
   );
 document
   .getElementById("monthly")
   .addEventListener(
     "input",
     simulate
+  );
+document
+  .getElementById("tradeValue")
+  .addEventListener(
+    "input",
+    () => {
+      tradeValueTouched = true;
+      simulate();
+    }
   );
 /* =========================================================
    PRIMEIRA EXECUÇÃO
