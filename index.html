@@ -116,6 +116,22 @@
   .ormuz-card:hover img{transform:scale(1.03);}
   .ormuz-card span{font-size:0.82rem; font-weight:600; color:#ff9599;}
   @media (max-width:600px){ .ormuz-card{width:100%;} }
+
+  .brinde-promo{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background: var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:10px 14px; text-decoration:none; max-width:440px; margin-top:14px;
+    transition: border-color 0.15s;
+  }
+  .brinde-promo:hover{border-color:var(--accent);}
+  .brinde-promo-badge{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:#0b0f14; background:var(--green); border-radius:99px; padding:3px 9px; flex-shrink:0;
+  }
+  .brinde-promo-text{font-size:0.85rem; color:var(--text); flex:1; min-width:170px;}
+  .brinde-promo-text strong{color:var(--accent);}
+  .brinde-promo-arrow{font-size:0.9rem; color:var(--accent); font-weight:700; flex-shrink:0;}
+  @media (max-width:600px){ .brinde-promo{max-width:100%;} }
   @media (max-width:700px){ h1{font-size:1.7rem;} .subtitle{font-size:0.95rem;} }
 
   section{padding: 30px 0; border-bottom:1px solid var(--border);}
@@ -368,6 +384,7 @@
       <a href="glossario.html">Glossário</a>
       <a href="painel-internacional.html">Painel Internacional</a>
       <a href="futuro.html">Futuro Financeiro</a>
+      <a href="brindes.html">Brindes</a>
     </div>
   </div>
 </nav>
@@ -433,6 +450,11 @@
       <div>
         <h2><span class="tag">Análise</span>Briefing do Dia</h2>
         <p class="section-note">Leitura do pregão de hoje, atualizada antes de cada morning call.</p>
+        <a href="brindes.html" class="brinde-promo">
+          <span class="brinde-promo-badge">Grátis</span>
+          <span class="brinde-promo-text">Baixe a <strong>Planilha do Trader</strong> — gestão de risco e resultado diário</span>
+          <span class="brinde-promo-arrow">→</span>
+        </a>
       </div>
       <a href="ormuz.html" class="ormuz-card">
         <img src="ormuz-card.webp" alt="Crise do Estreito de Ormuz">
