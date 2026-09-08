@@ -7,9 +7,10 @@
  * O que ele faz:
  *  1. Registra o service worker (/sw.js).
  *  2. Mostra um botão "Instalar App" quando o navegador permite instalar
- *     (Chrome/Edge/Android) — encaixado dentro do cabeçalho (nav .links),
- *     junto dos outros links do menu, e não mais flutuando no canto da
- *     tela. Se por algum motivo a página não tiver essa nav (não deveria
+ *     (Chrome/Edge/Android) — encaixado no cabeçalho, à esquerda, antes do
+ *     nome "Morning do Trader" (dentro de #pwa-nav-slot, no brand-group),
+ *     e não mais junto dos links do menu nem flutuando no canto da tela.
+ *     Se por algum motivo a página não tiver esse slot (não deveria
  *     acontecer, já que o cabeçalho é compartilhado no site todo), cai de
  *     volta pro botão flutuante antigo, só pra nunca sumir o recurso.
  *  3. No Safari/iOS (que não tem o prompt automático de instalação),
@@ -41,11 +42,12 @@
 
   var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  // Onde o botão vai morar: dentro do cabeçalho, ao lado dos outros
-  // links do menu (.nav .links). Fallback pro botão flutuante antigo
-  // só como rede de segurança, caso alguma página não tenha essa nav.
-  var navLinks = document.querySelector(".nav .links");
-  var placement = navLinks ? "nav" : "floating";
+  // Onde o botão vai morar: dentro do cabeçalho, à esquerda, antes do
+  // nome do site (#pwa-nav-slot, dentro do .brand-group). Fallback pro
+  // botão flutuante antigo só como rede de segurança, caso alguma página
+  // não tenha esse slot.
+  var navSlot = document.querySelector("#pwa-nav-slot");
+  var placement = navSlot ? "nav" : "floating";
 
   // 2) Botão — estilo muda conforme onde ele vai morar
   var style = document.createElement("style");
@@ -82,7 +84,7 @@
     "<span>Instalar App</span>";
 
   if (placement === "nav") {
-    navLinks.appendChild(btn);
+    navSlot.appendChild(btn);
   } else {
     document.body.appendChild(btn);
   }
