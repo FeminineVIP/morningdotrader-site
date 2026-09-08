@@ -119,7 +119,7 @@
 
   .pdt-ad{
     position:relative; display:block; border-radius:14px; overflow:hidden;
-    margin-bottom:22px; text-decoration:none; min-height:210px;
+    margin-bottom:22px; text-decoration:none; min-height:140px;
     border:1px solid var(--border); transition:border-color 0.15s;
   }
   .pdt-ad:hover{border-color:var(--accent);}
@@ -131,20 +131,20 @@
     background: linear-gradient(90deg, rgba(6,10,16,0.94) 0%, rgba(6,10,16,0.8) 40%, rgba(6,10,16,0.3) 72%, rgba(6,10,16,0) 100%);
   }
   .pdt-ad-content{
-    position:relative; z-index:2; padding:26px 28px; max-width:480px;
+    position:relative; z-index:2; padding:16px 22px; max-width:440px;
     height:100%; display:flex; flex-direction:column; justify-content:center;
   }
-  .pdt-ad-title{ font-size:1.5rem; margin:0 0 8px; color:#fff; font-weight:800; }
-  .pdt-ad-text{ font-size:0.92rem; color:#c9d4de; margin:0 0 16px; line-height:1.5; }
+  .pdt-ad-title{ font-size:1.15rem; margin:0 0 4px; color:#fff; font-weight:800; }
+  .pdt-ad-text{ font-size:0.82rem; color:#c9d4de; margin:0 0 10px; line-height:1.4; }
   .pdt-ad-cta{
     display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
-    padding:10px 20px; border-radius:8px; font-size:0.88rem; align-self:flex-start;
+    padding:7px 16px; border-radius:8px; font-size:0.82rem; align-self:flex-start;
   }
-  .pdt-ad-note{ font-size:0.72rem; color:var(--muted); margin-top:10px; }
+  .pdt-ad-note{ font-size:0.68rem; color:var(--muted); margin-top:6px; }
   @media (max-width:700px){
-    .pdt-ad{ min-height:280px; }
+    .pdt-ad{ min-height:200px; }
     .pdt-ad::after{ background: linear-gradient(180deg, rgba(6,10,16,0.2) 0%, rgba(6,10,16,0.92) 55%, rgba(6,10,16,0.98) 100%); }
-    .pdt-ad-content{ max-width:100%; justify-content:flex-end; padding:20px; }
+    .pdt-ad-content{ max-width:100%; justify-content:flex-end; padding:16px; }
   }
 
   .brinde-promo{
@@ -462,16 +462,6 @@
 <div class="layout-grid">
 <div class="main-col">
 
-  <a href="https://paineldotrader.com.br" target="_blank" rel="noopener" class="pdt-ad">
-    <img src="painel-trader-ad-bg.webp" alt="Painel do Trader — cotações internacionais em um único lugar">
-    <div class="pdt-ad-content">
-      <h3 class="pdt-ad-title">Painel do Trader</h3>
-      <p class="pdt-ad-text">Cotações internacionais que estão movendo o mercado agora, em um único painel exclusivo — sem precisar de vários monitores.</p>
-      <span class="pdt-ad-cta">Conhecer o Painel →</span>
-      <span class="pdt-ad-note">Assinatura segura via Mercado Pago</span>
-    </div>
-  </a>
-
   <div class="alert-banner" id="alertaDia" style="display:none;">
     <a id="alertaImagemLink" style="display:none; flex-shrink:0;">
       <img class="alert-icon" id="alertaImagem" src="" alt="">
@@ -506,6 +496,16 @@
       <div class="manual-updated" id="upd-briefing" style="margin-top:10px;"></div>
     </div>
   </section>
+
+  <a href="https://paineldotrader.com.br" target="_blank" rel="noopener" class="pdt-ad">
+    <img src="painel-trader-ad-bg.webp" alt="Painel do Trader — cotações internacionais em um único lugar">
+    <div class="pdt-ad-content">
+      <h3 class="pdt-ad-title">Painel do Trader</h3>
+      <p class="pdt-ad-text">Cotações internacionais que estão movendo o mercado agora, em um único painel exclusivo — sem precisar de vários monitores.</p>
+      <span class="pdt-ad-cta">Conhecer o Painel →</span>
+      <span class="pdt-ad-note">Assinatura segura via Mercado Pago</span>
+    </div>
+  </a>
 
   <section>
     <h2>Notícias que podem mover o mercado hoje</h2>
