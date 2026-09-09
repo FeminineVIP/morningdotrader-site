@@ -348,9 +348,9 @@
      com logo maior e sem cortar a imagem (contain em vez de cover), pra
      acomodar logos de parceiros que nao sao quadrados. */
   #destaqueParceiro{align-items:center;}
-  #destaqueParceiro .alert-icon{width:96px; height:96px; object-fit:contain; padding:8px;}
+  #destaqueParceiro .alert-icon{width:110px; height:110px; object-fit:contain; padding:10px; background:#f4f4f2; border-radius:10px;}
   @media (max-width:480px){
-    #destaqueParceiro .alert-icon{width:64px; height:64px; padding:5px;}
+    #destaqueParceiro .alert-icon{width:72px; height:72px; padding:6px;}
   }
   .edit-form{display:grid; gap:12px; margin-top:10px;}
   .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
@@ -1110,12 +1110,13 @@
           <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
         </div>
         <div style="grid-column:1 / -1;">
-          <label>Destaque para Apresentação / Parceiro (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco. Etiqueta fixa "Patrocinado")</label>
-          <label style="font-size:0.85rem; margin-top:2px;">Imagem/logo (opcional)</label>
+          <label>Destaque para Apresentação / Parceiro (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco)</label>
+          <input type="text" id="input-parceiro_tag" placeholder="Texto principal (etiqueta), ex: Patrocinado, Parceria, Apresenta">
+          <label style="font-size:0.85rem; margin-top:6px;">Imagem/logo (opcional)</label>
           <input type="file" id="input-parceiro_imagem" accept="image/*">
           <span id="parceiroImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
           <input type="text" id="input-parceiro_titulo" placeholder="Título, ex: Dom Investimentos" style="margin-top:6px;">
-          <textarea id="input-parceiro_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
+          <textarea id="input-parceiro_texto" placeholder="Descrição..." style="margin-top:6px; min-height:70px;"></textarea>
           <input type="text" id="input-parceiro_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
         </div>
         <div style="grid-column:1 / -1;">
@@ -1392,6 +1393,7 @@
     // sozinho quando o campo volta a ficar em branco. Etiqueta fixa "Patrocinado".
     const parceiroBox = document.getElementById("destaqueParceiro");
     if (data.parceiro_titulo && data.parceiro_titulo.trim()) {
+      document.getElementById("parceiroTag").textContent = (data.parceiro_tag && data.parceiro_tag.trim()) || "Patrocinado";
       document.getElementById("parceiroTitulo").textContent = data.parceiro_titulo;
       document.getElementById("parceiroTexto").textContent = data.parceiro_texto || "";
       const parceiroImgEl = document.getElementById("parceiroImagem");
@@ -1427,6 +1429,8 @@
     } else {
       parceiroBox.style.display = "none";
     }
+    const parceiroTagInput = document.getElementById("input-parceiro_tag");
+    if (parceiroTagInput && !parceiroTagInput.value) parceiroTagInput.value = data.parceiro_tag || "";
     const parceiroTituloInput = document.getElementById("input-parceiro_titulo");
     if (parceiroTituloInput && !parceiroTituloInput.value) parceiroTituloInput.value = data.parceiro_titulo || "";
     const parceiroTextoInput = document.getElementById("input-parceiro_texto");
@@ -1516,6 +1520,7 @@
         body.alerta_imagem = (window.__lastManualData && window.__lastManualData.alerta_imagem) || "";
       }
 
+      body.parceiro_tag = document.getElementById("input-parceiro_tag").value;
       body.parceiro_titulo = document.getElementById("input-parceiro_titulo").value;
       body.parceiro_texto = document.getElementById("input-parceiro_texto").value;
       body.parceiro_link = document.getElementById("input-parceiro_link").value;
