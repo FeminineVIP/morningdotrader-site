@@ -376,11 +376,7 @@
     h1{font-size:1.35rem;}
     header .wrap{flex-direction:column; align-items:flex-start;}
   }
-  .ad-carousel{position:relative; max-width:100%; margin:8px 0; border-radius:12px; overflow:hidden; aspect-ratio:3.1 / 1;}
   .ad-carousel-label{position:absolute; top:8px; left:8px; z-index:2; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em; color:rgba(255,255,255,0.85); background:rgba(0,0,0,0.45); padding:2px 8px; border-radius:999px;}
-  .ad-carousel-link{display:block; position:relative; width:100%; height:100%;}
-  .ad-carousel-img{position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1s ease;}
-  .ad-carousel-img.active{opacity:1;}
 
   .amazon-promo{margin:16px 0;}
   .amazon-promo-header{width:100%; display:block; border-radius:12px 12px 0 0;}
@@ -523,12 +519,17 @@
     </div>
   </section>
 
-  <div class="ad-carousel">
-    <span class="ad-carousel-label">Publicidade</span>
-    <a href="https://meli.la/1mhaTka" target="_blank" rel="noopener sponsored" class="ad-carousel-link">
-      <img src="ml-banner1.webp" alt="Mercado Livre — Ferramentas para quem faz" class="ad-carousel-img active" data-slide="0">
-      <img src="ml-banner2.webp" alt="Mercado Livre — Oficina, até 40% off" class="ad-carousel-img" data-slide="1">
+  <div class="alert-banner" id="destaqueParceiro" style="display:none;">
+    <a id="parceiroImagemLink" style="display:none; flex-shrink:0;">
+      <img class="alert-icon" id="parceiroImagem" src="" alt="">
     </a>
+    <div class="alert-content">
+      <a id="parceiroTagLink" style="text-decoration:none;">
+        <span class="alert-tag" id="parceiroTag">Patrocinado</span>
+      </a>
+      <p class="alert-titulo" id="parceiroTitulo"></p>
+      <p class="alert-texto" id="parceiroTexto"></p>
+    </div>
   </div>
 
   <section>
@@ -1101,6 +1102,15 @@
           <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
         </div>
         <div style="grid-column:1 / -1;">
+          <label>Destaque para Apresentação / Parceiro (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco. Etiqueta fixa "Patrocinado")</label>
+          <label style="font-size:0.85rem; margin-top:2px;">Imagem/logo (opcional)</label>
+          <input type="file" id="input-parceiro_imagem" accept="image/*">
+          <span id="parceiroImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-parceiro_titulo" placeholder="Título, ex: Dom Investimentos" style="margin-top:6px;">
+          <textarea id="input-parceiro_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
+          <input type="text" id="input-parceiro_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
           <label>Fluxo por Investidor — Quantzed/XP (R$ milhões, à vista / futuro / total)</label>
           <p style="font-size:0.8rem; color:var(--muted); margin:2px 0 8px;">Cole aqui o bloco de texto que o Claude te devolver — os 14 campos abaixo se preenchem sozinhos.</p>
           <textarea id="input-fluxo_colar" rows="6" placeholder="Cole aqui o bloco de texto..." style="width:100%; font-family:monospace; font-size:0.85rem; margin-bottom:8px;"></textarea>
@@ -1368,6 +1378,54 @@
     const alertaTextoInput = document.getElementById("input-alerta_texto");
     if (alertaTextoInput && !alertaTextoInput.value) alertaTextoInput.value = data.alerta_texto || "";
 
+    // Destaque para Apresentacao / Parceiro: bloco generico de propaganda
+    // pontual (ex: Dom Investimentos, TopGain) pra usar em apresentacoes e
+    // parcerias. So aparece quando parceiro_titulo esta preenchido; some
+    // sozinho quando o campo volta a ficar em branco. Etiqueta fixa "Patrocinado".
+    const parceiroBox = document.getElementById("destaqueParceiro");
+    if (data.parceiro_titulo && data.parceiro_titulo.trim()) {
+      document.getElementById("parceiroTitulo").textContent = data.parceiro_titulo;
+      document.getElementById("parceiroTexto").textContent = data.parceiro_texto || "";
+      const parceiroImgEl = document.getElementById("parceiroImagem");
+      const parceiroImagemLink = document.getElementById("parceiroImagemLink");
+      const parceiroTagLink = document.getElementById("parceiroTagLink");
+      const temImagemParceiro = !!(data.parceiro_imagem && data.parceiro_imagem.trim());
+      if (temImagemParceiro) {
+        parceiroImgEl.src = data.parceiro_imagem;
+        parceiroImgEl.style.display = "block";
+        parceiroImagemLink.style.display = "block";
+      } else {
+        parceiroImgEl.style.display = "none";
+        parceiroImgEl.src = "";
+        parceiroImagemLink.style.display = "none";
+      }
+      const temLinkParceiro = !!(data.parceiro_link && data.parceiro_link.trim());
+      if (temLinkParceiro) {
+        parceiroImagemLink.href = data.parceiro_link;
+        parceiroImagemLink.target = "_blank";
+        parceiroImagemLink.rel = "noopener sponsored";
+        parceiroTagLink.href = data.parceiro_link;
+        parceiroTagLink.target = "_blank";
+        parceiroTagLink.rel = "noopener sponsored";
+      } else {
+        parceiroImagemLink.removeAttribute("href");
+        parceiroImagemLink.removeAttribute("target");
+        parceiroImagemLink.removeAttribute("rel");
+        parceiroTagLink.removeAttribute("href");
+        parceiroTagLink.removeAttribute("target");
+        parceiroTagLink.removeAttribute("rel");
+      }
+      parceiroBox.style.display = "flex";
+    } else {
+      parceiroBox.style.display = "none";
+    }
+    const parceiroTituloInput = document.getElementById("input-parceiro_titulo");
+    if (parceiroTituloInput && !parceiroTituloInput.value) parceiroTituloInput.value = data.parceiro_titulo || "";
+    const parceiroTextoInput = document.getElementById("input-parceiro_texto");
+    if (parceiroTextoInput && !parceiroTextoInput.value) parceiroTextoInput.value = data.parceiro_texto || "";
+    const parceiroLinkInput = document.getElementById("input-parceiro_link");
+    if (parceiroLinkInput && !parceiroLinkInput.value) parceiroLinkInput.value = data.parceiro_link || "";
+
     if (data.atualizado_em) {
       const upd = new Date(data.atualizado_em).toLocaleString("pt-BR");
       document.getElementById("upd-suporte").textContent = "Atualizado em " + upd;
@@ -1448,6 +1506,25 @@
         alertaImagemStatus.textContent = "";
       } else {
         body.alerta_imagem = (window.__lastManualData && window.__lastManualData.alerta_imagem) || "";
+      }
+
+      body.parceiro_titulo = document.getElementById("input-parceiro_titulo").value;
+      body.parceiro_texto = document.getElementById("input-parceiro_texto").value;
+      body.parceiro_link = document.getElementById("input-parceiro_link").value;
+
+      const parceiroImagemInput = document.getElementById("input-parceiro_imagem");
+      const parceiroImagemStatus = document.getElementById("parceiroImagemStatus");
+      if (parceiroImagemInput.files && parceiroImagemInput.files[0]) {
+        parceiroImagemStatus.textContent = "Convertendo imagem...";
+        body.parceiro_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(parceiroImagemInput.files[0]);
+        });
+        parceiroImagemStatus.textContent = "";
+      } else {
+        body.parceiro_imagem = (window.__lastManualData && window.__lastManualData.parceiro_imagem) || "";
       }
 
       const graficoInput = document.getElementById("input-fluxo_b3_grafico");
@@ -1703,18 +1780,6 @@
   }
   carregarNoticias("/api/news-market", "newsMarketList");
   carregarNoticias("/api/news-corp", "newsCorpList");
-
-  // Carrossel de banners de publicidade
-  (function() {
-    const slides = document.querySelectorAll(".ad-carousel-img");
-    if (!slides.length) return;
-    let atual = 0;
-    setInterval(() => {
-      slides[atual].classList.remove("active");
-      atual = (atual + 1) % slides.length;
-      slides[atual].classList.add("active");
-    }, 5000);
-  })();
 
   // Telegram - canal publico, via Worker
   const chatFeedEl = document.getElementById("chatFeed"); // referência fixa: continua funcionando mesmo se o bloco for movido pra janela PiP
