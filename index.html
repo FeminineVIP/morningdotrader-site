@@ -344,6 +344,14 @@
   @media (max-width:480px){
     .alert-banner .alert-icon{width:44px; height:44px;}
   }
+  /* Destaque para Apresentacao / Parceiro: mesmo bloco do Alerta do Dia, mas
+     com logo maior e sem cortar a imagem (contain em vez de cover), pra
+     acomodar logos de parceiros que nao sao quadrados. */
+  #destaqueParceiro{align-items:center;}
+  #destaqueParceiro .alert-icon{width:96px; height:96px; object-fit:contain; padding:8px;}
+  @media (max-width:480px){
+    #destaqueParceiro .alert-icon{width:64px; height:64px; padding:5px;}
+  }
   .edit-form{display:grid; gap:12px; margin-top:10px;}
   .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
   .edit-form input, .edit-form textarea{
