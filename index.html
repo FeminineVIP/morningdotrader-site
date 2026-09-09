@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Morning Call — Morning do Trader</title>
+<meta name="description" content="Painel diário de mercado: índices globais, VIX, Bitcoin, calendário econômico, probabilidades do Polymarket e dados manuais — tudo em um só lugar antes do morning call.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://morningdotrader.com.br/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Morning do Trader">
+<meta property="og:title" content="Painel Morning Call — Morning do Trader">
+<meta property="og:description" content="Painel diário de mercado: índices globais, VIX, calendário econômico, fluxo de investidores B3, probabilidades do Polymarket e mais — tudo em um só lugar antes do pregão.">
+<meta property="og:url" content="https://morningdotrader.com.br/">
+<meta property="og:image" content="https://morningdotrader.com.br/hero-bg.webp">
+<meta property="og:locale" content="pt_BR">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Painel Morning Call — Morning do Trader">
+<meta name="twitter:description" content="Painel diário de mercado para day trade em mini índice e mini dólar, com probabilidades do Polymarket, atualizado todo dia útil antes da abertura.">
+<meta name="twitter:image" content="https://morningdotrader.com.br/hero-bg.webp">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Morning do Trader",
+  "url": "https://morningdotrader.com.br/",
+  "description": "Painel diário de mercado financeiro brasileiro para day trade em mini índice e mini dólar, com briefing, cotações, calendário econômico, fluxo de investidores e probabilidades de mercados preditivos como o Polymarket.",
+  "inLanguage": "pt-BR"
+}
+</script>
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --red: #e5484d;
+    --amber: #f5a623;
+    --green: #3ecf8e;
+    --accent: #4da3ff;
+    --purple: #a86ef5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height:1.55;
+  }
+  a{color:var(--accent);}
+  .nav{background: var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px; position:sticky; top:0; z-index:51;}
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; max-width:1180px; margin:0 auto;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .brand-group{display:flex; align-items:center; gap:8px;}
+  .nav .links{display:flex; gap:18px; font-size:0.88rem;}
+  .nav .links a{color:var(--muted); text-decoration:none;}
+  .nav .links a.active{color:var(--accent);}
+  .nav .links a:hover{color:var(--text);}
+  .ticker-sticky{position:sticky; top:var(--nav-h, 48px); z-index:50; background:var(--bg-alt); border-bottom:1px solid var(--border); padding:6px 16px;}
+
+  .wrap{max-width: 1180px; margin:0 auto; padding: 0 16px;}
+
+  header{position:relative;
+    min-height: 620px; display:flex; align-items:flex-end;
+    padding: 40px 0 36px; border-bottom: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, rgba(11,15,20,0.15) 0%, rgba(11,15,20,0.35) 55%, rgba(11,15,20,0.92) 100%),
+      url('hero-bg.webp');
+    background-size: cover;
+    background-position: center center;
+  }
+  header .wrap{width:100%;}
+  @media (max-width:700px){ header{ min-height: 420px; } }
+  header .wrap{padding:0 16px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:14px;}
+  .greeting{font-size:0.95rem; color:var(--muted); margin:0 0 8px;}
+  h1{font-size: 2.6rem; margin:0 0 8px;}
+  .subtitle{color:var(--muted); font-size:1.1rem; margin:0; max-width:520px;}
+  .hero-right{display:flex; flex-direction:column; align-items:flex-end; gap:10px;}
+  .market-status{
+    position:absolute; top:20px; right:16px; z-index:5;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:999px;
+    background: rgba(62,207,142,0.12); border:1px solid rgba(62,207,142,0.4);
+    font-size:0.82rem; color: var(--green); font-weight:600; white-space:nowrap;
+  }
+  .market-status .dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+  .market-status.closed{background: rgba(229,72,77,0.12); border-color: rgba(229,72,77,0.4); color: var(--red);}
+  .market-status.closed .dot{background: var(--red);}
+  .ormuz-btn{
+    position:absolute; top:20px; left:16px; z-index:5;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 16px; border-radius:999px;
+    background: rgba(11,15,20,0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border:1px solid rgba(229,72,77,0.55);
+    font-size:0.85rem; color:#ff9599; font-weight:600; white-space:nowrap;
+    text-decoration:none; transition:background 0.15s, border-color 0.15s;
+  }
+  .ormuz-btn .pulse{width:7px; height:7px; border-radius:50%; background:var(--red); flex-shrink:0; box-shadow:0 0 0 0 rgba(229,72,77,0.6); animation: pulseglow 2s infinite;}
+  @keyframes pulseglow{
+    0% { box-shadow: 0 0 0 0 rgba(229,72,77,0.55); }
+    70% { box-shadow: 0 0 0 7px rgba(229,72,77,0); }
+    100% { box-shadow: 0 0 0 0 rgba(229,72,77,0); }
+  }
+  .ormuz-btn:hover{background: rgba(11,15,20,0.75); border-color: rgba(229,72,77,0.9);}
+  .ormuz-card{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    text-decoration:none; flex-shrink:0; width:220px;
+  }
+  .ormuz-card img{width:100%; border-radius:12px; display:block; transition:transform 0.2s;}
+  .ormuz-card:hover img{transform:scale(1.03);}
+  .ormuz-card span{font-size:0.82rem; font-weight:600; color:#ff9599;}
+  @media (max-width:600px){ .ormuz-card{width:100%;} }
+
+  .pdt-ad{
+    position:relative; display:block; border-radius:14px; overflow:hidden;
+    margin-bottom:22px; text-decoration:none; min-height:140px;
+    border:1px solid var(--border); transition:border-color 0.15s;
+  }
+  .pdt-ad:hover{border-color:var(--accent);}
+  .pdt-ad > img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:0;
+  }
+  .pdt-ad::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background: linear-gradient(90deg, rgba(6,10,16,0.94) 0%, rgba(6,10,16,0.8) 40%, rgba(6,10,16,0.3) 72%, rgba(6,10,16,0) 100%);
+  }
+  .pdt-ad-content{
+    position:relative; z-index:2; padding:16px 22px; max-width:440px;
+    height:100%; display:flex; flex-direction:column; justify-content:center;
+  }
+  .pdt-ad-sponsored{
+    display:inline-block; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.06em;
+    font-weight:700; color:#c9d4de; background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.18); border-radius:99px; padding:2px 8px;
+    margin-bottom:6px; align-self:flex-start;
+  }
+  .pdt-ad-title{ font-size:1.15rem; margin:0 0 4px; color:#fff; font-weight:800; }
+  .pdt-ad-text{ font-size:0.82rem; color:#c9d4de; margin:0 0 10px; line-height:1.4; }
+  .pdt-ad-cta{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    padding:7px 16px; border-radius:8px; font-size:0.82rem; align-self:flex-start;
+  }
+  .pdt-ad-note{ font-size:0.68rem; color:var(--muted); margin-top:6px; }
+  @media (max-width:700px){
+    .pdt-ad{ min-height:200px; }
+    .pdt-ad::after{ background: linear-gradient(180deg, rgba(6,10,16,0.2) 0%, rgba(6,10,16,0.92) 55%, rgba(6,10,16,0.98) 100%); }
+    .pdt-ad-content{ max-width:100%; justify-content:flex-end; padding:16px; }
+  }
+
+  .brinde-promo{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    background: var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:10px 14px; text-decoration:none; max-width:440px; margin-top:14px;
+    transition: border-color 0.15s;
+  }
+  .brinde-promo:hover{border-color:var(--accent);}
+  .brinde-promo-badge{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:#0b0f14; background:var(--green); border-radius:99px; padding:3px 9px; flex-shrink:0;
+  }
+  .brinde-promo-text{font-size:0.85rem; color:var(--text); flex:1; min-width:170px;}
+  .brinde-promo-text strong{color:var(--accent);}
+  .brinde-promo-arrow{font-size:0.9rem; color:var(--accent); font-weight:700; flex-shrink:0;}
+  @media (max-width:600px){ .brinde-promo{max-width:100%;} }
+  @media (max-width:700px){ h1{font-size:1.7rem;} .subtitle{font-size:0.95rem;} }
+
+  section{padding: 30px 0; border-bottom:1px solid var(--border);}
+  section:last-of-type{border-bottom:none;}
+  h2{font-size:1.2rem; margin:0 0 4px; color:var(--text);}
+  h2 .tag{font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:normal; display:block; margin-bottom:4px;}
+  .section-note{font-size:0.82rem; color:var(--muted); margin:0 0 18px;}
+  p{color:#c9d4de; font-size:0.95rem;}
+
+  /* Widget grid */
+  .widget-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap:18px;
+  }
+  .widget-card{
+    background: var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:16px; min-height:230px;
+  }
+  .widget-card .wtitle{font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:10px;}
+  .tradingview-widget-container{width:100%;}
+  .tradingview-widget-copyright{font-size:0.7rem; color:var(--muted); text-align:right; padding-top:2px;}
+  .tradingview-widget-copyright a{color:var(--muted);}
+
+  /* Calendar / election embed frames */
+  .embed-card{
+    background: var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:16px; overflow:hidden;
+  }
+  .embed-placeholder{
+    border:1px dashed var(--border); border-radius:10px; padding:24px;
+    color: var(--muted); font-size:0.85rem; text-align:center;
+  }
+  .fedcal-zoom-wrap{
+    width:100%; overflow:hidden; border-radius:8px;
+  }
+  .fedcal-zoom-frame{
+    display:block; width:100%; height:750px;
+    border:0; border-radius:8px;
+  }
+  /* zoom (real layout re-render, not blurry like transform:scale) — supported in Chrome/Edge/Safari, not Firefox */
+  @supports (zoom:1){
+    .fedcal-zoom-frame{ width:87%; height:950px; zoom:1.15; }
+  }
+  @media (max-width:560px){
+    .fedcal-zoom-frame{ width:100% !important; height:700px !important; zoom:1 !important; }
+  }
+  .fg-grid{
+    display:grid; grid-template-columns: 200px 1fr 200px; align-items:center; gap:28px;
+    padding:20px;
+  }
+  .fg-side{ font-size:0.85rem; color:#c9d4de; line-height:1.5; }
+  .fg-gauge-col{ display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .fg-gauge-col svg{ width:100%; max-width:480px; display:block; }
+  @media (max-width:820px){
+    .fg-grid{ grid-template-columns: 1fr; justify-items:center; text-align:center; }
+    .fg-gauge-col{ order:-1; }
+  }
+
+  /* Election panel */
+  .election-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:14px;}
+  .election-card{background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px;}
+  .election-name{font-size:0.95rem; font-weight:600; margin-bottom:6px;}
+  .election-odds{font-size:1.6rem; font-weight:800; color:var(--accent);}
+  .election-note{font-size:0.75rem; color:var(--muted); margin-top:4px;}
+  .pm-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
+  .pm-title{font-size:0.98rem; font-weight:700; margin-bottom:14px;}
+  .pm-row{margin-bottom:10px;}
+  .pm-row:last-child{margin-bottom:0;}
+  .pm-row-top{display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:4px;}
+  .pm-row-label{color:#c9d4de;}
+  .pm-row-pct{font-weight:700; color:var(--accent);}
+  .pm-bar-track{background:var(--bg-alt); border-radius:999px; height:8px; overflow:hidden;}
+  .pm-bar-fill{background:var(--accent); height:100%; border-radius:999px;}
+  .fedwatch-banner{width:100%; height:auto; display:block; margin-bottom:18px; border-radius:14px;}
+  .fedwatch-grid{display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;}
+  @media (max-width:1050px){ .fedwatch-grid{grid-template-columns: repeat(2, 1fr);} }
+  @media (max-width:560px){ .fedwatch-grid{grid-template-columns: 1fr;} }
+  .sr-board{position:relative; max-width:600px; margin:0 auto;}
+  .sr-board-img{width:100%; display:block; border-radius:12px;}
+  .sr-value{
+    position:absolute; transform:translate(-50%,-50%);
+    font-size:3.2vw; font-weight:800; color:#fff;
+    text-shadow:0 2px 6px rgba(0,0,0,0.8);
+    max-width:600px;
+  }
+  @media (min-width:600px){ .sr-value{ font-size:19px; } }
+  .sr-value:empty::after{ content:"—"; color:rgba(255,255,255,0.35); font-weight:400; }
+
+  .fcb-board{position:relative; max-width:100%; margin:0 auto;}
+  .fcb-board-img{width:100%; display:block; border-radius:12px;}
+
+  .wrap-wide{max-width:1450px;}
+  .layout-grid{display:grid; grid-template-columns: 1fr 300px; gap:32px;}
+  .main-col{min-width:0;}
+  .sidebar-col{min-width:0;}
+  .sidebar-sticky{
+    position:sticky; top:calc(var(--nav-h, 48px) + var(--ticker-h, 60px) + 16px);
+    background:var(--card); border:1px solid var(--border); border-radius:12px;
+    padding:16px; max-height:calc(100vh - var(--nav-h, 48px) - var(--ticker-h, 60px) - 32px); display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .sidebar-header{display:flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; margin-bottom:4px;}
+  .sidebar-dot{width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; box-shadow:0 0 0 3px rgba(62,207,142,0.2);}
+  .pop-btn{
+    margin-left:auto; background:transparent; border:1px solid var(--border); color:var(--muted);
+    border-radius:6px; width:24px; height:24px; font-size:0.85rem; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; padding:0;
+  }
+  .pop-btn:hover{ color:var(--text); border-color:var(--accent); }
+  .sidebar-note{font-size:0.72rem; color:var(--muted); margin:0 0 12px;}
+  .chat-feed{overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:4px; flex:1; min-height:0;}
+  .chat-msg{font-size:0.82rem; color:#c9d4de; line-height:1.4; padding-bottom:10px; border-bottom:1px solid var(--border);}
+  .chat-msg:last-child{border-bottom:none; padding-bottom:0;}
+  .chat-time{color:var(--accent); font-weight:700; margin-right:6px;}
+  .briefing-text{white-space:pre-wrap; font-size:0.95rem; color:#c9d4de; line-height:1.6;}
+  .briefing-text.empty{color:var(--muted); font-style:italic;}
+
+  @media (max-width:1000px){
+    .layout-grid{grid-template-columns: 1fr;}
+    .sidebar-sticky{position:static; max-height:none;}
+  }
+
+  /* Manual panel */
+  .manual-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:18px;}
+  .manual-card{
+    background: var(--card); border:1px solid var(--border); border-top:3px solid var(--amber);
+    border-radius:12px; padding:18px;
+  }
+  .manual-label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px;}
+  .manual-value{font-size:1.6rem; font-weight:800; margin-bottom:4px; word-break:break-word;}
+  .manual-value.negative{color:var(--red);}
+  .manual-value.positive{color:var(--green);}
+  .manual-value.empty{color:var(--muted); font-size:1rem; font-weight:400; font-style:italic;}
+  .manual-updated{font-size:0.72rem; color:var(--muted);}
+  .manual-text{font-size:1rem; color:#c9d4de; white-space:pre-wrap;}
+  .manual-subrow{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px solid var(--border);}
+  .manual-subrow:last-child{border-bottom:none;}
+  .manual-subrow .manual-sublabel{font-size:0.78rem; color:var(--muted);}
+  .manual-subrow .manual-value{font-size:1rem; font-weight:700; margin-bottom:0;}
+  .manual-subrow.total{margin-top:2px; padding-top:8px; border-top:1px solid var(--border);}
+  .manual-subrow.total .manual-sublabel{font-weight:700; color:var(--text);}
+  .manual-subrow.total .manual-value{font-size:1.15rem;}
+
+  .edit-banner{
+    background: rgba(245,166,35,0.12); border:1px solid rgba(245,166,35,0.4);
+    border-radius:10px; padding:14px 16px; margin-bottom:18px; font-size:0.85rem; color:var(--amber);
+  }
+
+  /* Alerta do Dia: bloco opcional pra eventos/notícias de alto impacto
+     (Payroll, FOMC, Copom, etc). Só aparece quando o campo é preenchido no
+     painel manual; some sozinho nos dias sem nada especial. */
+  .alert-banner{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:22px;
+    padding:18px 20px;
+    border-radius:12px;
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
+    border:1px solid var(--amber);
+  }
+  .alert-banner .alert-icon{
+    width:56px; height:56px; border-radius:12px; object-fit:cover; flex-shrink:0;
+    background:var(--bg-alt);
+  }
+  .alert-banner .alert-content{min-width:0;}
+  .alert-banner .alert-tag{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--amber); display:block; margin-bottom:6px;
+  }
+  .alert-banner .alert-titulo{font-size:1.15rem; font-weight:700; margin:0 0 6px; line-height:1.35; color:var(--text);}
+  .alert-banner .alert-texto{font-size:0.92rem; color:#c9d4de; margin:0; white-space:pre-wrap;}
+  @media (max-width:480px){
+    .alert-banner .alert-icon{width:44px; height:44px;}
+  }
+  /* Destaque para Apresentacao / Parceiro: cards de patrocinio pontuais pra
+     parcerias/reunioes (ex: Dom Investimentos, TopGain). Layout dividido:
+     logo ocupando a altura toda e metade da largura do quadro, do lado
+     esquerdo, texto na lateral direita. Ate 2 quadros identicos, um por
+     parceiro, cada um em um lugar diferente da pagina. */
+  .parceiro-banner{
+    display:flex; flex-direction:row; align-items:stretch;
+    margin-bottom:18px; border-radius:12px; overflow:hidden;
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
+    border:1px solid var(--amber);
+    min-height:150px;
+  }
+  .parceiro-banner .parceiro-logo-wrap{
+    width:50%; flex-shrink:0; display:none; align-items:center; justify-content:center;
+    padding:18px;
+  }
+  .parceiro-banner .parceiro-logo{
+    max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain;
+  }
+  .parceiro-banner .parceiro-content{
+    flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center;
+    padding:26px 30px;
+  }
+  .parceiro-banner .parceiro-tag{
+    font-size:0.95rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;
+    color:var(--amber); display:block; margin-bottom:12px;
+  }
+  .parceiro-banner .parceiro-titulo{font-size:1.7rem; font-weight:700; margin:0 0 12px; line-height:1.3; color:var(--text);}
+  .parceiro-banner .parceiro-texto{font-size:1.1rem; color:#c9d4de; margin:0; line-height:1.5; white-space:pre-wrap;}
+  @media (max-width:768px){
+    .parceiro-banner .parceiro-titulo{font-size:1.3rem;}
+    .parceiro-banner .parceiro-texto{font-size:0.98rem;}
+  }
+  @media (max-width:600px){
+    .parceiro-banner{flex-direction:column;}
+    .parceiro-banner .parceiro-logo-wrap{width:100%; min-height:110px; padding:14px;}
+  }
+  .edit-form{display:grid; gap:12px; margin-top:10px;}
+  .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
+  .edit-form input, .edit-form textarea{
+    width:100%; background:var(--bg); border:1px solid var(--border); border-radius:8px;
+    color:var(--text); padding:10px 12px; font-size:0.95rem; font-family:inherit;
+  }
+  .edit-form textarea{min-height:90px; resize:vertical;}
+  .edit-save-btn{
+    background: var(--accent); color:#0b0f14; border:none; border-radius:8px;
+    padding:10px 18px; font-size:0.9rem; font-weight:700; cursor:pointer; justify-self:start;
+  }
+  .edit-save-btn:hover{opacity:0.9;}
+  .save-status{font-size:0.8rem; margin-top:4px;}
+  .save-status.ok{color:var(--green);}
+  .save-status.err{color:var(--red);}
+
+  .methodology{
+    background: var(--bg-alt); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px; font-size:0.85rem; color:var(--muted);
+  }
+  .methodology strong{color:var(--text);}
+  #newsMarketList li, #newsCorpList li{padding:10px 0; border-bottom:1px solid var(--border); font-size:0.92rem;}
+  #newsMarketList li:last-child, #newsCorpList li:last-child{border-bottom:none;}
+  #newsMarketList a, #newsCorpList a{color:var(--text); text-decoration:none;}
+  #newsMarketList a:hover, #newsCorpList a:hover{color:var(--accent);}
+
+  footer{padding:24px 0 40px; text-align:center; color:var(--muted); font-size:0.8rem;}
+
+  @media (max-width:600px){
+    h1{font-size:1.35rem;}
+    header .wrap{flex-direction:column; align-items:flex-start;}
+  }
+  .ad-carousel-label{position:absolute; top:8px; left:8px; z-index:2; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em; color:rgba(255,255,255,0.85); background:rgba(0,0,0,0.45); padding:2px 8px; border-radius:999px;}
+
+  .amazon-promo{margin:16px 0;}
+  .amazon-promo-header{width:100%; display:block; border-radius:12px 12px 0 0;}
+  .amazon-promo-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:2px; border-radius:0 0 12px 12px; overflow:hidden;}
+  @media (max-width:700px){ .amazon-promo-grid{ grid-template-columns:repeat(2, 1fr); } }
+  .amazon-promo-card{display:block; line-height:0; transition:filter 0.15s ease;}
+  .amazon-promo-card:hover{filter:brightness(1.06);}
+  .amazon-promo-img{width:100%; display:block;}
+
+  .ad-thin{margin:16px 0;}
+  .ad-thin-img{width:100%; display:block; border-radius:10px;}
+  .ad-thin-mp{margin:16px 0;}
+  .ad-thin-mp .crop-box img{width:100%; display:block; border-radius:10px;}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1020">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand-group">
+      <span id="pwa-nav-slot"></span>
+      <a class="brand" href="index.html">Morning do Trader</a>
+    </div>
+    <div class="links">
+      <a href="index.html" class="active">Morning Call</a>
+      <a href="ormuz.html">Crise do Ormuz</a>
+      <a href="noticias.html">Notícias</a>
+      <a href="glossario.html">Glossário</a>
+      <a href="painel-internacional.html">Painel Internacional</a>
+      <a href="futuro.html">Futuro Financeiro</a>
+      <a href="kit-do-trader.html">Kit do Trader</a>
+    </div>
+  </div>
+</nav>
+
+<div class="ticker-sticky">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <div class="tradingview-widget-copyright"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+      "symbols": [
+        { "proName": "CAPITALCOM:DXY", "title": "DXY" },
+        { "proName": "FX_IDC:USDBRL", "title": "USD/BRL" },
+        { "proName": "FX_IDC:USDMXN", "title": "USD/MXN" },
+        { "proName": "FX_IDC:USDCNH", "title": "USD/CNH" },
+        { "proName": "FX_IDC:USDARS", "title": "USD/ARS" },
+        { "proName": "FX_IDC:USDTRY", "title": "USD/TRY" },
+        { "proName": "FX_IDC:USDJPY", "title": "USD/JPY" },
+        { "proName": "OANDA:EURUSD", "title": "EUR/USD" },
+        { "proName": "OANDA:AUDUSD", "title": "AUD/USD" }
+      ],
+      "colorTheme": "dark",
+      "isTransparent": true,
+      "showSymbolLogo": true,
+      "displayMode": "compact",
+      "locale": "br"
+    }
+    </script>
+  </div>
+</div>
+
+<header>
+  <a href="ormuz.html" class="ormuz-btn"><span class="pulse"></span>Crise do Ormuz →</a>
+  <span class="market-status" id="marketStatus"><span class="dot"></span>Pré-mercado</span>
+  <div class="wrap">
+    <div>
+      <p class="greeting" id="greetingDate">Bom dia</p>
+      <h1>Painel Morning Call</h1>
+      <p class="subtitle">Tudo o que você precisa saber do Mercado Financeiro antes da abertura, em um só painel.</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap wrap-wide">
+<div class="layout-grid">
+<div class="main-col">
+
+  <div class="alert-banner" id="alertaDia" style="display:none;">
+    <a id="alertaImagemLink" style="display:none; flex-shrink:0;">
+      <img class="alert-icon" id="alertaImagem" src="" alt="">
+    </a>
+    <div class="alert-content">
+      <a id="alertaTagLink" style="text-decoration:none;">
+        <span class="alert-tag" id="alertaTag">Alerta do Dia</span>
+      </a>
+      <p class="alert-titulo" id="alertaTitulo"></p>
+      <p class="alert-texto" id="alertaTexto"></p>
+    </div>
+  </div>
+
+  <div class="parceiro-banner" id="destaqueParceiro" style="display:none;">
+    <a id="parceiroImagemLink" class="parceiro-logo-wrap" style="display:none;">
+      <img class="parceiro-logo" id="parceiroImagem" src="" alt="">
+    </a>
+    <div class="parceiro-content">
+      <a id="parceiroTagLink" style="text-decoration:none;">
+        <span class="parceiro-tag" id="parceiroTag">Patrocinado</span>
+      </a>
+      <p class="parceiro-titulo" id="parceiroTitulo"></p>
+      <p class="parceiro-texto" id="parceiroTexto"></p>
+    </div>
+  </div>
+
+  <section id="briefing-do-dia">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:22px;">
+      <div>
+        <h2><span class="tag">Análise</span>Briefing do Dia</h2>
+        <p class="section-note">Leitura do pregão de hoje, atualizada antes de cada morning call.</p>
+        <a href="kit-do-trader.html" class="brinde-promo">
+          <span class="brinde-promo-badge">Grátis</span>
+          <span class="brinde-promo-text">Baixe a <strong>Planilha do Trader</strong> — gestão de risco e resultado diário</span>
+          <span class="brinde-promo-arrow">→</span>
+        </a>
+      </div>
+      <a href="ormuz.html" class="ormuz-card">
+        <img src="ormuz-card.webp" alt="Crise do Estreito de Ormuz">
+        <span>Crise do Ormuz →</span>
+      </a>
+    </div>
+    <div class="embed-card">
+      <div id="briefingTexto" class="briefing-text empty">Aguardando atualização.</div>
+      <div class="manual-updated" id="upd-briefing" style="margin-top:10px;"></div>
+    </div>
+  </section>
+
+  <a href="https://paineldotrader.com.br" target="_blank" rel="noopener" class="pdt-ad">
+    <img src="painel-trader-ad-bg.webp" alt="Painel do Trader — cotações internacionais em um único lugar">
+    <div class="pdt-ad-content">
+      <span class="pdt-ad-sponsored">Patrocinado</span>
+      <h3 class="pdt-ad-title">Painel do Trader</h3>
+      <p class="pdt-ad-text">Cotações internacionais que estão movendo o mercado agora, em um único painel exclusivo — sem precisar de vários monitores.</p>
+      <span class="pdt-ad-cta">Conhecer o Painel →</span>
+      <span class="pdt-ad-note">Assinatura segura via Mercado Pago</span>
+    </div>
+  </a>
+
+  <section>
+    <h2>Notícias que podem mover o mercado hoje</h2>
+    <div class="embed-card">
+      <ul id="newsMarketList" style="list-style:none; margin:0; padding:0;">
+        <li style="color:var(--muted); font-size:0.9rem;">Carregando...</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="parceiro-banner" id="destaqueParceiro2" style="display:none;">
+    <a id="parceiro2ImagemLink" class="parceiro-logo-wrap" style="display:none;">
+      <img class="parceiro-logo" id="parceiro2Imagem" src="" alt="">
+    </a>
+    <div class="parceiro-content">
+      <a id="parceiro2TagLink" style="text-decoration:none;">
+        <span class="parceiro-tag" id="parceiro2Tag">Patrocinado</span>
+      </a>
+      <p class="parceiro-titulo" id="parceiro2Titulo"></p>
+      <p class="parceiro-texto" id="parceiro2Texto"></p>
+    </div>
+  </div>
+
+  <section>
+    <h2>Notícias corporativas — Ações brasileiras</h2>
+    <div class="embed-card">
+      <ul id="newsCorpList" style="list-style:none; margin:0; padding:0;">
+        <li style="color:var(--muted); font-size:0.9rem;">Carregando...</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="amazon-promo">
+    <span class="ad-carousel-label" style="position:static; display:inline-block; margin-bottom:6px;">Publicidade</span>
+    <img src="amazon-header.webp" alt="Um benefício especial para você — 30 dias grátis do melhor da Amazon" class="amazon-promo-header">
+    <div class="amazon-promo-grid">
+      <a href="https://link.amazon/B08y4TsG4" target="_blank" rel="noopener sponsored" class="amazon-promo-card">
+        <img src="ap-prime.webp" alt="Amazon Prime — Filmes, séries, frete e muito mais" class="amazon-promo-img">
+      </a>
+      <a href="https://link.amazon/A0d8N12SL" target="_blank" rel="noopener sponsored" class="amazon-promo-card">
+        <img src="ap-kindle.webp" alt="Kindle Unlimited — Milhões de livros para ler onde quiser" class="amazon-promo-img">
+      </a>
+      <a href="https://link.amazon/A07ptQXjL" target="_blank" rel="noopener sponsored" class="amazon-promo-card">
+        <img src="ap-music.webp" alt="Amazon Music — Música sem anúncios e milhões de músicas" class="amazon-promo-img">
+      </a>
+      <a href="https://link.amazon/B0iAD7eby" target="_blank" rel="noopener sponsored" class="amazon-promo-card">
+        <img src="ap-video.webp" alt="Prime Video — Filmes, séries e originais exclusivos" class="amazon-promo-img">
+      </a>
+    </div>
+  </div>
+
+  <section>
+    <h2>VIX</h2>
+    <div class="widget-grid">
+
+      <div class="widget-card">
+        <div class="wtitle">VIX</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:VIX", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="fluxo-cambial-bc">
+    <h2><span class="tag">Quantzed / XP</span>Fluxo por Investidor — B3</h2>
+    <p class="section-note">Saldo por tipo de investidor, separado por mercado à vista e futuro — Estrangeiro, Institucional, Inst. Financeira, Pessoa física e Outros (R$ milhões).</p>
+    <div class="fcb-board">
+      <img src="fluxo-cambial-bg.webp" alt="Fluxo por Investidor do Dia" class="fcb-board-img">
+    </div>
+    <div class="manual-grid" style="margin-top:16px;">
+      <div class="manual-card">
+        <div class="manual-label">Estrangeiro</div>
+        <div class="manual-subrow"><span class="manual-sublabel">À vista</span><span class="manual-value empty" id="val-fluxo_estrangeiro_vista">—</span></div>
+        <div class="manual-subrow"><span class="manual-sublabel">Futuro</span><span class="manual-value empty" id="val-fluxo_estrangeiro_futuro">—</span></div>
+        <div class="manual-subrow total"><span class="manual-sublabel">Total</span><span class="manual-value empty" id="val-fluxo_estrangeiro_total">—</span></div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Institucional</div>
+        <div class="manual-subrow"><span class="manual-sublabel">À vista</span><span class="manual-value empty" id="val-fluxo_institucional_vista">—</span></div>
+        <div class="manual-subrow"><span class="manual-sublabel">Futuro</span><span class="manual-value empty" id="val-fluxo_institucional_futuro">—</span></div>
+        <div class="manual-subrow total"><span class="manual-sublabel">Total</span><span class="manual-value empty" id="val-fluxo_institucional_total">—</span></div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Inst. Financeira</div>
+        <div class="manual-subrow"><span class="manual-sublabel">À vista</span><span class="manual-value empty" id="val-fluxo_instfin_vista">—</span></div>
+        <div class="manual-subrow"><span class="manual-sublabel">Futuro</span><span class="manual-value empty" id="val-fluxo_instfin_futuro">—</span></div>
+        <div class="manual-subrow total"><span class="manual-sublabel">Total</span><span class="manual-value empty" id="val-fluxo_instfin_total">—</span></div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Pessoa física</div>
+        <div class="manual-subrow"><span class="manual-sublabel">À vista</span><span class="manual-value empty" id="val-fluxo_pf_vista">—</span></div>
+        <div class="manual-subrow"><span class="manual-sublabel">Futuro</span><span class="manual-value empty" id="val-fluxo_pf_futuro">—</span></div>
+        <div class="manual-subrow total"><span class="manual-sublabel">Total</span><span class="manual-value empty" id="val-fluxo_pf_total">—</span></div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Outros</div>
+        <div class="manual-subrow"><span class="manual-sublabel">À vista</span><span class="manual-value empty" id="val-fluxo_outros_vista">—</span></div>
+        <div class="manual-subrow total"><span class="manual-sublabel">Total</span><span class="manual-value empty" id="val-fluxo_outros_total">—</span></div>
+      </div>
+    </div>
+    <div class="manual-updated" id="upd-fluxo-cambial" style="margin-top:10px;"></div>
+  </section>
+
+  <section>
+    <h2>Brasil</h2>
+    <div class="widget-grid">
+
+      <div class="widget-card">
+        <div class="wtitle">Ibovespa</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:IBOV", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">EWZ</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "AMEX:EWZ", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Vale (VALE3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:VALE3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Petrobras (PETR4)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:PETR4", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Petróleo Brent</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "TVC:UKOIL", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <!-- LEMBRETE: contrato mensal, sem rolagem automatica. Troque o simbolo no fim de cada mes
+           (ex: IRONU2026 = setembro/2026 -> IRONV2026 = outubro/2026 -> IRONX2026 = novembro/2026 ...) -->
+      <div class="widget-card">
+        <div class="wtitle">Minério de Ferro (CMC Markets)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CMCMARKETS:IRONU2026", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Itaú (ITUB4)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:ITUB4", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Bradesco (BBDC4)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:BBDC4", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">B3 (B3SA3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:B3SA3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Ambev (ABEV3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:ABEV3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">WEG (WEGE3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:WEGE3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">CSN (CSNA3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:CSNA3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Gerdau (GGBR4)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:GGBR4", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Suzano (SUZB3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:SUZB3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Banco do Brasil (BBAS3)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BMFBOVESPA:BBAS3", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="ad-thin">
+    <span class="ad-carousel-label" style="position:static; display:inline-block; margin-bottom:6px;">Publicidade</span>
+    <a href="https://www.amazon.com.br/deals?linkCode=ll2&tag=promo0874-20&linkId=df91b66ec16b7c1b166d77479cb3f9e9&ref_=as_li_ss_tl" target="_blank" rel="noopener sponsored">
+      <img src="ml-banner3.webp" alt="Amazon — Ofertas do dia, descontos por tempo limitado" class="ad-thin-img">
+    </a>
+  </div>
+
+  <section>
+    <h2>Global</h2>
+    <div class="widget-grid">
+
+      <div class="widget-card">
+        <div class="wtitle">Dollar Index (DXY)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:DXY", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">S&amp;P 500</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:US500", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">US 30 (Dow Jones)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:US30", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Nasdaq 100</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:US100", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Bitcoin (BTC/USD)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BITSTAMP:BTCUSD", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Ouro (Gold)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "TVC:GOLD", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Prata (Silver)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "TVC:SILVER", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Petróleo WTI</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "TVC:USOIL", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Ethereum (ETH/USD)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "BITSTAMP:ETHUSD", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Ásia</h2>
+    <div class="widget-grid">
+
+      <div class="widget-card">
+        <div class="wtitle">Shanghai Composite</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "SSE:000001", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Nikkei 225 (Japão)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "FOREXCOM:JP225", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+      <div class="widget-card">
+        <div class="wtitle">Hang Seng (Hong Kong)</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          { "symbol": "CAPITALCOM:HK50", "width": "100%", "height": 200, "locale": "br", "dateRange": "1D", "colorTheme": "dark", "isTransparent": true, "autosize": true }
+          </script>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="tag">Widget oficial — Investing.com</span>Calendário econômico do dia</h2>
+    <div class="embed-card">
+      <!--
+        CONFIGURAR: gere o código exato em
+        https://br.investing.com/webmaster-tools/economic-calendar
+        escolhendo tema escuro e os países de interesse (Brasil, EUA, China, Zona do Euro).
+        O snippet abaixo é o formato padrão do widget deles — confirme e ajuste os parâmetros
+        de cor/país/idioma no gerador oficial antes de publicar.
+        Widget não tem parâmetro de fonte, então o iframe é escalado via CSS (transform: scale)
+        para aumentar visualmente o texto sem cortar as colunas.
+      -->
+      <div class="fedcal-zoom-wrap">
+        <iframe class="fedcal-zoom-frame" src="https://sslecal2.investing.com/?ecoDayBackground=%23141c26&defaultFontColor=%23e8edf2&innerBorderColor=%23223041&columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=72,17,22,4,10,26,38,12,37,5,32&calType=day&timeZone=12&lang=12"
+          frameborder="0"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="tag">FearGreedChart.com</span>Fear &amp; Greed Index</h2>
+    <p class="section-note">Índice composto por 7 indicadores (momentum, amplitude e força de preços, opções put/call, volatilidade via VIX, demanda por junk bonds e por porto seguro) — não é só o VIX, é um termômetro mais amplo de sentimento.</p>
+    <div class="embed-card fg-grid" id="fgCard">
+      <div class="fg-side">
+        <strong style="color:var(--red); display:block; margin-bottom:6px;">Quando o Medo domina</strong>
+        Investidores fogem de ativos de risco, buscando proteção em dólar, ouro e títulos públicos. A volatilidade sobe e as quedas tendem a se acelerar — mas extremos de medo, historicamente, também marcam pontos de entrada interessantes pra quem opera contra o fluxo.
+      </div>
+      <div class="fg-gauge-col">
+        <svg id="fgGauge" viewBox="0 0 1536 1024">
+          <image href="fear-greed-bg.webp" x="0" y="0" width="1536" height="1024"/>
+          <!-- Ponteiro desenhado por cima, girando em torno do pino real da imagem (768, 758) -->
+          <g id="fgNeedleGroup" transform="rotate(-90 768 758)">
+            <polygon points="768,758 758,758 768,340 778,758" fill="#1e5fd9" stroke="#0f3a8a" stroke-width="2"/>
+            <circle cx="768" cy="758" r="34" fill="#1e5fd9" stroke="#0f3a8a" stroke-width="4"/>
+            <circle cx="768" cy="758" r="16" fill="#0b1f4d"/>
+          </g>
+        </svg>
+        <div style="font-size:2.4rem; font-weight:800; margin-top:2px;" id="fgValue">—</div>
+        <div style="font-size:0.9rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:4px 14px; border-radius:999px;" id="fgRating">Carregando...</div>
+      </div>
+      <div class="fg-side">
+        <strong style="color:var(--green); display:block; margin-bottom:6px;">Quando a Ganância domina</strong>
+        Investidores assumem mais risco, empurrando os preços pra cima mesmo com valuations esticados. A complacência aumenta e o mercado tende a ignorar sinais de alerta — extremos de ganância costumam anteceder correções.
+      </div>
+    </div>
+  </section>
+
+  <section id="fluxo-b3">
+    <h2><span class="tag">Dados de Mercado — B3 (manual)</span>Fluxo de Investidores</h2>
+    <p class="section-note">Saldo do pregão por tipo de investidor — Estrangeiro, Institucional, Pessoa física, Inst. Financeira e Outros (R$ milhões). Defasagem de D-2.</p>
+    <div class="manual-grid">
+      <div class="manual-card">
+        <div class="manual-label">Estrangeiro</div>
+        <div class="manual-value empty" id="val-fluxo_estrangeiro">Aguardando atualização.</div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Institucional</div>
+        <div class="manual-value empty" id="val-fluxo_institucional">Aguardando atualização.</div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Pessoa física</div>
+        <div class="manual-value empty" id="val-fluxo_pessoa_fisica">Aguardando atualização.</div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Inst. Financeira</div>
+        <div class="manual-value empty" id="val-fluxo_inst_financeira">Aguardando atualização.</div>
+      </div>
+      <div class="manual-card">
+        <div class="manual-label">Outros</div>
+        <div class="manual-value empty" id="val-fluxo_outros">Aguardando atualização.</div>
+      </div>
+    </div>
+    <div id="fluxoB3GraficoWrap" style="display:none; margin-top:16px;">
+      <img id="fluxoB3Grafico" style="width:100%; border-radius:10px; display:block;" alt="Gráfico de fluxo estrangeiro">
+    </div>
+    <div class="manual-updated" id="upd-fluxo-b3" style="margin-top:10px;"></div>
+  </section>
+
+  <div class="ad-thin-mp">
+    <span class="ad-carousel-label" style="position:static; display:inline-block; margin-bottom:6px;">Publicidade</span>
+    <a href="https://mpago.li/1M46MpN" target="_blank" rel="noopener sponsored" class="crop-box" style="display:block;">
+      <img src="mp-banner-maquininha.webp" alt="Mercado Pago — Point Smart 3, aceite todos os meios de pagamento com praticidade e segurança">
+    </a>
+  </div>
+
+  <section>
+    <h2><span class="tag">Polymarket</span>Panorama de mercado</h2>
+    <div id="polymarketPanels" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+      <div class="embed-card"><div class="election-name">Carregando mercados...</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="tag">CME FedWatch</span>Probabilidade Fed Funds</h2>
+    <img class="fedwatch-banner" src="fed-header.webp" alt="Decisão da taxa de juros do Fed — veja o que o mercado está precificando" loading="lazy">
+    <div class="fedwatch-grid" id="fedwatchGrid">
+      <div class="pm-card"><div class="pm-title">Carregando...</div></div>
+    </div>
+  </section>
+
+  <section id="painel-manual">
+    <h2>Suporte e Resistência do Dia</h2>
+
+    <div id="editBanner" style="display:none;" class="edit-banner">
+      Modo de edição ativo. Preencha os campos e clique em salvar — a atualização aparece para todos que acessarem o link, sem precisar recarregar a página.
+    </div>
+
+    <div class="sr-board" id="manualDisplay">
+      <img src="suporte-resistencia-bg.webp" alt="Quadro de suporte e resistência" class="sr-board-img">
+      <div class="sr-value" id="val-dolar_r3" style="left:36.8%; top:29.4%;"></div>
+      <div class="sr-value" id="val-dolar_r2" style="left:36.8%; top:40.0%;"></div>
+      <div class="sr-value" id="val-dolar_r1" style="left:36.8%; top:50.6%;"></div>
+      <div class="sr-value" id="val-indice_r3" style="left:79.4%; top:29.4%;"></div>
+      <div class="sr-value" id="val-indice_r2" style="left:79.4%; top:40.0%;"></div>
+      <div class="sr-value" id="val-indice_r1" style="left:79.4%; top:50.6%;"></div>
+      <div class="sr-value" id="val-dolar_divisor" style="left:36.8%; top:65.5%;"></div>
+      <div class="sr-value" id="val-indice_divisor" style="left:79.4%; top:65.5%;"></div>
+      <div class="sr-value" id="val-dolar_s1" style="left:36.8%; top:77.5%;"></div>
+      <div class="sr-value" id="val-dolar_s2" style="left:36.8%; top:85.7%;"></div>
+      <div class="sr-value" id="val-dolar_s3" style="left:36.8%; top:93.8%;"></div>
+      <div class="sr-value" id="val-indice_s1" style="left:79.4%; top:77.5%;"></div>
+      <div class="sr-value" id="val-indice_s2" style="left:79.4%; top:85.7%;"></div>
+      <div class="sr-value" id="val-indice_s3" style="left:79.4%; top:93.8%;"></div>
+    </div>
+    <div class="manual-updated" id="upd-suporte" style="text-align:center; margin-top:10px;"></div>
+
+    <div id="editFormWrap" style="display:none;">
+      <div class="edit-form" style="grid-template-columns:1fr 1fr; display:grid; gap:16px;">
+        <div style="grid-column:1 / -1;">
+          <label>Briefing do Dia (texto completo)</label>
+          <textarea id="input-briefing" placeholder="Cole aqui o briefing do pregão de hoje..." style="min-height:180px;"></textarea>
+        </div>
+        <div>
+          <label style="color:var(--red);">Dólar Futuro — Resistências</label>
+          <input type="text" id="input-dolar_r3" placeholder="R3">
+          <input type="text" id="input-dolar_r2" placeholder="R2" style="margin-top:6px;">
+          <input type="text" id="input-dolar_r1" placeholder="R1" style="margin-top:6px;">
+          <label style="color:var(--amber); margin-top:12px;">Dólar Futuro — Divisor do Dia</label>
+          <input type="text" id="input-dolar_divisor" placeholder="Ex: 5.130">
+          <label style="color:var(--green); margin-top:12px;">Dólar Futuro — Suportes</label>
+          <input type="text" id="input-dolar_s1" placeholder="S1">
+          <input type="text" id="input-dolar_s2" placeholder="S2" style="margin-top:6px;">
+          <input type="text" id="input-dolar_s3" placeholder="S3" style="margin-top:6px;">
+        </div>
+        <div>
+          <label style="color:var(--red);">Índice Futuro — Resistências</label>
+          <input type="text" id="input-indice_r3" placeholder="R3">
+          <input type="text" id="input-indice_r2" placeholder="R2" style="margin-top:6px;">
+          <input type="text" id="input-indice_r1" placeholder="R1" style="margin-top:6px;">
+          <label style="color:var(--amber); margin-top:12px;">Índice Futuro — Divisor do Dia</label>
+          <input type="text" id="input-indice_divisor" placeholder="Ex: 178.050">
+          <label style="color:var(--green); margin-top:12px;">Índice Futuro — Suportes</label>
+          <input type="text" id="input-indice_s1" placeholder="S1">
+          <input type="text" id="input-indice_s2" placeholder="S2" style="margin-top:6px;">
+          <input type="text" id="input-indice_s3" placeholder="S3" style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Fluxo B3 — Investidores (R$ milhões, consultar em dadosdemercado.com.br/fluxo)</label>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:10px;">
+            <input type="text" id="input-fluxo_estrangeiro" placeholder="Estrangeiro">
+            <input type="text" id="input-fluxo_institucional" placeholder="Institucional">
+            <input type="text" id="input-fluxo_pessoa_fisica" placeholder="Pessoa física">
+            <input type="text" id="input-fluxo_inst_financeira" placeholder="Inst. Financeira">
+            <input type="text" id="input-fluxo_outros" placeholder="Outros">
+          </div>
+          <div style="margin-top:10px;">
+            <label style="font-size:0.85rem;">Print do gráfico "Fluxo estrangeiro" (dadosdemercado.com.br/fluxo)</label>
+            <input type="file" id="input-fluxo_b3_grafico" accept="image/*">
+            <span id="fluxoB3GraficoStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          </div>
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Notícia urgente (opcional — vira o "Destaque do Trader"; deixe em branco pra voltar ao automático)</label>
+          <input type="text" id="input-featured_news_title" placeholder="Título a exibir">
+          <input type="text" id="input-featured_news_url" placeholder="https://..." style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Alerta do Dia (evento/notícia de alto impacto, ex: Payroll, FOMC, Copom — ou espaço de propaganda com ícone. Opcional, some sozinho se ficar em branco. Com imagem, a etiqueta vira "Um oferecimento de Painel do Trader"; sem imagem, vira "Alerta do Dia")</label>
+          <label style="font-size:0.85rem; margin-top:2px;">Imagem/ícone (opcional)</label>
+          <input type="file" id="input-alerta_imagem" accept="image/*">
+          <span id="alertaImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-alerta_titulo" placeholder="Título, ex: Payroll hoje às 9:30" style="margin-top:6px;">
+          <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Destaque para Apresentação / Parceiro 1 (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco)</label>
+          <input type="text" id="input-parceiro_tag" placeholder="Texto principal (etiqueta), ex: Patrocinado, Parceria, Apresenta">
+          <label style="font-size:0.85rem; margin-top:6px;">Imagem/logo (opcional)</label>
+          <input type="file" id="input-parceiro_imagem" accept="image/*">
+          <span id="parceiroImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-parceiro_titulo" placeholder="Título, ex: Dom Investimentos" style="margin-top:6px;">
+          <textarea id="input-parceiro_texto" placeholder="Descrição..." style="margin-top:6px; min-height:70px;"></textarea>
+          <input type="text" id="input-parceiro_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Destaque para Apresentação / Parceiro 2 (segundo quadro idêntico, pra ter dois parceiros ao mesmo tempo. Opcional, some sozinho se ficar em branco)</label>
+          <input type="text" id="input-parceiro2_tag" placeholder="Texto principal (etiqueta), ex: Patrocinado, Parceria, Apresenta">
+          <label style="font-size:0.85rem; margin-top:6px;">Imagem/logo (opcional)</label>
+          <input type="file" id="input-parceiro2_imagem" accept="image/*">
+          <span id="parceiro2ImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-parceiro2_titulo" placeholder="Título, ex: TopGain" style="margin-top:6px;">
+          <textarea id="input-parceiro2_texto" placeholder="Descrição..." style="margin-top:6px; min-height:70px;"></textarea>
+          <input type="text" id="input-parceiro2_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Fluxo por Investidor — Quantzed/XP (R$ milhões, à vista / futuro / total)</label>
+          <p style="font-size:0.8rem; color:var(--muted); margin:2px 0 8px;">Cole aqui o bloco de texto que o Claude te devolver — os 14 campos abaixo se preenchem sozinhos.</p>
+          <textarea id="input-fluxo_colar" rows="6" placeholder="Cole aqui o bloco de texto..." style="width:100%; font-family:monospace; font-size:0.85rem; margin-bottom:8px;"></textarea>
+          <div style="margin-bottom:10px;">
+            <button type="button" id="fluxoColarBtn" class="edit-save-btn" style="padding:6px 14px; font-size:0.85rem;">Preencher campos</button>
+            <span id="fluxoColarStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          </div>
+          <div style="display:grid; grid-template-columns: 90px repeat(3, 1fr); gap:8px; align-items:center; margin-top:6px;">
+            <span style="font-size:0.8rem; color:var(--muted);">Estrangeiro</span>
+            <input type="text" id="input-fluxo_estrangeiro_vista" placeholder="À vista">
+            <input type="text" id="input-fluxo_estrangeiro_futuro" placeholder="Futuro">
+            <input type="text" id="input-fluxo_estrangeiro_total" placeholder="Total">
+            <span style="font-size:0.8rem; color:var(--muted);">Institucional</span>
+            <input type="text" id="input-fluxo_institucional_vista" placeholder="À vista">
+            <input type="text" id="input-fluxo_institucional_futuro" placeholder="Futuro">
+            <input type="text" id="input-fluxo_institucional_total" placeholder="Total">
+            <span style="font-size:0.8rem; color:var(--muted);">Inst. Financeira</span>
+            <input type="text" id="input-fluxo_instfin_vista" placeholder="À vista">
+            <input type="text" id="input-fluxo_instfin_futuro" placeholder="Futuro">
+            <input type="text" id="input-fluxo_instfin_total" placeholder="Total">
+            <span style="font-size:0.8rem; color:var(--muted);">Pessoa física</span>
+            <input type="text" id="input-fluxo_pf_vista" placeholder="À vista">
+            <input type="text" id="input-fluxo_pf_futuro" placeholder="Futuro">
+            <input type="text" id="input-fluxo_pf_total" placeholder="Total">
+            <span style="font-size:0.8rem; color:var(--muted);">Outros</span>
+            <input type="text" id="input-fluxo_outros_vista" placeholder="À vista">
+            <span></span>
+            <input type="text" id="input-fluxo_outros_total" placeholder="Total">
+          </div>
+        </div>
+        <button class="edit-save-btn" id="saveBtn" style="grid-column:1 / -1;">Salvar atualização</button>
+        <div class="save-status" id="saveStatus" style="grid-column:1 / -1;"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="methodology">
+      <p><strong>Sobre este painel:</strong> índices, VIX, Bitcoin e minério de ferro vêm de widgets oficiais do TradingView. O calendário econômico e as notícias vêm de fontes oficiais da Investing.com. O panorama eleitoral vem da API pública do Polymarket. O Fear &amp; Greed Index é buscado direto da CNN.</p>
+    </div>
+  </section>
+
+</div>
+
+<aside class="sidebar-col">
+  <div class="sidebar-sticky">
+    <div class="sidebar-header">
+      <span class="sidebar-dot"></span>
+      <span>Notícias em tempo real</span>
+      <button id="popNewsBtn" class="pop-btn" title="Abrir em janela flutuante" onclick="popNewsWindow()">⤢</button>
+    </div>
+    <div class="chat-feed" id="chatFeed">
+      <div class="chat-msg">Carregando...</div>
+    </div>
+  </div>
+</aside>
+
+</div>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between; align-items:center;">
+    <span>© 2026 Morning do Trader — Todos os direitos reservados. Conteúdo próprio combinado com widgets oficiais de terceiros, sempre identificados.</span>
+    <a href="privacidade.html" style="color:var(--muted); text-decoration:underline; white-space:nowrap;">Política de Privacidade</a>
+  </div>
+</footer>
+
+<script>
+  // Cabeçalho (.nav) e barra de cotações (.ticker-sticky) agora ficam sticky
+  // JUNTOS no topo, um empilhado sobre o outro. A barra lateral (Notícias em
+  // tempo real) precisa ficar sempre abaixo dos dois, então medimos a altura
+  // real de cada um (em vez de chutar valor fixo) e ajustamos os dois via
+  // variável CSS.
+  (function(){
+    function updateStickyHeights(){
+      var nav = document.querySelector('.nav');
+      var ticker = document.querySelector('.ticker-sticky');
+      if (nav) {
+        document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px');
+      }
+      if (ticker) {
+        document.documentElement.style.setProperty('--ticker-h', ticker.offsetHeight + 'px');
+      }
+    }
+    window.addEventListener('load', updateStickyHeights);
+    window.addEventListener('resize', updateStickyHeights);
+    // Os widgets da TradingView carregam de forma assíncrona,
+    // então recalcula as alturas de novo logo após o load.
+    setTimeout(updateStickyHeights, 1500);
+  })();
+</script>
+
+<script>
+  // CONFIGURAR: troque pela URL real do seu Worker depois do deploy.
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+  const POLYMARKET_MARKETS = [
+    // Linha 1: risco político/monetário doméstico
+    { slug: "brazil-presidential-election", label: "Eleição presidencial no Brasil" },
+    { slug: "bank-of-brazil-decision-in-september-20260616232552895", label: "Decisão do Banco Central do Brasil em setembro" },
+    // Linha 2: risco monetário/geopolítico internacional
+    { slug: "fed-decision-in-september-762", label: "Decisão do Fed em setembro" },
+    { slug: "strait-of-hormuz-traffic-returns-to-normal-by-august-31-20260702154212320", label: "Tráfego no Estreito de Ormuz volta ao normal" },
+    // Linha 3: geopolítica Irã
+    { slug: "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080", label: "EUA anunciam fim do bloqueio iraniano" },
+    { slug: "iran-x-israelus-conflict-ends-by", label: "Guerra Irã-Israel termina em 2026" },
+    // Linha 4: mercado financeiro (EUA/cripto)
+    { slug: "us-recession-by-end-of-2026", label: "Recessão nos EUA até o fim de 2026" },
+    { slug: "what-price-will-bitcoin-hit-before-2027", label: "Meta de preço do Bitcoin em 2026" }
+  ];
+
+  // Saudação e status simples de mercado (B3: 10h-17h, seg-sex, horário de Brasília)
+  (function () {
+    const now = new Date();
+    const dias = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+    const dataFmt = now.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+    document.getElementById("greetingDate").textContent = "Bom dia — " + dias[now.getDay()] + ", " + dataFmt;
+
+    const hora = now.getHours();
+    const minuto = now.getMinutes();
+    const minutosAgora = hora * 60 + minuto;
+    const status = document.getElementById("marketStatus");
+    const diaUtil = now.getDay() >= 1 && now.getDay() <= 5;
+    if (diaUtil && minutosAgora >= 600 && minutosAgora < 1110) { // 10:00 as 18:30
+      status.innerHTML = '<span class="dot"></span>Mercado Aberto';
+      status.classList.remove("closed");
+    } else if (diaUtil && minutosAgora >= 540 && minutosAgora < 600) { // 9:00 as 10:00
+      status.innerHTML = '<span class="dot"></span>Pré-mercado — abre às 10h';
+      status.classList.remove("closed");
+    } else {
+      status.innerHTML = '<span class="dot"></span>Mercado Fechado';
+      status.classList.add("closed");
+    }
+  })();
+
+  // Painel manual: leitura pública
+  async function carregarPainelManual() {
+    try {
+      const resp = await fetch(WORKER_URL + "/api/manual-data");
+      const data = await resp.json();
+      preencherDisplay(data);
+    } catch (e) {
+      console.warn("Não foi possível carregar o painel manual (Worker ainda não configurado?)", e);
+    }
+  }
+
+  const SR_FIELDS = ["dolar_r3", "dolar_r2", "dolar_r1", "dolar_divisor", "indice_r3", "indice_r2", "indice_r1", "indice_divisor", "dolar_s1", "dolar_s2", "dolar_s3", "indice_s1", "indice_s2", "indice_s3"];
+  const FLUXO_FIELDS = ["fluxo_estrangeiro", "fluxo_institucional", "fluxo_pessoa_fisica", "fluxo_inst_financeira", "fluxo_outros"];
+  const FLUXO_CAMBIAL_FIELDS = [
+    "fluxo_estrangeiro_vista", "fluxo_estrangeiro_futuro", "fluxo_estrangeiro_total",
+    "fluxo_institucional_vista", "fluxo_institucional_futuro", "fluxo_institucional_total",
+    "fluxo_instfin_vista", "fluxo_instfin_futuro", "fluxo_instfin_total",
+    "fluxo_pf_vista", "fluxo_pf_futuro", "fluxo_pf_total",
+    "fluxo_outros_vista", "fluxo_outros_total"
+  ];
+
+  function preencherDisplay(data) {
+    window.__lastManualData = data;
+    SR_FIELDS.forEach(campo => {
+      const el = document.getElementById("val-" + campo);
+      if (el) el.textContent = data[campo] || "";
+      const inputEl = document.getElementById("input-" + campo);
+      if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
+    });
+
+    function preencherValorColorido(el, valor) {
+      if (!el) return;
+      if (valor) {
+        el.textContent = valor + " mi";
+        el.classList.remove("empty", "negative", "positive");
+        const negativo = valor.toString().trim().startsWith("-");
+        el.classList.add(negativo ? "negative" : "positive");
+      } else {
+        el.textContent = "Aguardando atualização.";
+        el.classList.remove("negative", "positive");
+        el.classList.add("empty");
+      }
+    }
+
+    FLUXO_FIELDS.forEach(campo => {
+      preencherValorColorido(document.getElementById("val-" + campo), data[campo]);
+      const inputEl = document.getElementById("input-" + campo);
+      if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
+    });
+
+    const graficoWrap = document.getElementById("fluxoB3GraficoWrap");
+    const graficoImg = document.getElementById("fluxoB3Grafico");
+    if (data.fluxo_b3_grafico) {
+      graficoImg.src = data.fluxo_b3_grafico;
+      graficoWrap.style.display = "block";
+    } else {
+      graficoWrap.style.display = "none";
+    }
+
+    FLUXO_CAMBIAL_FIELDS.forEach(campo => {
+      preencherValorColorido(document.getElementById("val-" + campo), data[campo]);
+      const inputEl = document.getElementById("input-" + campo);
+      if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
+    });
+
+    const briefingEl = document.getElementById("briefingTexto");
+    if (data.briefing && data.briefing.trim()) {
+      briefingEl.textContent = data.briefing;
+      briefingEl.classList.remove("empty");
+    } else {
+      briefingEl.textContent = "Aguardando atualização.";
+      briefingEl.classList.add("empty");
+    }
+    const briefingInput = document.getElementById("input-briefing");
+    if (briefingInput && !briefingInput.value) briefingInput.value = data.briefing || "";
+
+    // Noticia urgente manual: se preenchida, vira o "Destaque do Trader" com
+    // prioridade sobre a manchete automatica; se vazia, o automatico assume.
+    window.__featuredNews = (data.featured_news_url && data.featured_news_title)
+      ? { title: data.featured_news_title, url: data.featured_news_url }
+      : null;
+    renderNewsMarketList();
+    const featTitleInput = document.getElementById("input-featured_news_title");
+    if (featTitleInput && !featTitleInput.value) featTitleInput.value = data.featured_news_title || "";
+    const featUrlInput = document.getElementById("input-featured_news_url");
+    if (featUrlInput && !featUrlInput.value) featUrlInput.value = data.featured_news_url || "";
+
+    // Alerta do Dia: bloco opcional pra evento/noticia de alto impacto
+    // (Payroll, FOMC, Copom...) ou espaço de propaganda (ex: "Um oferecimento
+    // de Painel do Trader" + ícone). So aparece quando o titulo esta
+    // preenchido; some sozinho quando o campo volta a ficar em branco.
+    const alertaBox = document.getElementById("alertaDia");
+    if (data.alerta_titulo && data.alerta_titulo.trim()) {
+      const temImagem = !!(data.alerta_imagem && data.alerta_imagem.trim());
+      // Etiqueta automatica: com imagem, vira propaganda ("Um oferecimento de
+      // Painel do Trader"); sem imagem, vira alerta de mercado comum.
+      document.getElementById("alertaTag").textContent = temImagem ? "Um oferecimento de Painel do Trader" : "Alerta do Dia";
+      document.getElementById("alertaTitulo").textContent = data.alerta_titulo;
+      document.getElementById("alertaTexto").textContent = data.alerta_texto || "";
+      const alertaImgEl = document.getElementById("alertaImagem");
+      const alertaImagemLink = document.getElementById("alertaImagemLink");
+      const alertaTagLink = document.getElementById("alertaTagLink");
+      if (temImagem) {
+        alertaImgEl.src = data.alerta_imagem;
+        alertaImgEl.style.display = "block";
+        alertaImagemLink.style.display = "block";
+        // Modo propaganda: imagem e etiqueta viram link pro Painel do Trader.
+        alertaImagemLink.href = "https://paineldotrader.com.br/";
+        alertaImagemLink.target = "_blank";
+        alertaImagemLink.rel = "noopener";
+        alertaTagLink.href = "https://paineldotrader.com.br/";
+        alertaTagLink.target = "_blank";
+        alertaTagLink.rel = "noopener";
+      } else {
+        alertaImgEl.style.display = "none";
+        alertaImgEl.src = "";
+        alertaImagemLink.style.display = "none";
+        alertaImagemLink.removeAttribute("href");
+        alertaImagemLink.removeAttribute("target");
+        alertaImagemLink.removeAttribute("rel");
+        alertaTagLink.removeAttribute("href");
+        alertaTagLink.removeAttribute("target");
+        alertaTagLink.removeAttribute("rel");
+      }
+      alertaBox.style.display = "flex";
+    } else {
+      alertaBox.style.display = "none";
+    }
+    const alertaTituloInput = document.getElementById("input-alerta_titulo");
+    if (alertaTituloInput && !alertaTituloInput.value) alertaTituloInput.value = data.alerta_titulo || "";
+    const alertaTextoInput = document.getElementById("input-alerta_texto");
+    if (alertaTextoInput && !alertaTextoInput.value) alertaTextoInput.value = data.alerta_texto || "";
+
+    // Destaque para Apresentacao / Parceiro: bloco generico de propaganda
+    // pontual (ex: Dom Investimentos, TopGain) pra usar em apresentacoes e
+    // parcerias. So aparece quando parceiro_titulo esta preenchido; some
+    // sozinho quando o campo volta a ficar em branco. Etiqueta fixa "Patrocinado".
+    const parceiroBox = document.getElementById("destaqueParceiro");
+    if (data.parceiro_titulo && data.parceiro_titulo.trim()) {
+      document.getElementById("parceiroTag").textContent = (data.parceiro_tag && data.parceiro_tag.trim()) || "Patrocinado";
+      document.getElementById("parceiroTitulo").textContent = data.parceiro_titulo;
+      document.getElementById("parceiroTexto").textContent = data.parceiro_texto || "";
+      const parceiroImgEl = document.getElementById("parceiroImagem");
+      const parceiroImagemLink = document.getElementById("parceiroImagemLink");
+      const parceiroTagLink = document.getElementById("parceiroTagLink");
+      const temImagemParceiro = !!(data.parceiro_imagem && data.parceiro_imagem.trim());
+      if (temImagemParceiro) {
+        parceiroImgEl.src = data.parceiro_imagem;
+        parceiroImgEl.style.display = "block";
+        parceiroImagemLink.style.display = "flex";
+      } else {
+        parceiroImgEl.style.display = "none";
+        parceiroImgEl.src = "";
+        parceiroImagemLink.style.display = "none";
+      }
+      const temLinkParceiro = !!(data.parceiro_link && data.parceiro_link.trim());
+      if (temLinkParceiro) {
+        parceiroImagemLink.href = data.parceiro_link;
+        parceiroImagemLink.target = "_blank";
+        parceiroImagemLink.rel = "noopener sponsored";
+        parceiroTagLink.href = data.parceiro_link;
+        parceiroTagLink.target = "_blank";
+        parceiroTagLink.rel = "noopener sponsored";
+      } else {
+        parceiroImagemLink.removeAttribute("href");
+        parceiroImagemLink.removeAttribute("target");
+        parceiroImagemLink.removeAttribute("rel");
+        parceiroTagLink.removeAttribute("href");
+        parceiroTagLink.removeAttribute("target");
+        parceiroTagLink.removeAttribute("rel");
+      }
+      parceiroBox.style.display = "flex";
+    } else {
+      parceiroBox.style.display = "none";
+    }
+    const parceiroTagInput = document.getElementById("input-parceiro_tag");
+    if (parceiroTagInput && !parceiroTagInput.value) parceiroTagInput.value = data.parceiro_tag || "";
+    const parceiroTituloInput = document.getElementById("input-parceiro_titulo");
+    if (parceiroTituloInput && !parceiroTituloInput.value) parceiroTituloInput.value = data.parceiro_titulo || "";
+    const parceiroTextoInput = document.getElementById("input-parceiro_texto");
+    if (parceiroTextoInput && !parceiroTextoInput.value) parceiroTextoInput.value = data.parceiro_texto || "";
+    const parceiroLinkInput = document.getElementById("input-parceiro_link");
+    if (parceiroLinkInput && !parceiroLinkInput.value) parceiroLinkInput.value = data.parceiro_link || "";
+
+    // Destaque para Apresentacao / Parceiro 2: segundo quadro identico ao
+    // primeiro, pra ter dois parceiros em destaque ao mesmo tempo.
+    const parceiro2Box = document.getElementById("destaqueParceiro2");
+    if (data.parceiro2_titulo && data.parceiro2_titulo.trim()) {
+      document.getElementById("parceiro2Tag").textContent = (data.parceiro2_tag && data.parceiro2_tag.trim()) || "Patrocinado";
+      document.getElementById("parceiro2Titulo").textContent = data.parceiro2_titulo;
+      document.getElementById("parceiro2Texto").textContent = data.parceiro2_texto || "";
+      const parceiro2ImgEl = document.getElementById("parceiro2Imagem");
+      const parceiro2ImagemLink = document.getElementById("parceiro2ImagemLink");
+      const parceiro2TagLink = document.getElementById("parceiro2TagLink");
+      const temImagemParceiro2 = !!(data.parceiro2_imagem && data.parceiro2_imagem.trim());
+      if (temImagemParceiro2) {
+        parceiro2ImgEl.src = data.parceiro2_imagem;
+        parceiro2ImgEl.style.display = "block";
+        parceiro2ImagemLink.style.display = "flex";
+      } else {
+        parceiro2ImgEl.style.display = "none";
+        parceiro2ImgEl.src = "";
+        parceiro2ImagemLink.style.display = "none";
+      }
+      const temLinkParceiro2 = !!(data.parceiro2_link && data.parceiro2_link.trim());
+      if (temLinkParceiro2) {
+        parceiro2ImagemLink.href = data.parceiro2_link;
+        parceiro2ImagemLink.target = "_blank";
+        parceiro2ImagemLink.rel = "noopener sponsored";
+        parceiro2TagLink.href = data.parceiro2_link;
+        parceiro2TagLink.target = "_blank";
+        parceiro2TagLink.rel = "noopener sponsored";
+      } else {
+        parceiro2ImagemLink.removeAttribute("href");
+        parceiro2ImagemLink.removeAttribute("target");
+        parceiro2ImagemLink.removeAttribute("rel");
+        parceiro2TagLink.removeAttribute("href");
+        parceiro2TagLink.removeAttribute("target");
+        parceiro2TagLink.removeAttribute("rel");
+      }
+      parceiro2Box.style.display = "flex";
+    } else {
+      parceiro2Box.style.display = "none";
+    }
+    const parceiro2TagInput = document.getElementById("input-parceiro2_tag");
+    if (parceiro2TagInput && !parceiro2TagInput.value) parceiro2TagInput.value = data.parceiro2_tag || "";
+    const parceiro2TituloInput = document.getElementById("input-parceiro2_titulo");
+    if (parceiro2TituloInput && !parceiro2TituloInput.value) parceiro2TituloInput.value = data.parceiro2_titulo || "";
+    const parceiro2TextoInput = document.getElementById("input-parceiro2_texto");
+    if (parceiro2TextoInput && !parceiro2TextoInput.value) parceiro2TextoInput.value = data.parceiro2_texto || "";
+    const parceiro2LinkInput = document.getElementById("input-parceiro2_link");
+    if (parceiro2LinkInput && !parceiro2LinkInput.value) parceiro2LinkInput.value = data.parceiro2_link || "";
+
+    if (data.atualizado_em) {
+      const upd = new Date(data.atualizado_em).toLocaleString("pt-BR");
+      document.getElementById("upd-suporte").textContent = "Atualizado em " + upd;
+      document.getElementById("upd-briefing").textContent = "Atualizado em " + upd;
+      document.getElementById("upd-fluxo-b3").textContent = "Atualizado em " + upd;
+      document.getElementById("upd-fluxo-cambial").textContent = "Atualizado em " + upd;
+    }
+  }
+
+  // Modo de edição via ?editar=CHAVE na URL
+  function iniciarModoEdicao() {
+    const params = new URLSearchParams(window.location.search);
+    const chave = params.get("editar");
+    if (!chave) return;
+
+    document.getElementById("editBanner").style.display = "block";
+    document.getElementById("editFormWrap").style.display = "block";
+
+    // Distribui o bloco de texto colado ("Fluxo por Investidor") pelos 14 campos,
+    // sem salvar nada sozinho — só preenche pra o usuário conferir antes de clicar
+    // em "Salvar atualização". Formato esperado, uma linha por categoria:
+    //   ESTRANGEIRO: vista=1760.04 futuro=-1086.73 total=673.31
+    //   OUTROS: vista=126.64 total=126.64   (Outros não tem "futuro")
+    document.getElementById("fluxoColarBtn").addEventListener("click", () => {
+      const texto = document.getElementById("input-fluxo_colar").value;
+      const status = document.getElementById("fluxoColarStatus");
+      const mapaCategorias = {
+        ESTRANGEIRO: "fluxo_estrangeiro",
+        INSTITUCIONAL: "fluxo_institucional",
+        INSTFIN: "fluxo_instfin",
+        PF: "fluxo_pf",
+        OUTROS: "fluxo_outros",
+      };
+      let preenchidos = 0;
+      texto.split("\n").forEach(linha => {
+        const catMatch = linha.match(/^\s*([A-ZÇÃÕa-zçãõ]+)\s*:/);
+        if (!catMatch) return;
+        const prefixo = mapaCategorias[catMatch[1].toUpperCase()];
+        if (!prefixo) return;
+        ["vista", "futuro", "total"].forEach(sub => {
+          const valMatch = linha.match(new RegExp(sub + "\\s*=\\s*(-?[0-9.,]+)", "i"));
+          if (valMatch) {
+            const el = document.getElementById("input-" + prefixo + "_" + sub);
+            if (el) { el.value = valMatch[1]; preenchidos++; }
+          }
+        });
+      });
+      status.textContent = preenchidos > 0
+        ? preenchidos + " campos preenchidos — confira os valores abaixo antes de salvar."
+        : "Nada reconhecido nesse texto. Confira o formato.";
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      const body = { briefing: document.getElementById("input-briefing").value };
+      SR_FIELDS.forEach(campo => {
+        const el = document.getElementById("input-" + campo);
+        if (el) body[campo] = el.value;
+      });
+      FLUXO_FIELDS.forEach(campo => {
+        const el = document.getElementById("input-" + campo);
+        if (el) body[campo] = el.value;
+      });
+      body.featured_news_title = document.getElementById("input-featured_news_title").value;
+      body.featured_news_url = document.getElementById("input-featured_news_url").value;
+      body.alerta_titulo = document.getElementById("input-alerta_titulo").value;
+      body.alerta_texto = document.getElementById("input-alerta_texto").value;
+
+      const alertaImagemInput = document.getElementById("input-alerta_imagem");
+      const alertaImagemStatus = document.getElementById("alertaImagemStatus");
+      if (alertaImagemInput.files && alertaImagemInput.files[0]) {
+        alertaImagemStatus.textContent = "Convertendo imagem...";
+        body.alerta_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(alertaImagemInput.files[0]);
+        });
+        alertaImagemStatus.textContent = "";
+      } else {
+        body.alerta_imagem = (window.__lastManualData && window.__lastManualData.alerta_imagem) || "";
+      }
+
+      body.parceiro_tag = document.getElementById("input-parceiro_tag").value;
+      body.parceiro_titulo = document.getElementById("input-parceiro_titulo").value;
+      body.parceiro_texto = document.getElementById("input-parceiro_texto").value;
+      body.parceiro_link = document.getElementById("input-parceiro_link").value;
+
+      const parceiroImagemInput = document.getElementById("input-parceiro_imagem");
+      const parceiroImagemStatus = document.getElementById("parceiroImagemStatus");
+      if (parceiroImagemInput.files && parceiroImagemInput.files[0]) {
+        parceiroImagemStatus.textContent = "Convertendo imagem...";
+        body.parceiro_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(parceiroImagemInput.files[0]);
+        });
+        parceiroImagemStatus.textContent = "";
+      } else {
+        body.parceiro_imagem = (window.__lastManualData && window.__lastManualData.parceiro_imagem) || "";
+      }
+
+      body.parceiro2_tag = document.getElementById("input-parceiro2_tag").value;
+      body.parceiro2_titulo = document.getElementById("input-parceiro2_titulo").value;
+      body.parceiro2_texto = document.getElementById("input-parceiro2_texto").value;
+      body.parceiro2_link = document.getElementById("input-parceiro2_link").value;
+
+      const parceiro2ImagemInput = document.getElementById("input-parceiro2_imagem");
+      const parceiro2ImagemStatus = document.getElementById("parceiro2ImagemStatus");
+      if (parceiro2ImagemInput.files && parceiro2ImagemInput.files[0]) {
+        parceiro2ImagemStatus.textContent = "Convertendo imagem...";
+        body.parceiro2_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(parceiro2ImagemInput.files[0]);
+        });
+        parceiro2ImagemStatus.textContent = "";
+      } else {
+        body.parceiro2_imagem = (window.__lastManualData && window.__lastManualData.parceiro2_imagem) || "";
+      }
+
+      const graficoInput = document.getElementById("input-fluxo_b3_grafico");
+      const graficoStatus = document.getElementById("fluxoB3GraficoStatus");
+      if (graficoInput.files && graficoInput.files[0]) {
+        graficoStatus.textContent = "Convertendo imagem...";
+        body.fluxo_b3_grafico = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(graficoInput.files[0]);
+        });
+        graficoStatus.textContent = "";
+      } else {
+        body.fluxo_b3_grafico = (window.__lastManualData && window.__lastManualData.fluxo_b3_grafico) || "";
+      }
+
+      FLUXO_CAMBIAL_FIELDS.forEach(campo => {
+        const el = document.getElementById("input-" + campo);
+        if (el) body[campo] = el.value;
+      });
+      const statusEl = document.getElementById("saveStatus");
+      statusEl.textContent = "Salvando...";
+      statusEl.className = "save-status";
+      try {
+        const resp = await fetch(WORKER_URL + "/api/manual-data?chave=" + encodeURIComponent(chave), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        if (!resp.ok) throw new Error("Chave inválida ou erro no servidor");
+        const data = await resp.json();
+        preencherDisplay(data);
+        statusEl.textContent = "Salvo com sucesso.";
+        statusEl.className = "save-status ok";
+      } catch (e) {
+        statusEl.textContent = "Erro ao salvar: " + e.message;
+        statusEl.className = "save-status err";
+      }
+    });
+  }
+
+  // Polymarket - via proxy do nosso Worker (gamma-api.polymarket.com e' bloqueada
+  // para conexoes brasileiras pela Anatel/Polymarket, entao o Worker busca por nos).
+  async function fetchComRetry(url, tentativas = 2) {
+    let ultimoErro;
+    for (let i = 0; i < tentativas; i++) {
+      try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        return await resp.json();
+      } catch (e) {
+        ultimoErro = e;
+        if (i < tentativas - 1) await new Promise(r => setTimeout(r, 1200));
+      }
+    }
+    throw ultimoErro;
+  }
+
+  async function carregarUmMercado(mkt) {
+    try {
+      const events = await fetchComRetry(WORKER_URL + "/api/polymarket?slug=" + encodeURIComponent(mkt.slug));
+      if (!events || !events.length) throw new Error("mercado nao encontrado");
+      const evento = events[0];
+      const markets = evento.markets || [];
+      // So' considera sub-mercados ainda abertos - um mercado fechado (closed:true) ja'
+      // tem resultado definitivo e nao representa mais uma probabilidade "ao vivo".
+      // Mostrar isso junto com os abertos e' o que causava varias opcoes empatadas em 100%.
+      const abertos = markets.filter(m => !m.closed);
+      if (evento.closed || !abertos.length) {
+        return `<div class="pm-card"><div class="pm-title">${mkt.label}</div><div class="election-note">Mercado encerrado.</div></div>`;
+      }
+      const comProbabilidade = abertos.map(m => {
+        let pct = 0;
+        try {
+          const prices = JSON.parse(m.outcomePrices || "[]");
+          if (prices[0]) pct = parseFloat(prices[0]) * 100;
+        } catch (e) {}
+        const TERMOS = { January:"Janeiro", February:"Fevereiro", March:"Março", April:"Abril",
+          May:"Maio", June:"Junho", July:"Julho", August:"Agosto", September:"Setembro",
+          October:"Outubro", November:"Novembro", December:"Dezembro",
+          "Yes":"Sim", "No":"Não" };
+        let nome = m.groupItemTitle || m.question || "Opcao";
+        // termos de decisao de juros: cobre qualquer variacao de maiusc./espaco
+        nome = nome.replace(/no change/gi, "Sem mudança");
+        nome = nome.replace(/(\d+\+?)\s*bps\s*increase/gi, "Aumento de $1 pontos-base");
+        nome = nome.replace(/(\d+\+?)\s*bps\s*decrease/gi, "Redução de $1 pontos-base");
+        Object.keys(TERMOS).sort((a,b) => b.length - a.length).forEach(en => {
+          nome = nome.replace(new RegExp("\\b" + en + "\\b", "g"), TERMOS[en]);
+        });
+        return { nome, pct };
+      });
+      comProbabilidade.sort((a, b) => b.pct - a.pct); // maior probabilidade primeiro
+      const linhas = comProbabilidade.slice(0, 5).map(item => {
+        return `<div class="pm-row">
+          <div class="pm-row-top"><span class="pm-row-label">${item.nome}</span><span class="pm-row-pct">${item.pct.toFixed(1)}%</span></div>
+          <div class="pm-bar-track"><div class="pm-bar-fill" style="width:${item.pct}%"></div></div>
+        </div>`;
+      }).join("");
+      return `<div class="pm-card"><div class="pm-title">${mkt.label}</div>${linhas || '<div class="election-note">Sem dados de mercado no momento.</div>'}</div>`;
+    } catch (e) {
+      console.error("Polymarket - falha ao carregar mercado:", mkt.slug, e);
+      return `<div class="pm-card"><div class="pm-title">${mkt.label}</div><div class="election-note">Nao foi possivel carregar este mercado.</div></div>`;
+    }
+  }
+
+  async function carregarPolymarket() {
+    const wrap = document.getElementById("polymarketPanels");
+    const resultados = await Promise.all(POLYMARKET_MARKETS.map(carregarUmMercado));
+    const bannerPesquisas = `<a href="https://flex.pollingdata.com.br/" target="_blank" rel="noopener" style="display:block; border-radius:12px; overflow:hidden;">
+      <img src="pesquisas-eleitorais-banner.webp" alt="Pesquisas eleitorais 2026 — média ponderada, PollingData" style="width:100%; display:block;">
+    </a>`;
+    wrap.innerHTML = resultados.join("") + bannerPesquisas;
+  }
+
+  // Fear & Greed - painel proprio, sem depender de iframe de terceiro
+  async function carregarFearGreed() {
+    const needleGroup = document.getElementById("fgNeedleGroup");
+    const valEl = document.getElementById("fgValue");
+    const ratingEl = document.getElementById("fgRating");
+    try {
+      const resp = await fetch(WORKER_URL + "/api/fear-greed");
+      const data = await resp.json();
+      const score = Math.max(0, Math.min(100, data.score));
+      const angle = -90 + (score / 100) * 180;
+      needleGroup.setAttribute("transform", `rotate(${angle} 768 758)`);
+      valEl.textContent = Math.round(score);
+      const traducoes = {
+        "extreme fear": "Medo Extremo",
+        "fear": "Medo",
+        "neutral": "Neutro",
+        "greed": "Ganância",
+        "extreme greed": "Ganância Extrema"
+      };
+      const cores = {
+        "extreme fear": { bg: "rgba(229,72,77,0.15)", fg: "#e5484d" },
+        "fear": { bg: "rgba(245,130,74,0.15)", fg: "#f5824a" },
+        "neutral": { bg: "rgba(245,217,35,0.15)", fg: "#f5d923" },
+        "greed": { bg: "rgba(168,217,35,0.15)", fg: "#a8d923" },
+        "extreme greed": { bg: "rgba(62,207,142,0.15)", fg: "#3ecf8e" }
+      };
+      const chave = (data.rating || "").toLowerCase();
+      ratingEl.textContent = traducoes[chave] || data.rating || "";
+      const cor = cores[chave] || { bg: "transparent", fg: "#e8edf2" };
+      ratingEl.style.color = cor.fg;
+      ratingEl.style.background = cor.bg;
+    } catch (e) {
+      ratingEl.textContent = "Indisponível";
+      ratingEl.style.background = "transparent";
+      console.warn("Fear & Greed: worker ainda nao configurado?", e);
+    }
+  }
+
+  async function carregarFedWatch() {
+    const grid = document.getElementById("fedwatchGrid");
+    try {
+      const resp = await fetch(WORKER_URL + "/api/fedwatch-data");
+      const data = await resp.json();
+      const reunioes = data.reunioes || [];
+
+      if (reunioes.length === 0) {
+        grid.innerHTML = `<div class="pm-card"><div class="pm-title">Sem dados ainda — aguardando primeira atualização.</div></div>`;
+        return;
+      }
+
+      const meses = { Jan: "jan", Feb: "fev", Mar: "mar", Apr: "abr", May: "mai", Jun: "jun", Jul: "jul", Aug: "ago", Sep: "set", Oct: "out", Nov: "nov", Dec: "dez" };
+
+      function formatarData(dataStr) {
+        // Ex.: "Sep 16, 2026 02:00PM ET" -> "16/set/2026"
+        const m = dataStr.match(/([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})/);
+        if (!m) return dataStr;
+        const mes = meses[m[1]] || m[1].toLowerCase();
+        return `${m[2].padStart(2, "0")}/${mes}/${m[3]}`;
+      }
+
+      grid.innerHTML = reunioes.map(r => {
+        const linhas = r.faixas.map(f => `
+          <div class="pm-row">
+            <div class="pm-row-top"><span class="pm-row-label">${f.faixa.replace("-", "–")}</span><span class="pm-row-pct">${f.probabilidade.toFixed(1).replace(".", ",")}%</span></div>
+            <div class="pm-bar-track"><div class="pm-bar-fill" style="width:${f.probabilidade}%"></div></div>
+          </div>
+        `).join("");
+
+        return `
+          <div class="pm-card">
+            <div class="pm-title">Reunião de ${formatarData(r.data)}</div>
+            ${linhas}
+          </div>
+        `;
+      }).join("");
+
+    } catch (e) {
+      grid.innerHTML = `<div class="pm-card"><div class="pm-title">Indisponível no momento.</div></div>`;
+      console.warn("FedWatch: erro ao carregar", e);
+    }
+  }
+
+  carregarPainelManual();
+  iniciarModoEdicao();
+  carregarPolymarket();
+  carregarFearGreed();
+  carregarFedWatch();
+
+  // Noticias via RSS (Investing.com), lidas pelo Worker
+  let __newsMarketItems = [];
+
+  function renderNewsMarketList() {
+    const list = document.getElementById("newsMarketList");
+    if (!list) return;
+    const itens = [...__newsMarketItems];
+    if (window.__featuredNews) {
+      // Noticia urgente preenchida a mao tem prioridade sobre a automatica.
+      itens.unshift({ title: window.__featuredNews.title, link: window.__featuredNews.url, destaque: true, manual: true });
+    } else if (itens.length) {
+      // Sem override manual: a mais recente do feed vira o "Destaque" automaticamente.
+      itens[0] = { ...itens[0], destaque: true };
+    }
+    if (!itens.length) {
+      list.innerHTML = '<li style="color:var(--muted); font-size:0.9rem;">Carregando...</li>';
+      return;
+    }
+    list.innerHTML = itens.slice(0, 8).map(item => {
+      const badge = item.destaque
+        ? '<span style="font-size:0.68rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--amber); font-weight:700; margin-right:6px;">Destaque do Trader</span>'
+        : '';
+      // O item em Destaque SEMPRE leva pra pagina propria de noticias, manual
+      // ou automatico - se for manual, a noticia urgente aparece fixada no
+      // topo dela mesma (ver noticias.html).
+      const href = item.destaque ? "noticias.html" : item.link;
+      const target = item.destaque ? "" : ' target="_blank" rel="noopener"';
+      return `<li>${badge}<a href="${href}"${target}>${item.title}</a></li>`;
+    }).join("");
+  }
+
+  async function carregarNoticias(endpoint, listId) {
+    const list = document.getElementById(listId);
+    try {
+      const resp = await fetch(WORKER_URL + endpoint);
+      const items = await resp.json();
+      if (!items || !items.length) throw new Error("vazio");
+      if (listId === "newsMarketList") {
+        __newsMarketItems = items;
+        renderNewsMarketList();
+      } else {
+        list.innerHTML = items.slice(0, 8).map(item =>
+          `<li><a href="${item.link}" target="_blank" rel="noopener">${item.title}</a></li>`
+        ).join("");
+      }
+    } catch (e) {
+      list.innerHTML = '<li style="color:var(--muted); font-size:0.9rem;">Indisponivel (configure o Worker)</li>';
+      console.warn(listId + ": worker ainda nao configurado?", e);
+    }
+  }
+  carregarNoticias("/api/news-market", "newsMarketList");
+  carregarNoticias("/api/news-corp", "newsCorpList");
+
+  // Telegram - canal publico, via Worker
+  const chatFeedEl = document.getElementById("chatFeed"); // referência fixa: continua funcionando mesmo se o bloco for movido pra janela PiP
+  async function carregarTelegram() {
+    const feed = chatFeedEl;
+    try {
+      const resp = await fetch(WORKER_URL + "/api/telegram-news");
+      const items = await resp.json();
+      if (!items || !items.length) throw new Error("vazio");
+      feed.innerHTML = items.map(item =>
+        `<div class="chat-msg"><span class="chat-time">${item.hora}</span>${item.texto}</div>`
+      ).join("");
+    } catch (e) {
+      feed.innerHTML = '<div class="chat-msg" style="color:var(--muted);">Indisponível no momento.</div>';
+      console.warn("Telegram: worker ainda nao configurado?", e);
+    }
+  }
+  carregarTelegram();
+  setInterval(carregarTelegram, 60000); // atualiza sozinho a cada 60 segundos
+
+  // Pop-out do bloco de notícias: usa Document Picture-in-Picture (Chrome/Edge) para
+  // abrir o bloco numa janelinha flutuante que fica por cima de todos os apps do computador,
+  // sem interromper a atualização (mesma referência de JS, só muda o documento que exibe).
+  // Se o navegador não suportar (Firefox/Safari), abre uma janela pop-up normal como alternativa.
+  async function popNewsWindow() {
+    const sidebarBlock = document.querySelector(".sidebar-sticky");
+    const btn = document.getElementById("popNewsBtn");
+
+    if ("documentPictureInPicture" in window) {
+      try {
+        const pipWindow = await window.documentPictureInPicture.requestWindow({
+          width: 380, height: 640
+        });
+        // copia todo o CSS da página pra janela flutuante manter a aparência
+        [...document.styleSheets].forEach(styleSheet => {
+          try {
+            const rules = [...styleSheet.cssRules].map(r => r.cssText).join("");
+            const style = document.createElement("style");
+            style.textContent = rules;
+            pipWindow.document.head.appendChild(style);
+          } catch (e) {
+            if (styleSheet.href) {
+              const link = document.createElement("link");
+              link.rel = "stylesheet";
+              link.href = styleSheet.href;
+              pipWindow.document.head.appendChild(link);
+            }
+          }
+        });
+        pipWindow.document.body.style.background = "var(--bg)";
+        pipWindow.document.body.style.margin = "0";
+        pipWindow.document.body.style.padding = "10px";
+        sidebarBlock.style.position = "static";
+        sidebarBlock.style.maxHeight = "100%";
+        sidebarBlock.style.height = "calc(100vh - 20px)";
+        pipWindow.document.body.appendChild(sidebarBlock);
+        btn.style.display = "none";
+
+        pipWindow.addEventListener("pagehide", () => {
+          // devolve o bloco pro site quando a janela flutuante for fechada
+          sidebarBlock.style.position = "";
+          sidebarBlock.style.maxHeight = "";
+          sidebarBlock.style.height = "";
+          document.querySelector(".sidebar-col").appendChild(sidebarBlock);
+          btn.style.display = "";
+        }, { once: true });
+      } catch (e) {
+        console.warn("Picture-in-Picture falhou, usando pop-up normal.", e);
+        abrirPopupNoticias();
+      }
+    } else {
+      abrirPopupNoticias();
+    }
+  }
+
+  // Alternativa pra navegadores sem suporte a Document Picture-in-Picture (Firefox, Safari)
+  function abrirPopupNoticias() {
+    const popup = window.open("", "morningTraderNoticias", "width=400,height=650,popup=yes");
+    if (!popup) {
+      alert("Seu navegador bloqueou a janela pop-up. Permita pop-ups para este site e tente de novo.");
+      return;
+    }
+    popup.document.write(`
+      <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Notícias — Morning do Trader</title>
+      <style>
+        body{background:#0b0f14; color:#e8edf2; font-family:Arial, sans-serif; margin:0; padding:14px;}
+        .chat-msg{font-size:0.85rem; color:#c9d4de; line-height:1.4; padding-bottom:10px; margin-bottom:10px; border-bottom:1px solid #223041;}
+        .chat-time{color:#3ecf8e; font-weight:700; margin-right:6px;}
+      </style></head><body>
+        <div id="feed">Carregando...</div>
+        <script>
+          async function carregar(){
+            try{
+              const r = await fetch("${WORKER_URL}/api/telegram-news");
+              const items = await r.json();
+              document.getElementById("feed").innerHTML = items.map(i =>
+                '<div class="chat-msg"><span class="chat-time">'+i.hora+'</span>'+i.texto+'</div>'
+              ).join("");
+            }catch(e){
+              document.getElementById("feed").innerHTML = '<div class="chat-msg">Indisponível no momento.</div>';
+            }
+          }
+          carregar();
+          setInterval(carregar, 60000);
+        <\/script>
+      </body></html>
+    `);
+    popup.document.close();
+  }
+</script>
+
+</body>
+</html>
