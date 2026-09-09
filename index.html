@@ -345,29 +345,37 @@
     .alert-banner .alert-icon{width:44px; height:44px;}
   }
   /* Destaque para Apresentacao / Parceiro: cards de patrocinio pontuais pra
-     parcerias/reunioes (ex: Dom Investimentos, TopGain). Layout vertical e
-     centralizado, com a logo grande e sem corte (contain), pensado pra
-     mostrar bem qualquer proporcao de logo. Ate 2 quadros identicos, um
-     por parceiro. */
+     parcerias/reunioes (ex: Dom Investimentos, TopGain). Layout dividido:
+     logo ocupando a altura toda e metade da largura do quadro, do lado
+     esquerdo, texto na lateral direita. Ate 2 quadros identicos, um por
+     parceiro, cada um em um lugar diferente da pagina. */
   .parceiro-banner{
-    display:flex; flex-direction:column; align-items:center; text-align:center;
-    gap:14px; margin-bottom:18px; padding:26px 22px; border-radius:12px;
+    display:flex; flex-direction:row; align-items:stretch;
+    margin-bottom:18px; border-radius:12px; overflow:hidden;
     background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
     border:1px solid var(--amber);
+    min-height:150px;
+  }
+  .parceiro-banner .parceiro-logo-wrap{
+    width:50%; flex-shrink:0; display:none; align-items:center; justify-content:center;
+    padding:18px;
   }
   .parceiro-banner .parceiro-logo{
-    max-width:220px; max-height:110px; width:auto; height:auto; object-fit:contain;
-    background:#f4f4f2; border-radius:10px; padding:12px;
+    max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain;
   }
-  .parceiro-banner .parceiro-content{max-width:560px;}
+  .parceiro-banner .parceiro-content{
+    flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center;
+    padding:20px 24px;
+  }
   .parceiro-banner .parceiro-tag{
     font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
     color:var(--amber); display:block; margin-bottom:8px;
   }
-  .parceiro-banner .parceiro-titulo{font-size:1.25rem; font-weight:700; margin:0 0 8px; line-height:1.35; color:var(--text);}
-  .parceiro-banner .parceiro-texto{font-size:0.95rem; color:#c9d4de; margin:0; white-space:pre-wrap;}
-  @media (max-width:480px){
-    .parceiro-banner .parceiro-logo{max-width:160px; max-height:80px; padding:8px;}
+  .parceiro-banner .parceiro-titulo{font-size:1.2rem; font-weight:700; margin:0 0 8px; line-height:1.35; color:var(--text);}
+  .parceiro-banner .parceiro-texto{font-size:0.92rem; color:#c9d4de; margin:0; white-space:pre-wrap;}
+  @media (max-width:600px){
+    .parceiro-banner{flex-direction:column;}
+    .parceiro-banner .parceiro-logo-wrap{width:100%; min-height:110px; padding:14px;}
   }
   .edit-form{display:grid; gap:12px; margin-top:10px;}
   .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
@@ -502,6 +510,19 @@
     </div>
   </div>
 
+  <div class="parceiro-banner" id="destaqueParceiro" style="display:none;">
+    <a id="parceiroImagemLink" class="parceiro-logo-wrap" style="display:none;">
+      <img class="parceiro-logo" id="parceiroImagem" src="" alt="">
+    </a>
+    <div class="parceiro-content">
+      <a id="parceiroTagLink" style="text-decoration:none;">
+        <span class="parceiro-tag" id="parceiroTag">Patrocinado</span>
+      </a>
+      <p class="parceiro-titulo" id="parceiroTitulo"></p>
+      <p class="parceiro-texto" id="parceiroTexto"></p>
+    </div>
+  </div>
+
   <section id="briefing-do-dia">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; margin-bottom:22px;">
       <div>
@@ -544,21 +565,8 @@
     </div>
   </section>
 
-  <div class="parceiro-banner" id="destaqueParceiro" style="display:none;">
-    <a id="parceiroImagemLink" style="display:none;">
-      <img class="parceiro-logo" id="parceiroImagem" src="" alt="">
-    </a>
-    <div class="parceiro-content">
-      <a id="parceiroTagLink" style="text-decoration:none;">
-        <span class="parceiro-tag" id="parceiroTag">Patrocinado</span>
-      </a>
-      <p class="parceiro-titulo" id="parceiroTitulo"></p>
-      <p class="parceiro-texto" id="parceiroTexto"></p>
-    </div>
-  </div>
-
   <div class="parceiro-banner" id="destaqueParceiro2" style="display:none;">
-    <a id="parceiro2ImagemLink" style="display:none;">
+    <a id="parceiro2ImagemLink" class="parceiro-logo-wrap" style="display:none;">
       <img class="parceiro-logo" id="parceiro2Imagem" src="" alt="">
     </a>
     <div class="parceiro-content">
@@ -1443,7 +1451,7 @@
       if (temImagemParceiro) {
         parceiroImgEl.src = data.parceiro_imagem;
         parceiroImgEl.style.display = "block";
-        parceiroImagemLink.style.display = "block";
+        parceiroImagemLink.style.display = "flex";
       } else {
         parceiroImgEl.style.display = "none";
         parceiroImgEl.src = "";
@@ -1492,7 +1500,7 @@
       if (temImagemParceiro2) {
         parceiro2ImgEl.src = data.parceiro2_imagem;
         parceiro2ImgEl.style.display = "block";
-        parceiro2ImagemLink.style.display = "block";
+        parceiro2ImagemLink.style.display = "flex";
       } else {
         parceiro2ImgEl.style.display = "none";
         parceiro2ImgEl.src = "";
