@@ -344,13 +344,30 @@
   @media (max-width:480px){
     .alert-banner .alert-icon{width:44px; height:44px;}
   }
-  /* Destaque para Apresentacao / Parceiro: mesmo bloco do Alerta do Dia, mas
-     com logo maior e sem cortar a imagem (contain em vez de cover), pra
-     acomodar logos de parceiros que nao sao quadrados. */
-  #destaqueParceiro{align-items:center;}
-  #destaqueParceiro .alert-icon{width:110px; height:110px; object-fit:contain; padding:10px; background:#f4f4f2; border-radius:10px;}
+  /* Destaque para Apresentacao / Parceiro: cards de patrocinio pontuais pra
+     parcerias/reunioes (ex: Dom Investimentos, TopGain). Layout vertical e
+     centralizado, com a logo grande e sem corte (contain), pensado pra
+     mostrar bem qualquer proporcao de logo. Ate 2 quadros identicos, um
+     por parceiro. */
+  .parceiro-banner{
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    gap:14px; margin-bottom:18px; padding:26px 22px; border-radius:12px;
+    background: linear-gradient(135deg, rgba(245,166,35,0.14), var(--card));
+    border:1px solid var(--amber);
+  }
+  .parceiro-banner .parceiro-logo{
+    max-width:220px; max-height:110px; width:auto; height:auto; object-fit:contain;
+    background:#f4f4f2; border-radius:10px; padding:12px;
+  }
+  .parceiro-banner .parceiro-content{max-width:560px;}
+  .parceiro-banner .parceiro-tag{
+    font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--amber); display:block; margin-bottom:8px;
+  }
+  .parceiro-banner .parceiro-titulo{font-size:1.25rem; font-weight:700; margin:0 0 8px; line-height:1.35; color:var(--text);}
+  .parceiro-banner .parceiro-texto{font-size:0.95rem; color:#c9d4de; margin:0; white-space:pre-wrap;}
   @media (max-width:480px){
-    #destaqueParceiro .alert-icon{width:72px; height:72px; padding:6px;}
+    .parceiro-banner .parceiro-logo{max-width:160px; max-height:80px; padding:8px;}
   }
   .edit-form{display:grid; gap:12px; margin-top:10px;}
   .edit-form label{font-size:0.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; display:block; margin-bottom:4px;}
@@ -527,16 +544,29 @@
     </div>
   </section>
 
-  <div class="alert-banner" id="destaqueParceiro" style="display:none;">
-    <a id="parceiroImagemLink" style="display:none; flex-shrink:0;">
-      <img class="alert-icon" id="parceiroImagem" src="" alt="">
+  <div class="parceiro-banner" id="destaqueParceiro" style="display:none;">
+    <a id="parceiroImagemLink" style="display:none;">
+      <img class="parceiro-logo" id="parceiroImagem" src="" alt="">
     </a>
-    <div class="alert-content">
+    <div class="parceiro-content">
       <a id="parceiroTagLink" style="text-decoration:none;">
-        <span class="alert-tag" id="parceiroTag">Patrocinado</span>
+        <span class="parceiro-tag" id="parceiroTag">Patrocinado</span>
       </a>
-      <p class="alert-titulo" id="parceiroTitulo"></p>
-      <p class="alert-texto" id="parceiroTexto"></p>
+      <p class="parceiro-titulo" id="parceiroTitulo"></p>
+      <p class="parceiro-texto" id="parceiroTexto"></p>
+    </div>
+  </div>
+
+  <div class="parceiro-banner" id="destaqueParceiro2" style="display:none;">
+    <a id="parceiro2ImagemLink" style="display:none;">
+      <img class="parceiro-logo" id="parceiro2Imagem" src="" alt="">
+    </a>
+    <div class="parceiro-content">
+      <a id="parceiro2TagLink" style="text-decoration:none;">
+        <span class="parceiro-tag" id="parceiro2Tag">Patrocinado</span>
+      </a>
+      <p class="parceiro-titulo" id="parceiro2Titulo"></p>
+      <p class="parceiro-texto" id="parceiro2Texto"></p>
     </div>
   </div>
 
@@ -1110,7 +1140,7 @@
           <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
         </div>
         <div style="grid-column:1 / -1;">
-          <label>Destaque para Apresentação / Parceiro (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco)</label>
+          <label>Destaque para Apresentação / Parceiro 1 (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco)</label>
           <input type="text" id="input-parceiro_tag" placeholder="Texto principal (etiqueta), ex: Patrocinado, Parceria, Apresenta">
           <label style="font-size:0.85rem; margin-top:6px;">Imagem/logo (opcional)</label>
           <input type="file" id="input-parceiro_imagem" accept="image/*">
@@ -1118,6 +1148,16 @@
           <input type="text" id="input-parceiro_titulo" placeholder="Título, ex: Dom Investimentos" style="margin-top:6px;">
           <textarea id="input-parceiro_texto" placeholder="Descrição..." style="margin-top:6px; min-height:70px;"></textarea>
           <input type="text" id="input-parceiro_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label>Destaque para Apresentação / Parceiro 2 (segundo quadro idêntico, pra ter dois parceiros ao mesmo tempo. Opcional, some sozinho se ficar em branco)</label>
+          <input type="text" id="input-parceiro2_tag" placeholder="Texto principal (etiqueta), ex: Patrocinado, Parceria, Apresenta">
+          <label style="font-size:0.85rem; margin-top:6px;">Imagem/logo (opcional)</label>
+          <input type="file" id="input-parceiro2_imagem" accept="image/*">
+          <span id="parceiro2ImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
+          <input type="text" id="input-parceiro2_titulo" placeholder="Título, ex: TopGain" style="margin-top:6px;">
+          <textarea id="input-parceiro2_texto" placeholder="Descrição..." style="margin-top:6px; min-height:70px;"></textarea>
+          <input type="text" id="input-parceiro2_link" placeholder="https://... (link de destino)" style="margin-top:6px;">
         </div>
         <div style="grid-column:1 / -1;">
           <label>Fluxo por Investidor — Quantzed/XP (R$ milhões, à vista / futuro / total)</label>
@@ -1438,6 +1478,55 @@
     const parceiroLinkInput = document.getElementById("input-parceiro_link");
     if (parceiroLinkInput && !parceiroLinkInput.value) parceiroLinkInput.value = data.parceiro_link || "";
 
+    // Destaque para Apresentacao / Parceiro 2: segundo quadro identico ao
+    // primeiro, pra ter dois parceiros em destaque ao mesmo tempo.
+    const parceiro2Box = document.getElementById("destaqueParceiro2");
+    if (data.parceiro2_titulo && data.parceiro2_titulo.trim()) {
+      document.getElementById("parceiro2Tag").textContent = (data.parceiro2_tag && data.parceiro2_tag.trim()) || "Patrocinado";
+      document.getElementById("parceiro2Titulo").textContent = data.parceiro2_titulo;
+      document.getElementById("parceiro2Texto").textContent = data.parceiro2_texto || "";
+      const parceiro2ImgEl = document.getElementById("parceiro2Imagem");
+      const parceiro2ImagemLink = document.getElementById("parceiro2ImagemLink");
+      const parceiro2TagLink = document.getElementById("parceiro2TagLink");
+      const temImagemParceiro2 = !!(data.parceiro2_imagem && data.parceiro2_imagem.trim());
+      if (temImagemParceiro2) {
+        parceiro2ImgEl.src = data.parceiro2_imagem;
+        parceiro2ImgEl.style.display = "block";
+        parceiro2ImagemLink.style.display = "block";
+      } else {
+        parceiro2ImgEl.style.display = "none";
+        parceiro2ImgEl.src = "";
+        parceiro2ImagemLink.style.display = "none";
+      }
+      const temLinkParceiro2 = !!(data.parceiro2_link && data.parceiro2_link.trim());
+      if (temLinkParceiro2) {
+        parceiro2ImagemLink.href = data.parceiro2_link;
+        parceiro2ImagemLink.target = "_blank";
+        parceiro2ImagemLink.rel = "noopener sponsored";
+        parceiro2TagLink.href = data.parceiro2_link;
+        parceiro2TagLink.target = "_blank";
+        parceiro2TagLink.rel = "noopener sponsored";
+      } else {
+        parceiro2ImagemLink.removeAttribute("href");
+        parceiro2ImagemLink.removeAttribute("target");
+        parceiro2ImagemLink.removeAttribute("rel");
+        parceiro2TagLink.removeAttribute("href");
+        parceiro2TagLink.removeAttribute("target");
+        parceiro2TagLink.removeAttribute("rel");
+      }
+      parceiro2Box.style.display = "flex";
+    } else {
+      parceiro2Box.style.display = "none";
+    }
+    const parceiro2TagInput = document.getElementById("input-parceiro2_tag");
+    if (parceiro2TagInput && !parceiro2TagInput.value) parceiro2TagInput.value = data.parceiro2_tag || "";
+    const parceiro2TituloInput = document.getElementById("input-parceiro2_titulo");
+    if (parceiro2TituloInput && !parceiro2TituloInput.value) parceiro2TituloInput.value = data.parceiro2_titulo || "";
+    const parceiro2TextoInput = document.getElementById("input-parceiro2_texto");
+    if (parceiro2TextoInput && !parceiro2TextoInput.value) parceiro2TextoInput.value = data.parceiro2_texto || "";
+    const parceiro2LinkInput = document.getElementById("input-parceiro2_link");
+    if (parceiro2LinkInput && !parceiro2LinkInput.value) parceiro2LinkInput.value = data.parceiro2_link || "";
+
     if (data.atualizado_em) {
       const upd = new Date(data.atualizado_em).toLocaleString("pt-BR");
       document.getElementById("upd-suporte").textContent = "Atualizado em " + upd;
@@ -1538,6 +1627,26 @@
         parceiroImagemStatus.textContent = "";
       } else {
         body.parceiro_imagem = (window.__lastManualData && window.__lastManualData.parceiro_imagem) || "";
+      }
+
+      body.parceiro2_tag = document.getElementById("input-parceiro2_tag").value;
+      body.parceiro2_titulo = document.getElementById("input-parceiro2_titulo").value;
+      body.parceiro2_texto = document.getElementById("input-parceiro2_texto").value;
+      body.parceiro2_link = document.getElementById("input-parceiro2_link").value;
+
+      const parceiro2ImagemInput = document.getElementById("input-parceiro2_imagem");
+      const parceiro2ImagemStatus = document.getElementById("parceiro2ImagemStatus");
+      if (parceiro2ImagemInput.files && parceiro2ImagemInput.files[0]) {
+        parceiro2ImagemStatus.textContent = "Convertendo imagem...";
+        body.parceiro2_imagem = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(parceiro2ImagemInput.files[0]);
+        });
+        parceiro2ImagemStatus.textContent = "";
+      } else {
+        body.parceiro2_imagem = (window.__lastManualData && window.__lastManualData.parceiro2_imagem) || "";
       }
 
       const graficoInput = document.getElementById("input-fluxo_b3_grafico");
