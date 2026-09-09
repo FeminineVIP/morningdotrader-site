@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Gratuito do Trader — Morning do Trader</title>
+<meta name="description" content="Materiais gratuitos para traders: Planilha de Gestão de Trade com controle emocional e o Diário do Trader, pra registrar cada operação.">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --red: #e5484d;
+    --amber: #f5a623;
+    --green: #3ecf8e;
+    --accent: #4da3ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.6;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width: 900px; margin:0 auto; padding: 0 16px;}
+
+  .nav{background: var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px; position:sticky; top:0; z-index:51;}
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .brand-group{display:flex; align-items:center; gap:8px;}
+  .nav .links{display:flex; flex-wrap:wrap; align-items:center; gap:18px; font-size:0.88rem;}
+  .nav .links a{color:var(--muted); text-decoration:none;}
+  .nav .links a.active{color:var(--accent);}
+  .nav .links a:hover{color:var(--text);}
+
+  header{padding: 28px 0 20px; border-bottom: 1px solid var(--border);}
+  header h1{font-size: 1.6rem; margin:0 0 6px;}
+  header p{color:var(--muted); font-size:0.95rem; margin:0;}
+
+  main{padding:28px 0 60px;}
+
+  .brinde-card{
+    background: var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:24px; margin-bottom:22px; display:flex; gap:20px; align-items:flex-start;
+  }
+  .brinde-card.em-breve{opacity:0.6;}
+  .brinde-icon{
+    width:52px; height:52px; border-radius:12px; background:var(--bg-alt);
+    display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0;
+  }
+  .brinde-body{flex:1; min-width:0;}
+  .brinde-top{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+  .brinde-body h2{font-size:1.15rem; margin:0;}
+  .badge-em-breve{
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em; font-weight:700;
+    color:var(--amber); border:1px solid var(--amber); border-radius:99px; padding:2px 10px;
+  }
+  .brinde-body p.desc{color:#c9d4de; font-size:0.92rem; margin:0 0 16px;}
+
+  .brinde-proof{
+    background: rgba(62,207,142,0.08); border:1px solid rgba(62,207,142,0.35);
+    border-radius:10px; padding:14px 16px; margin-bottom:18px;
+  }
+  .brinde-proof-badge{
+    display:inline-flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.03em; color:var(--green);
+    background:rgba(62,207,142,0.15); border-radius:99px; padding:3px 10px; margin-bottom:9px;
+  }
+  .brinde-proof-text{font-size:0.86rem; color:#c9d4de; margin:0; line-height:1.55;}
+  .brinde-fineprint{font-size:0.72rem; color:var(--muted); margin-top:14px; line-height:1.45; font-style:italic;}
+
+  .pdt-ad{
+    position:relative; display:block; border-radius:14px; overflow:hidden;
+    margin-bottom:26px; text-decoration:none; min-height:210px;
+    border:1px solid var(--border); transition:border-color 0.15s;
+  }
+  .pdt-ad:hover{border-color:var(--accent);}
+  .pdt-ad > img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:0;
+  }
+  .pdt-ad::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background: linear-gradient(90deg, rgba(6,10,16,0.94) 0%, rgba(6,10,16,0.8) 40%, rgba(6,10,16,0.3) 72%, rgba(6,10,16,0) 100%);
+  }
+  .pdt-ad-content{
+    position:relative; z-index:2; padding:26px 28px; max-width:480px;
+    height:100%; display:flex; flex-direction:column; justify-content:center;
+  }
+  .pdt-ad-sponsored{
+    display:inline-block; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.06em;
+    font-weight:700; color:#c9d4de; background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.18); border-radius:99px; padding:3px 10px;
+    margin-bottom:10px; align-self:flex-start;
+  }
+  .pdt-ad-title{ font-size:1.5rem; margin:0 0 8px; color:#fff; font-weight:800; }
+  .pdt-ad-text{ font-size:0.92rem; color:#c9d4de; margin:0 0 16px; line-height:1.5; }
+  .pdt-ad-cta{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    padding:10px 20px; border-radius:8px; font-size:0.88rem; align-self:flex-start;
+  }
+  .pdt-ad-note{ font-size:0.72rem; color:var(--muted); margin-top:10px; }
+  @media (max-width:700px){
+    .pdt-ad{ min-height:280px; }
+    .pdt-ad::after{ background: linear-gradient(180deg, rgba(6,10,16,0.2) 0%, rgba(6,10,16,0.92) 55%, rgba(6,10,16,0.98) 100%); }
+    .pdt-ad-content{ max-width:100%; justify-content:flex-end; padding:20px; }
+  }
+
+  .lead-form{display:flex; gap:10px; flex-wrap:wrap;}
+  .lead-form input[type="email"]{
+    flex:1; min-width:220px; background:var(--bg-alt); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:11px 14px; font-size:0.92rem; outline:none;
+  }
+  .lead-form input[type="email"]:focus{border-color:var(--accent);}
+  .lead-form button{
+    background:var(--accent); border:none; color:#08131f; font-weight:700;
+    border-radius:8px; padding:11px 20px; font-size:0.92rem; cursor:pointer; white-space:nowrap;
+  }
+  .lead-form button:hover{filter:brightness(1.08);}
+  .lead-form button:disabled{opacity:0.6; cursor:default;}
+
+  .lead-msg{font-size:0.85rem; margin-top:10px; display:none;}
+  .lead-msg.show{display:block;}
+  .lead-msg.ok{color:var(--green);}
+  .lead-msg.err{color:var(--red);}
+
+  .disclaimer{color:var(--muted); font-size:0.78rem; margin-top:30px; text-align:center;}
+
+  footer{padding:24px 0 40px; text-align:center; color:var(--muted); font-size:0.8rem;}
+
+  @media (max-width:600px){
+    .brinde-card{flex-direction:column;}
+  }
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1020">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand-group">
+      <span id="pwa-nav-slot"></span>
+      <a class="brand" href="index.html">Morning do Trader</a>
+    </div>
+    <div class="links">
+      <a href="index.html">Morning Call</a>
+      <a href="ormuz.html">Crise do Ormuz</a>
+      <a href="noticias.html">Notícias</a>
+      <a href="glossario.html">Glossário</a>
+      <a href="painel-internacional.html">Painel Internacional</a>
+      <a href="futuro.html">Futuro Financeiro</a>
+      <a href="kit-do-trader.html" class="active">Kit do Trader</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <h1>Kit Gratuito do Trader</h1>
+    <p>Materiais gratuitos pra te ajudar a operar com mais controle e organização. Baixe informando seu e-mail — sem compromisso.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <a href="https://paineldotrader.com.br" target="_blank" rel="noopener" class="pdt-ad">
+    <img src="painel-trader-ad-bg.webp" alt="Painel do Trader — cotações internacionais em um único lugar">
+    <div class="pdt-ad-content">
+      <span class="pdt-ad-sponsored">Patrocinado</span>
+      <h3 class="pdt-ad-title">Painel do Trader</h3>
+      <p class="pdt-ad-text">Cotações internacionais que estão movendo o mercado agora, em um único painel exclusivo — sem precisar de vários monitores.</p>
+      <span class="pdt-ad-cta">Conhecer o Painel →</span>
+      <span class="pdt-ad-note">Assinatura segura via Mercado Pago</span>
+    </div>
+  </a>
+
+  <div class="brinde-card">
+    <div class="brinde-icon">📊</div>
+    <div class="brinde-body">
+      <div class="brinde-top">
+        <h2>Planilha do Trader</h2>
+      </div>
+      <p class="desc">Gestão de plano de trade com cálculo de risco por operação, meta diária/mensal e diário de bordo com controle emocional — pra você acompanhar não só o resultado, mas o comportamento por trás dele.</p>
+
+      <div class="brinde-proof">
+        <span class="brinde-proof-badge">✓ Testada com +500 traders</span>
+        <p class="brinde-proof-text">Quem aplica o plano à risca — sem pular etapa — fecha o mês no positivo. O resultado não vem da sorte: vem da disciplina de seguir exatamente os critérios de risco e meta que a planilha já calcula pra você.</p>
+      </div>
+
+      <form class="lead-form" id="formPlanilha" novalidate>
+        <input type="email" id="emailPlanilha" placeholder="seu@email.com" required autocomplete="email">
+        <button type="submit" id="btnPlanilha">Quero baixar</button>
+      </form>
+      <div class="lead-msg" id="msgPlanilha"></div>
+
+      <p class="brinde-fineprint">Resultado baseado em teste com uma comunidade de traders ao longo de um mês. Desempenho passado não garante resultados futuros — o mercado financeiro envolve risco.</p>
+    </div>
+  </div>
+
+  <div class="brinde-card">
+    <div class="brinde-icon">📒</div>
+    <div class="brinde-body">
+      <div class="brinde-top">
+        <h2>Diário do Trader</h2>
+      </div>
+      <p class="desc">Registro simples de cada operação: compra ou venda, ativo, motivo da entrada, Stop Gain e Stop Loss — pra você revisar depois com clareza.</p>
+
+      <form class="lead-form" id="formDiario" novalidate>
+        <input type="email" id="emailDiario" placeholder="seu@email.com" required autocomplete="email">
+        <button type="submit" id="btnDiario">Quero baixar</button>
+      </form>
+      <div class="lead-msg" id="msgDiario"></div>
+    </div>
+  </div>
+
+  <p class="disclaimer">Seu e-mail é usado só pra te enviar esses materiais e novidades do Morning do Trader e do Painel do Trader. Sem spam.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Morning do Trader — conteúdo gratuito pra ajudar quem opera todo dia.
+  </div>
+</footer>
+
+<script>
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+
+  function setupLeadForm(formId, emailId, msgId, btnId, brinde) {
+    const form = document.getElementById(formId);
+    const emailInput = document.getElementById(emailId);
+    const msg = document.getElementById(msgId);
+    const btn = document.getElementById(btnId);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      msg.className = "lead-msg";
+      msg.textContent = "";
+
+      if (!email || !email.includes("@")) {
+        msg.textContent = "Digite um e-mail válido.";
+        msg.classList.add("show", "err");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      try {
+        const resp = await fetch(WORKER_URL + "/api/leads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, brinde })
+        });
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.error || "Falha ao enviar");
+        }
+
+        msg.textContent = "Prontinho! Confira seu e-mail (e a caixa de spam) — enviamos o link de download.";
+        msg.classList.add("show", "ok");
+        form.reset();
+      } catch (err) {
+        console.warn("brindes: falha ao cadastrar lead", err);
+        msg.textContent = "Não foi possível enviar agora. Tenta de novo em instantes.";
+        msg.classList.add("show", "err");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Quero baixar";
+      }
+    });
+  }
+
+  setupLeadForm("formPlanilha", "emailPlanilha", "msgPlanilha", "btnPlanilha", "planilha-trader");
+  setupLeadForm("formDiario", "emailDiario", "msgDiario", "btnDiario", "diario-trader");
+</script>
+
+</body>
+</html>
