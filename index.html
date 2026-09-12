@@ -1205,6 +1205,19 @@
             <input type="text" id="input-fluxo_outros_total" placeholder="Total">
           </div>
         </div>
+        <div style="grid-column:1 / -1; border-top:1px solid var(--border); padding-top:16px; margin-top:4px;">
+          <label>FedWatch — override manual (só pra casos extremos, ex: logo após o Fed anunciar e o Investing.com ainda desatualizado)</label>
+          <p style="font-size:0.8rem; color:var(--muted); margin:2px 0 8px;">
+            Um bloco por reunião, separado por linha em branco. Primeira linha da data (do jeito que você quiser escrever); linhas seguintes no formato "faixa = probabilidade". Ex:<br>
+            <span style="font-family:monospace;">16 Sep 2026<br>3.50-3.75 = 49.3<br>3.75-4.00 = 50.7</span>
+          </p>
+          <textarea id="input-fedwatch_colar" rows="6" placeholder="Cole aqui os dados manuais do FedWatch..." style="width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <button type="button" id="fedwatchSalvarBtn" class="edit-save-btn" style="padding:6px 14px; font-size:0.85rem;">Aplicar e travar automático por 3h</button>
+            <button type="button" id="fedwatchDestravarBtn" class="edit-save-btn" style="padding:6px 14px; font-size:0.85rem; background:var(--bg-alt); color:var(--text); border:1px solid var(--border);">Voltar ao automático agora</button>
+          </div>
+          <div id="fedwatchStatus" style="font-size:0.8rem; color:var(--muted); margin-top:6px;"></div>
+        </div>
         <button class="edit-save-btn" id="saveBtn" style="grid-column:1 / -1;">Salvar atualização</button>
         <div class="save-status" id="saveStatus" style="grid-column:1 / -1;"></div>
       </div>
@@ -1592,6 +1605,73 @@
       status.textContent = preenchidos > 0
         ? preenchidos + " campos preenchidos — confira os valores abaixo antes de salvar."
         : "Nada reconhecido nesse texto. Confira o formato.";
+    });
+
+    // FedWatch - override manual pra casos extremos. Nao usa o "Salvar
+    // atualização" geral (que fala com /api/manual-data) porque o FedWatch
+    // tem sua propria chave no KV e sua propria trava anti-sobrescrita
+    // automatica; ver /api/fedwatch-manual no worker.
+    document.getElementById("fedwatchSalvarBtn").addEventListener("click", async () => {
+      const texto = document.getElementById("input-fedwatch_colar").value;
+      const status = document.getElementById("fedwatchStatus");
+
+      const blocos = texto.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+      const reunioes = [];
+      blocos.forEach(bloco => {
+        const linhas = bloco.split("\n").map(l => l.trim()).filter(Boolean);
+        if (!linhas.length) return;
+        const dataReuniao = linhas[0];
+        const faixas = [];
+        linhas.slice(1).forEach(linha => {
+          const m = linha.match(/^([\d.]+\s*-\s*[\d.]+)\s*=\s*([\d.]+)/);
+          if (m) faixas.push({ faixa: m[1].replace(/\s+/g, ""), probabilidade: parseFloat(m[2]) });
+        });
+        if (faixas.length) reunioes.push({ data: dataReuniao, faixas });
+      });
+
+      if (!reunioes.length) {
+        status.textContent = "Nada reconhecido nesse texto. Confira o formato.";
+        status.style.color = "var(--red)";
+        return;
+      }
+
+      status.textContent = "Salvando...";
+      status.style.color = "var(--muted)";
+      try {
+        const resp = await fetch(WORKER_URL + "/api/fedwatch-manual?chave=" + encodeURIComponent(chave), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reunioes, horas_trava: 3 })
+        });
+        if (!resp.ok) throw new Error("chave inválida ou erro no servidor");
+        const data = await resp.json();
+        const horaLimite = new Date(data.travado_ate).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+        status.textContent = "Aplicado — atualização automática travada até " + horaLimite + " (volta sozinha depois disso).";
+        status.style.color = "var(--green)";
+        if (typeof carregarFedWatch === "function") carregarFedWatch();
+      } catch (e) {
+        status.textContent = "Erro ao salvar: " + e.message;
+        status.style.color = "var(--red)";
+      }
+    });
+
+    document.getElementById("fedwatchDestravarBtn").addEventListener("click", async () => {
+      const status = document.getElementById("fedwatchStatus");
+      status.textContent = "Voltando ao automático...";
+      status.style.color = "var(--muted)";
+      try {
+        const resp = await fetch(WORKER_URL + "/api/fedwatch-manual?chave=" + encodeURIComponent(chave), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ destravar: true })
+        });
+        if (!resp.ok) throw new Error("chave inválida ou erro no servidor");
+        status.textContent = "Automático reativado — o próximo Cron ou clique no link de refresh já atualiza normalmente.";
+        status.style.color = "var(--green)";
+      } catch (e) {
+        status.textContent = "Erro: " + e.message;
+        status.style.color = "var(--red)";
+      }
     });
 
     document.getElementById("saveBtn").addEventListener("click", async () => {
