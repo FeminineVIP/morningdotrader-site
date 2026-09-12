@@ -109,11 +109,13 @@
   }
 
   .lead-form{display:flex; gap:10px; flex-wrap:wrap;}
-  .lead-form input[type="email"]{
-    flex:1; min-width:220px; background:var(--bg-alt); border:1px solid var(--border); color:var(--text);
+  .lead-form input[type="email"],
+  .lead-form input[type="tel"]{
+    flex:1; min-width:160px; background:var(--bg-alt); border:1px solid var(--border); color:var(--text);
     border-radius:8px; padding:11px 14px; font-size:0.92rem; outline:none;
   }
-  .lead-form input[type="email"]:focus{border-color:var(--accent);}
+  .lead-form input[type="email"]:focus,
+  .lead-form input[type="tel"]:focus{border-color:var(--accent);}
   .lead-form button{
     background:var(--accent); border:none; color:#08131f; font-weight:700;
     border-radius:8px; padding:11px 20px; font-size:0.92rem; cursor:pointer; white-space:nowrap;
@@ -199,6 +201,7 @@
 
       <form class="lead-form" id="formPlanilha" novalidate>
         <input type="email" id="emailPlanilha" placeholder="seu@email.com" required autocomplete="email">
+        <input type="tel" id="whatsappPlanilha" placeholder="WhatsApp (DDD + número)" required autocomplete="tel">
         <button type="submit" id="btnPlanilha">Quero baixar</button>
       </form>
       <div class="lead-msg" id="msgPlanilha"></div>
@@ -217,13 +220,14 @@
 
       <form class="lead-form" id="formDiario" novalidate>
         <input type="email" id="emailDiario" placeholder="seu@email.com" required autocomplete="email">
+        <input type="tel" id="whatsappDiario" placeholder="WhatsApp (DDD + número)" required autocomplete="tel">
         <button type="submit" id="btnDiario">Quero baixar</button>
       </form>
       <div class="lead-msg" id="msgDiario"></div>
     </div>
   </div>
 
-  <p class="disclaimer">Seu e-mail é usado só pra te enviar esses materiais e novidades do Morning do Trader e do Painel do Trader. Sem spam.</p>
+  <p class="disclaimer">Seu e-mail é usado pra te enviar esses materiais (o link de download vai só por lá) e o WhatsApp pra novidades do Morning do Trader e do Painel do Trader. Sem spam.</p>
 
 </main>
 
@@ -236,20 +240,28 @@
 <script>
   const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
 
-  function setupLeadForm(formId, emailId, msgId, btnId, brinde) {
+  function setupLeadForm(formId, emailId, whatsappId, msgId, btnId, brinde) {
     const form = document.getElementById(formId);
     const emailInput = document.getElementById(emailId);
+    const whatsappInput = document.getElementById(whatsappId);
     const msg = document.getElementById(msgId);
     const btn = document.getElementById(btnId);
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const email = emailInput.value.trim();
+      const whatsappDigits = whatsappInput.value.replace(/\D/g, "");
       msg.className = "lead-msg";
       msg.textContent = "";
 
       if (!email || !email.includes("@")) {
         msg.textContent = "Digite um e-mail válido.";
+        msg.classList.add("show", "err");
+        return;
+      }
+
+      if (whatsappDigits.length < 10 || whatsappDigits.length > 13) {
+        msg.textContent = "Digite um WhatsApp válido, com DDD.";
         msg.classList.add("show", "err");
         return;
       }
@@ -261,7 +273,7 @@
         const resp = await fetch(WORKER_URL + "/api/leads", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, brinde })
+          body: JSON.stringify({ email, whatsapp: whatsappDigits, brinde })
         });
         const data = await resp.json().catch(() => ({}));
 
@@ -283,8 +295,8 @@
     });
   }
 
-  setupLeadForm("formPlanilha", "emailPlanilha", "msgPlanilha", "btnPlanilha", "planilha-trader");
-  setupLeadForm("formDiario", "emailDiario", "msgDiario", "btnDiario", "diario-trader");
+  setupLeadForm("formPlanilha", "emailPlanilha", "whatsappPlanilha", "msgPlanilha", "btnPlanilha", "planilha-trader");
+  setupLeadForm("formDiario", "emailDiario", "whatsappDiario", "msgDiario", "btnDiario", "diario-trader");
 </script>
 
 </body>
