@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ferramentas do Trader — Morning do Trader</title>
+<meta name="description" content="Calculadora de Risco, Calculadora de Recuperação de Prejuízo e Plano de Trade em 1 Página — ferramentas gratuitas do Morning do Trader.">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --accent: #4da3ff;
+    --green: #35c780;
+    --red: #ef5566;
+    --yellow: #e6b23d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    line-height:1.5;
+  }
+  a{color:var(--accent);}
+  .nav{background:var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px;}
+  .nav .wrap{max-width:920px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .sair{color:var(--muted); text-decoration:none; font-size:0.82rem; cursor:pointer; background:none; border:none; font-family:inherit;}
+  .nav .sair:hover{color:var(--text);}
+  .wrap{max-width:920px; margin:0 auto; padding:0 16px;}
+
+  header.hero{padding:32px 0 20px;}
+  header.hero h1{font-size:1.5rem; margin:0 0 6px;}
+  header.hero p{color:var(--muted); margin:0; font-size:0.95rem;}
+
+  /* ---- Portao de login ---- */
+  .gate{
+    max-width:420px; margin:40px auto; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:28px 26px;
+  }
+  .gate h2{margin:0 0 6px; font-size:1.15rem;}
+  .gate p.desc{color:var(--muted); font-size:0.88rem; margin:0 0 20px;}
+  .campo{margin-bottom:14px;}
+  .campo label{display:block; font-size:0.78rem; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.03em;}
+  .campo input, .campo select, .campo textarea{
+    width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg-alt); color:var(--text); font-size:0.95rem; font-family:inherit;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus{outline:none; border-color:var(--accent);}
+  .btn{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    border:none; border-radius:8px; padding:12px 20px; font-size:0.92rem; cursor:pointer;
+    font-family:inherit; width:100%;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:disabled{opacity:0.6; cursor:default;}
+  .btn.secundario{background:transparent; border:1px solid var(--border); color:var(--text); width:auto;}
+  .msg{font-size:0.85rem; margin-top:12px;}
+  .msg.ok{color:var(--green);}
+  .msg.erro{color:var(--red);}
+
+  /* ---- Area logada ---- */
+  #areaFerramentas{display:none;}
+  .tabs{display:flex; gap:6px; border-bottom:1px solid var(--border); margin-bottom:24px; flex-wrap:wrap;}
+  .tab-btn{
+    background:none; border:none; color:var(--muted); font-family:inherit; font-size:0.88rem;
+    padding:10px 14px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .tab-btn.active{color:var(--accent); border-bottom-color:var(--accent);}
+  .tab-btn:hover{color:var(--text);}
+  .painel{display:none;}
+  .painel.active{display:block;}
+
+  .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 24px; margin-bottom:20px;}
+  .card h3{margin:0 0 4px; font-size:1.02rem;}
+  .card .nota{color:var(--muted); font-size:0.82rem; margin:0 0 18px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
+
+  .resultado{
+    margin-top:18px; padding:16px 18px; background:var(--bg-alt); border:1px solid var(--border);
+    border-radius:10px;
+  }
+  .resultado .linha{display:flex; justify-content:space-between; padding:6px 0; font-size:0.92rem; border-bottom:1px solid var(--border);}
+  .resultado .linha:last-child{border-bottom:none;}
+  .resultado .valor{font-weight:700;}
+  .resultado .valor.destaque{color:var(--accent); font-size:1.15rem;}
+  .resultado .binding{font-size:0.78rem; color:var(--muted); margin-top:8px;}
+
+  table.tabela{width:100%; border-collapse:collapse; font-size:0.86rem; margin-top:14px;}
+  table.tabela th, table.tabela td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:right;}
+  table.tabela th:first-child, table.tabela td:first-child{text-align:left;}
+  table.tabela th{color:var(--muted); font-weight:600; font-size:0.75rem; text-transform:uppercase;}
+  table.tabela tr.linha-atual{background:rgba(77,163,255,0.1);}
+
+  .toggle-group{display:flex; gap:8px; flex-wrap:wrap;}
+  .toggle-group button{
+    background:var(--bg-alt); border:1px solid var(--border); color:var(--muted); border-radius:8px;
+    padding:8px 14px; font-size:0.85rem; cursor:pointer; font-family:inherit;
+  }
+  .toggle-group button.selecionado{border-color:var(--accent); color:var(--accent); background:rgba(77,163,255,0.1);}
+
+  .emoji-group{display:flex; gap:10px;}
+  .emoji-group button{
+    background:var(--bg-alt); border:1px solid var(--border); border-radius:10px; font-size:1.5rem;
+    padding:8px 12px; cursor:pointer;
+  }
+  .emoji-group button.selecionado{border-color:var(--accent); background:rgba(77,163,255,0.15);}
+
+  .check-lista label{display:flex; align-items:flex-start; gap:8px; font-size:0.88rem; margin-bottom:8px; cursor:pointer; color:var(--text);}
+  .check-lista input{margin-top:3px;}
+
+  .confirma-box{
+    background:rgba(77,163,255,0.08); border:1px solid var(--accent); border-radius:10px; padding:16px 18px;
+    margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+  .confirma-box p{margin:0; font-size:0.9rem;}
+  .confirma-box .btn{width:auto;}
+  .badge-ok{color:var(--green); font-weight:700; font-size:0.85rem;}
+
+  .subseccao{border-top:1px solid var(--border); padding-top:18px; margin-top:18px;}
+  .subseccao h4{margin:0 0 12px; font-size:0.88rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em;}
+
+  footer{padding:30px 0; text-align:center; color:var(--muted); font-size:0.8rem;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="/">Morning do Trader</a>
+    <button class="sair" id="btnSair" style="display:none;">Sair</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Ferramentas do Trader</h1>
+    <p>Calculadora de Risco, Recuperação de Prejuízo e Plano de Trade — as 3 ferramentas do Kit do Trader, num só acesso.</p>
+  </header>
+</div>
+
+<!-- ============ PORTAO DE LOGIN ============ -->
+<div class="gate" id="gateLogin">
+  <h2>Entrar nas ferramentas</h2>
+  <p class="desc" id="gateDesc">Digite seu e-mail. Se for a primeira vez, também vamos pedir seu WhatsApp — um único cadastro libera as 3 ferramentas.</p>
+
+  <form id="formAcesso">
+    <div class="campo">
+      <label for="inputEmail">E-mail</label>
+      <input type="email" id="inputEmail" required autocomplete="email" placeholder="voce@email.com">
+    </div>
+    <div class="campo" id="campoWhatsapp" style="display:none;">
+      <label for="inputWhatsapp">WhatsApp (DDD + número)</label>
+      <input type="tel" id="inputWhatsapp" autocomplete="tel" placeholder="11999998888">
+    </div>
+    <button type="submit" class="btn" id="btnAcesso">Receber link de acesso</button>
+    <p class="msg" id="msgAcesso"></p>
+  </form>
+</div>
+
+<!-- ============ AREA LOGADA ============ -->
+<div class="wrap" id="areaFerramentas">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="risco">Calculadora de Risco</button>
+    <button class="tab-btn" data-tab="recuperacao">Recuperação de Prejuízo</button>
+    <button class="tab-btn" data-tab="plano">Plano de Trade</button>
+  </div>
+
+  <!-- ---------- CALCULADORA DE RISCO ---------- -->
+  <div class="painel active" id="painel-risco">
+    <div class="card">
+      <h3>Calculadora de Risco do Trader</h3>
+      <p class="nota">Calcula o número máximo de contratos considerando o seu risco por operação E a margem disponível na corretora — o resultado é sempre o menor dos dois (o que realmente te limita).</p>
+
+      <div class="grid2">
+        <div class="campo">
+          <label for="riscoAtivo">Ativo</label>
+          <select id="riscoAtivo">
+            <option value="WIN">WIN — Mini Índice</option>
+            <option value="WDO">WDO — Mini Dólar</option>
+            <option value="IND">IND — Índice Cheio</option>
+            <option value="DOL">DOL — Dólar Cheio</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="riscoCapital">Capital disponível (R$)</label>
+          <input type="number" id="riscoCapital" min="0" step="0.01" placeholder="10000">
+        </div>
+        <div class="campo">
+          <label for="riscoPercentual">Risco máximo por operação (%)</label>
+          <input type="number" id="riscoPercentual" min="0" step="0.1" placeholder="1">
+        </div>
+        <div class="campo">
+          <label for="riscoStop">Stop loss (em pontos)</label>
+          <input type="number" id="riscoStop" min="0" step="1" placeholder="100">
+        </div>
+        <div class="campo">
+          <label for="riscoMargem">Margem disponível na corretora (R$)</label>
+          <input type="number" id="riscoMargem" min="0" step="0.01">
+        </div>
+        <div class="campo">
+          <label for="riscoMargemContrato">Margem exigida por contrato (R$)</label>
+          <input type="number" id="riscoMargemContrato" min="0" step="0.01">
+        </div>
+      </div>
+
+      <p class="nota" style="margin-top:-6px;">Os valores de margem já vêm preenchidos com o padrão atual das corretoras (R$155 WIN / R$150 WDO — os de IND e DOL são uma estimativa de 5x o mini, ajuste pelo valor real da sua corretora). A "regra dos R$1.000 por contrato" que alguns mestres de daytrade recomendam é uma diretriz de gestão de risco pessoal — não é uma exigência da corretora, por isso não entra na conta acima.</p>
+
+      <div class="resultado" id="resultadoRisco" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ---------- CALCULADORA DE RECUPERACAO ---------- -->
+  <div class="painel" id="painel-recuperacao">
+    <div class="card">
+      <h3>Calculadora de Recuperação de Prejuízo</h3>
+      <p class="nota">Quanto maior a perda, desproporcionalmente maior precisa ser o ganho pra recuperar o capital. Veja o tamanho real do desafio antes de tentar "recuperar rápido".</p>
+
+      <div class="toggle-group" style="margin-bottom:14px;">
+        <button type="button" class="modo-perda selecionado" data-modo="pct">Informar em %</button>
+        <button type="button" class="modo-perda" data-modo="reais">Informar em R$</button>
+      </div>
+
+      <div class="grid2">
+        <div class="campo" id="campoPerdaPct">
+          <label for="perdaPercentual">Perda sofrida (%)</label>
+          <input type="number" id="perdaPercentual" min="0" max="99" step="0.1" placeholder="20">
+        </div>
+        <div class="campo" id="campoPerdaReais" style="display:none;">
+          <label for="perdaReais">Perda sofrida (R$)</label>
+          <input type="number" id="perdaReais" min="0" step="0.01" placeholder="2000">
+        </div>
+        <div class="campo" id="campoCapitalBase" style="display:none;">
+          <label for="capitalBase">Capital antes da perda (R$)</label>
+          <input type="number" id="capitalBase" min="0" step="0.01" placeholder="10000">
+        </div>
+        <div class="campo">
+          <label for="ganhoMedioDiario">Ganho médio diário esperado (%)</label>
+          <input type="number" id="ganhoMedioDiario" min="0" step="0.1" placeholder="0.5">
+        </div>
+      </div>
+
+      <div class="resultado" id="resultadoRecuperacao" style="display:none;"></div>
+
+      <div class="subseccao">
+        <h4>Tabela de referência</h4>
+        <table class="tabela">
+          <thead><tr><th>Perda</th><th>Ganho necessário</th></tr></thead>
+          <tbody id="tabelaRecuperacao"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- PLANO DE TRADE ---------- -->
+  <div class="painel" id="painel-plano">
+    <div class="tabs" style="border-bottom:1px solid var(--border); margin-bottom:20px;">
+      <button class="tab-btn active" data-subtab="hoje">Hoje</button>
+      <button class="tab-btn" data-subtab="meuplano">Meu Plano</button>
+    </div>
+
+    <!-- HOJE -->
+    <div class="painel active" id="sub-hoje">
+      <div class="confirma-box" id="confirmaBox">
+        <p id="confirmaTexto">Você ainda não confirmou seu plano hoje.</p>
+        <button class="btn" id="btnConfirmarPlano">Li e confirmo meu plano hoje</button>
+      </div>
+
+      <div class="card">
+        <h3>Meu dia — <span id="dataHoje"></span></h3>
+
+        <div class="campo">
+          <label>Ativo do dia</label>
+          <div class="toggle-group" id="hojeAtivos">
+            <button type="button" data-ativo="WIN">WIN</button>
+            <button type="button" data-ativo="WDO">WDO</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="hojeCenario">Cenário do dia</label>
+          <select id="hojeCenario">
+            <option value="">Selecione</option>
+            <option value="alta">Tendência de alta</option>
+            <option value="baixa">Tendência de baixa</option>
+            <option value="lateral">Lateral / sem direção clara</option>
+            <option value="indefinido">Ainda não sei — vou esperar o mercado abrir</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label>Como você está emocionalmente agora (manhã)?</label>
+          <div class="emoji-group" id="emocionalManha">
+            <button type="button" data-valor="otimo">😄</button>
+            <button type="button" data-valor="bem">🙂</button>
+            <button type="button" data-valor="neutro">😐</button>
+            <button type="button" data-valor="ansioso">😟</button>
+            <button type="button" data-valor="mal">😫</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label for="hojeAnotacoes">Minhas anotações</label>
+          <textarea id="hojeAnotacoes" rows="4" placeholder="Observações livres sobre o dia..."></textarea>
+        </div>
+
+        <button class="btn secundario" id="btnSalvarHoje">Salvar</button>
+      </div>
+
+      <div class="card" id="cardFechamento">
+        <h3>Fechamento do dia</h3>
+        <p class="nota">Preencha ao final do pregão.</p>
+
+        <div class="campo">
+          <label>Como você está emocionalmente agora (fim do dia)?</label>
+          <div class="emoji-group" id="emocionalNoite">
+            <button type="button" data-valor="otimo">😄</button>
+            <button type="button" data-valor="bem">🙂</button>
+            <button type="button" data-valor="neutro">😐</button>
+            <button type="button" data-valor="ansioso">😟</button>
+            <button type="button" data-valor="mal">😫</button>
+          </div>
+        </div>
+
+        <div class="campo">
+          <label>Comportamentos de risco hoje (marque os que aconteceram)</label>
+          <div class="check-lista" id="comportamentosRisco">
+            <label><input type="checkbox" value="aumentou_risco_apos_perda"> Aumentei o risco depois de uma perda</label>
+            <label><input type="checkbox" value="fora_horario"> Operei fora do horário planejado</label>
+            <label><input type="checkbox" value="ignorou_stop"> Ignorei meu stop loss</label>
+            <label><input type="checkbox" value="tedio_vinganca"> Operei por tédio ou vontade de "revanche"</label>
+            <label><input type="checkbox" value="nenhum"> Nenhum comportamento de risco hoje</label>
+          </div>
+        </div>
+
+        <button class="btn secundario" id="btnSalvarFechamento">Salvar fechamento</button>
+      </div>
+    </div>
+
+    <!-- MEU PLANO -->
+    <div class="painel" id="sub-meuplano">
+      <div class="card">
+        <h3>Meu Plano</h3>
+        <p class="nota">Preenchido uma vez, revisado raramente. É a base fixa das suas regras — não muda todo dia.</p>
+
+        <div class="subseccao" style="border-top:none; padding-top:0; margin-top:0;">
+          <h4>Meus limites</h4>
+          <div class="grid2">
+            <div class="campo">
+              <label for="limitePerdaDiaria">Perda máxima aceitável no dia (%)</label>
+              <input type="number" id="limitePerdaDiaria" min="0" step="0.1">
+            </div>
+            <div class="campo">
+              <label for="limiteMetaGanho">Meta de ganho no dia (%)</label>
+              <input type="number" id="limiteMetaGanho" min="0" step="0.1">
+            </div>
+            <div class="campo">
+              <label for="limiteMaxOperacoes">Número máximo de operações por dia</label>
+              <input type="number" id="limiteMaxOperacoes" min="0" step="1">
+            </div>
+            <div class="campo">
+              <label for="limiteMaxContratos">Número máximo de contratos</label>
+              <input type="number" id="limiteMaxContratos" min="0" step="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="subseccao">
+          <h4>Meus setups</h4>
+          <div class="campo">
+            <textarea id="meusSetups" rows="4" placeholder="Descreva os setups que você opera..."></textarea>
+          </div>
+        </div>
+
+        <div class="subseccao">
+          <h4>Regras de entrada</h4>
+          <div class="campo">
+            <textarea id="regrasEntrada" rows="4" placeholder="Em que condições você entra numa operação..."></textarea>
+          </div>
+        </div>
+
+        <div class="subseccao">
+          <h4>Regras de saída</h4>
+          <div class="campo">
+            <textarea id="regrasSaida" rows="4" placeholder="Em que condições você sai de uma operação (stop, alvo, tempo)..."></textarea>
+          </div>
+        </div>
+
+        <button class="btn secundario" id="btnSalvarMeuPlano">Salvar Meu Plano</button>
+        <p class="msg" id="msgMeuPlano"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Morning do Trader — conteúdo educacional, não é recomendação de investimento.</footer>
+
+<script>
+(function(){
+  "use strict";
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+  const LS_KEY = "mdt_sessao";
+
+  // ---------------- Sessao / login ----------------
+
+  function getSessaoSalva(){
+    try { return localStorage.getItem(LS_KEY) || ""; } catch(e){ return ""; }
+  }
+  function salvarSessao(token){
+    try { localStorage.setItem(LS_KEY, token); } catch(e){}
+  }
+  function limparSessao(){
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+  }
+
+  async function apiFetch(path, opts){
+    opts = opts || {};
+    const headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+    const sessao = getSessaoSalva();
+    if (sessao) headers["x-sessao"] = sessao;
+    const resp = await fetch(WORKER_URL + path, Object.assign({}, opts, { headers }));
+    return resp;
+  }
+
+  function mostrarArea(mostrar){
+    document.getElementById("gateLogin").style.display = mostrar ? "none" : "block";
+    document.getElementById("areaFerramentas").style.display = mostrar ? "block" : "none";
+    document.getElementById("btnSair").style.display = mostrar ? "inline-block" : "none";
+  }
+
+  async function checarSessao(){
+    const sessao = getSessaoSalva();
+    if (!sessao){ mostrarArea(false); return; }
+    try {
+      const resp = await apiFetch("/api/acesso-status");
+      if (resp.ok){
+        mostrarArea(true);
+        carregarPlano();
+      } else {
+        limparSessao();
+        mostrarArea(false);
+      }
+    } catch(e){
+      mostrarArea(false);
+    }
+  }
+
+  // Recebe o token vindo do link magico (?sessao=...), guarda e limpa a URL.
+  (function capturarSessaoDaURL(){
+    const params = new URLSearchParams(window.location.search);
+    const sessao = params.get("sessao");
+    if (sessao){
+      salvarSessao(sessao);
+      params.delete("sessao");
+      const novaQuery = params.toString();
+      const novaURL = window.location.pathname + (novaQuery ? "?" + novaQuery : "");
+      window.history.replaceState({}, "", novaURL);
+    }
+  })();
+
+  document.getElementById("formAcesso").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const email = document.getElementById("inputEmail").value.trim().toLowerCase();
+    const whatsappVisivel = document.getElementById("campoWhatsapp").style.display !== "none";
+    const whatsapp = whatsappVisivel ? document.getElementById("inputWhatsapp").value.trim() : undefined;
+    const btn = document.getElementById("btnAcesso");
+    const msg = document.getElementById("msgAcesso");
+
+    btn.disabled = true;
+    msg.textContent = "";
+    msg.className = "msg";
+
+    try {
+      const resp = await fetch(WORKER_URL + "/api/acesso-solicitar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, whatsapp, redirect: "ferramentas-do-trader.html" })
+      });
+      const data = await resp.json().catch(function(){ return {}; });
+
+      if (resp.ok){
+        msg.textContent = "Pronto! Verifique seu e-mail (e a caixa de spam) e clique no link pra entrar.";
+        msg.className = "msg ok";
+      } else if (data.error === "cadastro_necessario"){
+        document.getElementById("campoWhatsapp").style.display = "block";
+        document.getElementById("gateDesc").textContent = "Primeiro acesso — confirme seu WhatsApp pra liberar as ferramentas.";
+        msg.textContent = "Só mais um passo: informe seu WhatsApp e envie de novo.";
+        msg.className = "msg";
+      } else {
+        msg.textContent = "Não deu certo: " + (data.error || "tente novamente em instantes.");
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha de conexão. Tente novamente.";
+      msg.className = "msg erro";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnSair").addEventListener("click", async function(){
+    try { await apiFetch("/api/acesso-sair", { method: "POST" }); } catch(e){}
+    limparSessao();
+    mostrarArea(false);
+  });
+
+  // ---------------- Tabs (ferramentas) ----------------
+
+  document.querySelectorAll(".tabs .tab-btn[data-tab]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".tabs .tab-btn[data-tab]").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll("#areaFerramentas > .painel").forEach(function(p){ p.classList.remove("active"); });
+      document.getElementById("painel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  document.querySelectorAll(".tabs .tab-btn[data-subtab]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".tabs .tab-btn[data-subtab]").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll("#painel-plano > .painel").forEach(function(p){ p.classList.remove("active"); });
+      document.getElementById("sub-" + btn.dataset.subtab).classList.add("active");
+    });
+  });
+
+  // ---------------- Calculadora de Risco ----------------
+
+  const ATIVOS_RISCO = {
+    WIN: { valorPonto: 0.20, margemPadrao: 155 },
+    WDO: { valorPonto: 10.00, margemPadrao: 150 },
+    IND: { valorPonto: 1.00, margemPadrao: 775 },
+    DOL: { valorPonto: 50.00, margemPadrao: 750 },
+  };
+
+  function atualizarPadraoAtivo(){
+    const ativo = document.getElementById("riscoAtivo").value;
+    const info = ATIVOS_RISCO[ativo];
+    document.getElementById("riscoMargemContrato").value = info.margemPadrao;
+    calcularRisco();
+  }
+  document.getElementById("riscoAtivo").addEventListener("change", atualizarPadraoAtivo);
+
+  function calcularRisco(){
+    const ativo = document.getElementById("riscoAtivo").value;
+    const info = ATIVOS_RISCO[ativo];
+    const capital = parseFloat(document.getElementById("riscoCapital").value) || 0;
+    const riscoPct = parseFloat(document.getElementById("riscoPercentual").value) || 0;
+    const stopPontos = parseFloat(document.getElementById("riscoStop").value) || 0;
+    const margemDisponivel = parseFloat(document.getElementById("riscoMargem").value) || 0;
+    const margemContrato = parseFloat(document.getElementById("riscoMargemContrato").value) || info.margemPadrao;
+
+    const box = document.getElementById("resultadoRisco");
+    if (!capital || !riscoPct || !stopPontos){
+      box.style.display = "none";
+      return;
+    }
+
+    const valorRiscoR$ = capital * (riscoPct / 100);
+    const riscoPorContrato = stopPontos * info.valorPonto;
+    const contratosPorRisco = riscoPorContrato > 0 ? Math.floor(valorRiscoR$ / riscoPorContrato) : 0;
+    const margemInformada = margemDisponivel > 0 && margemContrato > 0;
+    const contratosPorMargem = margemInformada ? Math.floor(margemDisponivel / margemContrato) : null;
+    const contratosFinal = Math.max(0, margemInformada ? Math.min(contratosPorRisco, contratosPorMargem) : contratosPorRisco);
+    const binding = margemInformada && contratosPorMargem < contratosPorRisco ? "margem" : "risco";
+
+    box.style.display = "block";
+    box.innerHTML =
+      '<div class="linha"><span>Valor de risco no dia (' + riscoPct + '% do capital)</span><span class="valor">R$ ' + valorRiscoR$.toFixed(2) + '</span></div>' +
+      '<div class="linha"><span>Risco por contrato (stop de ' + stopPontos + ' pts)</span><span class="valor">R$ ' + riscoPorContrato.toFixed(2) + '</span></div>' +
+      '<div class="linha"><span>Contratos permitidos pelo risco</span><span class="valor">' + contratosPorRisco + '</span></div>' +
+      '<div class="linha"><span>Contratos permitidos pela margem</span><span class="valor">' + (margemInformada ? contratosPorMargem : "—") + '</span></div>' +
+      '<div class="linha"><span>Máximo de contratos recomendado</span><span class="valor destaque">' + contratosFinal + '</span></div>' +
+      '<p class="binding">Fator que está te limitando agora: <strong>' + (binding === "risco" ? "seu risco por operação" : "sua margem disponível") + '</strong>.</p>';
+  }
+
+  ["riscoCapital","riscoPercentual","riscoStop","riscoMargem","riscoMargemContrato"].forEach(function(id){
+    document.getElementById(id).addEventListener("input", calcularRisco);
+  });
+  atualizarPadraoAtivo();
+
+  // ---------------- Calculadora de Recuperacao ----------------
+
+  document.querySelectorAll(".modo-perda").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".modo-perda").forEach(function(b){ b.classList.remove("selecionado"); });
+      btn.classList.add("selecionado");
+      const modo = btn.dataset.modo;
+      document.getElementById("campoPerdaPct").style.display = modo === "pct" ? "block" : "none";
+      document.getElementById("campoPerdaReais").style.display = modo === "reais" ? "block" : "none";
+      document.getElementById("campoCapitalBase").style.display = modo === "reais" ? "block" : "none";
+      calcularRecuperacao();
+    });
+  });
+
+  function ganhoNecessarioPct(perdaPct){
+    if (perdaPct <= 0 || perdaPct >= 100) return null;
+    return (perdaPct / (100 - perdaPct)) * 100;
+  }
+
+  function calcularRecuperacao(){
+    const modoReais = document.querySelector(".modo-perda.selecionado").dataset.modo === "reais";
+    let perdaPct = null;
+    let perdaReaisValor = null;
+
+    if (modoReais){
+      const perdaR = parseFloat(document.getElementById("perdaReais").value) || 0;
+      const capitalBase = parseFloat(document.getElementById("capitalBase").value) || 0;
+      if (perdaR > 0 && capitalBase > 0){
+        perdaPct = (perdaR / capitalBase) * 100;
+        perdaReaisValor = perdaR;
+      }
+    } else {
+      perdaPct = parseFloat(document.getElementById("perdaPercentual").value) || 0;
+    }
+
+    const ganhoMedio = parseFloat(document.getElementById("ganhoMedioDiario").value) || 0;
+    const box = document.getElementById("resultadoRecuperacao");
+
+    if (!perdaPct || perdaPct <= 0){
+      box.style.display = "none";
+      return;
+    }
+
+    const ganhoNec = ganhoNecessarioPct(perdaPct);
+    box.style.display = "block";
+    let html = '<div class="linha"><span>Perda sofrida</span><span class="valor">' + perdaPct.toFixed(2) + '%' + (perdaReaisValor ? " (R$ " + perdaReaisValor.toFixed(2) + ")" : "") + '</span></div>';
+    html += '<div class="linha"><span>Ganho necessário pra voltar ao ponto inicial</span><span class="valor destaque">' + (ganhoNec ? ganhoNec.toFixed(2) + "%" : "—") + '</span></div>';
+
+    if (ganhoNec && ganhoMedio > 0){
+      const dias = Math.ceil(ganhoNec / ganhoMedio);
+      html += '<div class="linha"><span>Estimativa de pregões necessários (sem juros compostos)</span><span class="valor">' + dias + '</span></div>';
+      html += '<p class="binding">Estimativa conservadora: soma o ganho diário esperado sem reaplicar sobre o saldo recuperado. Na prática, quem consegue manter a consistência tende a levar menos tempo — mas não é seguro contar com isso.</p>';
+    }
+    box.innerHTML = html;
+  }
+
+  ["perdaPercentual","perdaReais","capitalBase","ganhoMedioDiario"].forEach(function(id){
+    document.getElementById(id).addEventListener("input", calcularRecuperacao);
+  });
+
+  (function montarTabelaRecuperacao(){
+    const valores = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70];
+    const corpo = document.getElementById("tabelaRecuperacao");
+    corpo.innerHTML = valores.map(function(v){
+      const ganho = ganhoNecessarioPct(v);
+      return '<tr><td>' + v + '%</td><td>' + (ganho ? ganho.toFixed(1) + "%" : "—") + '</td></tr>';
+    }).join("");
+  })();
+
+  // ---------------- Plano de Trade ----------------
+
+  let planoAtual = { meuPlano: {}, historico: {} };
+  let hojeChave = new Date().toISOString().slice(0, 10);
+  document.getElementById("dataHoje").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
+
+  function selecionarToggle(grupoEl, valor, multi){
+    const botoes = grupoEl.querySelectorAll("button");
+    botoes.forEach(function(b){
+      const attr = b.dataset.ativo !== undefined ? b.dataset.ativo : b.dataset.valor;
+      const ativo = multi ? (Array.isArray(valor) && valor.indexOf(attr) >= 0) : (attr === valor);
+      b.classList.toggle("selecionado", ativo);
+    });
+  }
+
+  document.querySelectorAll("#hojeAtivos button").forEach(function(btn){
+    btn.addEventListener("click", function(){ btn.classList.toggle("selecionado"); });
+  });
+  document.querySelectorAll("#emocionalManha button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll("#emocionalManha button").forEach(function(b){ b.classList.remove("selecionado"); });
+      btn.classList.add("selecionado");
+    });
+  });
+  document.querySelectorAll("#emocionalNoite button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll("#emocionalNoite button").forEach(function(b){ b.classList.remove("selecionado"); });
+      btn.classList.add("selecionado");
+    });
+  });
+
+  function coletarAtivosHoje(){
+    return Array.from(document.querySelectorAll("#hojeAtivos button.selecionado")).map(function(b){ return b.dataset.ativo; });
+  }
+  function coletarEmocional(id){
+    const sel = document.querySelector("#" + id + " button.selecionado");
+    return sel ? sel.dataset.valor : "";
+  }
+  function coletarComportamentos(){
+    return Array.from(document.querySelectorAll("#comportamentosRisco input:checked")).map(function(c){ return c.value; });
+  }
+
+  async function carregarPlano(){
+    try {
+      const resp = await apiFetch("/api/plano-trade");
+      if (!resp.ok) return;
+      planoAtual = await resp.json();
+    } catch(e){ return; }
+
+    const mp = planoAtual.meuPlano || {};
+    document.getElementById("limitePerdaDiaria").value = mp.limitePerdaDiaria || "";
+    document.getElementById("limiteMetaGanho").value = mp.limiteMetaGanho || "";
+    document.getElementById("limiteMaxOperacoes").value = mp.limiteMaxOperacoes || "";
+    document.getElementById("limiteMaxContratos").value = mp.limiteMaxContratos || "";
+    document.getElementById("meusSetups").value = mp.meusSetups || "";
+    document.getElementById("regrasEntrada").value = mp.regrasEntrada || "";
+    document.getElementById("regrasSaida").value = mp.regrasSaida || "";
+
+    const hoje = (planoAtual.historico || {})[hojeChave] || {};
+    if (hoje.ativos) selecionarToggle(document.getElementById("hojeAtivos"), hoje.ativos, true);
+    if (hoje.cenario) document.getElementById("hojeCenario").value = hoje.cenario;
+    if (hoje.emocionalManha) selecionarToggle(document.getElementById("emocionalManha"), hoje.emocionalManha, false);
+    if (hoje.anotacoes) document.getElementById("hojeAnotacoes").value = hoje.anotacoes;
+    if (hoje.emocionalNoite) selecionarToggle(document.getElementById("emocionalNoite"), hoje.emocionalNoite, false);
+    if (Array.isArray(hoje.comportamentos)){
+      document.querySelectorAll("#comportamentosRisco input").forEach(function(c){
+        c.checked = hoje.comportamentos.indexOf(c.value) >= 0;
+      });
+    }
+    atualizarConfirmaBox(!!hoje.confirmado);
+  }
+
+  function atualizarConfirmaBox(confirmado){
+    const box = document.getElementById("confirmaBox");
+    const texto = document.getElementById("confirmaTexto");
+    const btn = document.getElementById("btnConfirmarPlano");
+    if (confirmado){
+      box.style.borderColor = "var(--green)";
+      texto.innerHTML = '<span class="badge-ok">✓ Plano confirmado hoje</span>';
+      btn.style.display = "none";
+    } else {
+      texto.textContent = "Você ainda não confirmou seu plano hoje.";
+      btn.style.display = "inline-block";
+    }
+  }
+
+  document.getElementById("btnConfirmarPlano").addEventListener("click", async function(){
+    await salvarHoje({ confirmado: true });
+    atualizarConfirmaBox(true);
+  });
+
+  async function salvarHoje(extra){
+    const hoje = Object.assign({
+      ativos: coletarAtivosHoje(),
+      cenario: document.getElementById("hojeCenario").value,
+      emocionalManha: coletarEmocional("emocionalManha"),
+      anotacoes: document.getElementById("hojeAnotacoes").value,
+    }, extra || {});
+
+    try {
+      await apiFetch("/api/plano-trade", {
+        method: "POST",
+        body: JSON.stringify({ data: hojeChave, hoje })
+      });
+    } catch(e){}
+  }
+
+  document.getElementById("btnSalvarHoje").addEventListener("click", async function(){
+    await salvarHoje({});
+  });
+
+  document.getElementById("btnSalvarFechamento").addEventListener("click", async function(){
+    await salvarHoje({
+      emocionalNoite: coletarEmocional("emocionalNoite"),
+      comportamentos: coletarComportamentos(),
+    });
+  });
+
+  document.getElementById("btnSalvarMeuPlano").addEventListener("click", async function(){
+    const meuPlano = {
+      limitePerdaDiaria: document.getElementById("limitePerdaDiaria").value,
+      limiteMetaGanho: document.getElementById("limiteMetaGanho").value,
+      limiteMaxOperacoes: document.getElementById("limiteMaxOperacoes").value,
+      limiteMaxContratos: document.getElementById("limiteMaxContratos").value,
+      meusSetups: document.getElementById("meusSetups").value,
+      regrasEntrada: document.getElementById("regrasEntrada").value,
+      regrasSaida: document.getElementById("regrasSaida").value,
+    };
+    const msg = document.getElementById("msgMeuPlano");
+    try {
+      await apiFetch("/api/plano-trade", { method: "POST", body: JSON.stringify({ meuPlano }) });
+      msg.textContent = "Salvo.";
+      msg.className = "msg ok";
+    } catch(e){
+      msg.textContent = "Falha ao salvar.";
+      msg.className = "msg erro";
+    }
+  });
+
+  checarSessao();
+})();
+</script>
+</body>
+</html>
