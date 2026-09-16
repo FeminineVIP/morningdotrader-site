@@ -347,6 +347,21 @@
   @media (max-width:480px){
     .alert-banner .alert-icon{width:44px; height:44px;}
   }
+  /* Contador regressivo opcional dentro do Alerta do Dia, pra eventos com
+     hora marcada (ex: decisão do FOMC, Payroll). Só aparece quando o campo
+     alerta_countdown_ate é preenchido no painel manual. */
+  .alert-countdown{display:flex; gap:22px; margin-top:14px;}
+  .alert-countdown .countdown-item{text-align:center; min-width:44px;}
+  .alert-countdown .countdown-item span{
+    display:block; font-size:1.6rem; font-weight:800; color:var(--text); font-variant-numeric:tabular-nums;
+  }
+  .alert-countdown .countdown-item small{
+    display:block; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-top:2px;
+  }
+  @media (max-width:480px){
+    .alert-countdown{gap:14px;}
+    .alert-countdown .countdown-item span{font-size:1.3rem;}
+  }
   /* Destaque para Apresentacao / Parceiro: cards de patrocinio pontuais pra
      parcerias/reunioes (ex: Dom Investimentos, TopGain). Layout dividido:
      logo ocupando a altura toda e metade da largura do quadro, do lado
@@ -514,6 +529,11 @@
       </a>
       <p class="alert-titulo" id="alertaTitulo"></p>
       <p class="alert-texto" id="alertaTexto"></p>
+      <div class="alert-countdown" id="alertaCountdown" style="display:none;">
+        <div class="countdown-item"><span id="cdHoras">00</span><small>Horas</small></div>
+        <div class="countdown-item"><span id="cdMinutos">00</span><small>Minutos</small></div>
+        <div class="countdown-item"><span id="cdSegundos">00</span><small>Seg</small></div>
+      </div>
     </div>
   </div>
 
@@ -1153,6 +1173,8 @@
           <span id="alertaImagemStatus" style="font-size:0.8rem; color:var(--muted); margin-left:8px;"></span>
           <input type="text" id="input-alerta_titulo" placeholder="Título, ex: Payroll hoje às 9:30" style="margin-top:6px;">
           <textarea id="input-alerta_texto" placeholder="Texto explicativo..." style="margin-top:6px; min-height:70px;"></textarea>
+          <label style="font-size:0.85rem; margin-top:8px;">Contador regressivo (opcional — data/hora de Brasília do evento, ex: divulgação do FOMC. Deixe em branco pra não mostrar contador)</label>
+          <input type="datetime-local" id="input-alerta_countdown_ate" style="margin-top:4px;">
         </div>
         <div style="grid-column:1 / -1;">
           <label>Destaque para Apresentação / Parceiro 1 (banner pontual pra parcerias e reuniões, ex: Dom Investimentos, TopGain. Opcional, some sozinho se ficar em branco)</label>
@@ -1333,6 +1355,47 @@
     }
   }
 
+  // Contador regressivo do Alerta do Dia (ex: hora da decisao do FOMC). O
+  // valor salvo (alerta_countdown_ate) e' sempre horario de Brasilia, digitado
+  // no campo datetime-local do painel manual; convertemos pra UTC na marra
+  // (BRT = UTC-3, sem horario de verao) em vez de deixar o "new Date(string)"
+  // interpretar como fuso do navegador de quem estiver vendo o site, que pode
+  // nao ser o Brasil.
+  let alertaCountdownInterval = null;
+  function iniciarAlertaCountdown(dataHoraBrasiliaStr) {
+    if (alertaCountdownInterval) {
+      clearInterval(alertaCountdownInterval);
+      alertaCountdownInterval = null;
+    }
+    const cdBox = document.getElementById("alertaCountdown");
+    const m = (dataHoraBrasiliaStr || "").match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (!m) {
+      cdBox.style.display = "none";
+      return;
+    }
+    const [, ano, mes, dia, hora, minuto] = m.map(Number);
+    const alvoMs = Date.UTC(ano, mes - 1, dia, hora + 3, minuto); // BRT -> UTC
+    function atualizar() {
+      const diff = alvoMs - Date.now();
+      if (diff <= 0) {
+        cdBox.style.display = "none";
+        clearInterval(alertaCountdownInterval);
+        alertaCountdownInterval = null;
+        return;
+      }
+      const totalSeg = Math.floor(diff / 1000);
+      const h = Math.floor(totalSeg / 3600);
+      const min = Math.floor((totalSeg % 3600) / 60);
+      const seg = totalSeg % 60;
+      document.getElementById("cdHoras").textContent = String(h).padStart(2, "0");
+      document.getElementById("cdMinutos").textContent = String(min).padStart(2, "0");
+      document.getElementById("cdSegundos").textContent = String(seg).padStart(2, "0");
+      cdBox.style.display = "flex";
+    }
+    atualizar();
+    alertaCountdownInterval = setInterval(atualizar, 1000);
+  }
+
   const SR_FIELDS = ["dolar_r3", "dolar_r2", "dolar_r1", "dolar_divisor", "indice_r3", "indice_r2", "indice_r1", "indice_divisor", "dolar_s1", "dolar_s2", "dolar_s3", "indice_s1", "indice_s2", "indice_s3"];
   const FLUXO_FIELDS = ["fluxo_estrangeiro", "fluxo_institucional", "fluxo_pessoa_fisica", "fluxo_inst_financeira", "fluxo_outros"];
   const FLUXO_CAMBIAL_FIELDS = [
@@ -1447,13 +1510,27 @@
         alertaTagLink.removeAttribute("rel");
       }
       alertaBox.style.display = "flex";
+      if (data.alerta_countdown_ate && data.alerta_countdown_ate.trim()) {
+        iniciarAlertaCountdown(data.alerta_countdown_ate.trim());
+      } else if (alertaCountdownInterval) {
+        clearInterval(alertaCountdownInterval);
+        alertaCountdownInterval = null;
+        document.getElementById("alertaCountdown").style.display = "none";
+      }
     } else {
       alertaBox.style.display = "none";
+      if (alertaCountdownInterval) {
+        clearInterval(alertaCountdownInterval);
+        alertaCountdownInterval = null;
+      }
+      document.getElementById("alertaCountdown").style.display = "none";
     }
     const alertaTituloInput = document.getElementById("input-alerta_titulo");
     if (alertaTituloInput && !alertaTituloInput.value) alertaTituloInput.value = data.alerta_titulo || "";
     const alertaTextoInput = document.getElementById("input-alerta_texto");
     if (alertaTextoInput && !alertaTextoInput.value) alertaTextoInput.value = data.alerta_texto || "";
+    const alertaCountdownInput = document.getElementById("input-alerta_countdown_ate");
+    if (alertaCountdownInput && !alertaCountdownInput.value) alertaCountdownInput.value = data.alerta_countdown_ate || "";
 
     // Destaque para Apresentacao / Parceiro: bloco generico de propaganda
     // pontual (ex: Dom Investimentos, TopGain) pra usar em apresentacoes e
@@ -1688,6 +1765,7 @@
       body.featured_news_url = document.getElementById("input-featured_news_url").value;
       body.alerta_titulo = document.getElementById("input-alerta_titulo").value;
       body.alerta_texto = document.getElementById("input-alerta_texto").value;
+      body.alerta_countdown_ate = document.getElementById("input-alerta_countdown_ate").value;
 
       const alertaImagemInput = document.getElementById("input-alerta_imagem");
       const alertaImagemStatus = document.getElementById("alertaImagemStatus");
