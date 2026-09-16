@@ -146,15 +146,15 @@
 <!-- ============ PORTAO DE LOGIN ============ -->
 <div class="gate" id="gateLogin">
   <h2>Entrar nas ferramentas</h2>
-  <p class="desc" id="gateDesc">Digite seu e-mail. Se for a primeira vez, também vamos pedir seu WhatsApp — um único cadastro libera as 3 ferramentas.</p>
+  <p class="desc" id="gateDesc">Um único cadastro libera as 3 ferramentas. O WhatsApp só é obrigatório no seu primeiro acesso.</p>
 
   <form id="formAcesso">
     <div class="campo">
       <label for="inputEmail">E-mail</label>
       <input type="email" id="inputEmail" required autocomplete="email" placeholder="voce@email.com">
     </div>
-    <div class="campo" id="campoWhatsapp" style="display:none;">
-      <label for="inputWhatsapp">WhatsApp (DDD + número)</label>
+    <div class="campo" id="campoWhatsapp">
+      <label for="inputWhatsapp">WhatsApp — DDD + número (obrigatório só no 1º acesso)</label>
       <input type="tel" id="inputWhatsapp" autocomplete="tel" placeholder="11999998888">
     </div>
     <button type="submit" class="btn" id="btnAcesso">Receber link de acesso</button>
@@ -465,8 +465,7 @@
   document.getElementById("formAcesso").addEventListener("submit", async function(ev){
     ev.preventDefault();
     const email = document.getElementById("inputEmail").value.trim().toLowerCase();
-    const whatsappVisivel = document.getElementById("campoWhatsapp").style.display !== "none";
-    const whatsapp = whatsappVisivel ? document.getElementById("inputWhatsapp").value.trim() : undefined;
+    const whatsapp = document.getElementById("inputWhatsapp").value.trim();
     const btn = document.getElementById("btnAcesso");
     const msg = document.getElementById("msgAcesso");
 
@@ -486,10 +485,9 @@
         msg.textContent = "Pronto! Verifique seu e-mail (e a caixa de spam) e clique no link pra entrar.";
         msg.className = "msg ok";
       } else if (data.error === "cadastro_necessario"){
-        document.getElementById("campoWhatsapp").style.display = "block";
-        document.getElementById("gateDesc").textContent = "Primeiro acesso — confirme seu WhatsApp pra liberar as ferramentas.";
-        msg.textContent = "Só mais um passo: informe seu WhatsApp e envie de novo.";
-        msg.className = "msg";
+        msg.textContent = "Esse é seu primeiro acesso — informe um WhatsApp válido (DDD + número) acima e envie de novo.";
+        msg.className = "msg erro";
+        document.getElementById("inputWhatsapp").focus();
       } else {
         msg.textContent = "Não deu certo: " + (data.error || "tente novamente em instantes.");
         msg.className = "msg erro";
