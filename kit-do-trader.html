@@ -72,6 +72,17 @@
   .brinde-proof-text{font-size:0.86rem; color:#c9d4de; margin:0; line-height:1.55;}
   .brinde-fineprint{font-size:0.72rem; color:var(--muted); margin-top:14px; line-height:1.45; font-style:italic;}
 
+  .brinde-premio{
+    background: rgba(245,166,35,0.1); border:1px solid rgba(245,166,35,0.4);
+    border-radius:10px; padding:14px 16px; margin-bottom:18px;
+  }
+  .brinde-premio-badge{
+    display:inline-flex; align-items:center; gap:5px; font-size:0.7rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.03em; color:var(--amber);
+    background:rgba(245,166,35,0.18); border-radius:99px; padding:3px 10px; margin-bottom:9px;
+  }
+  .brinde-premio-text{font-size:0.86rem; color:#c9d4de; margin:0; line-height:1.55;}
+
   .pdt-ad{
     position:relative; display:block; border-radius:14px; overflow:hidden;
     margin-bottom:26px; text-decoration:none; min-height:210px;
@@ -187,6 +198,30 @@
   </a>
 
   <div class="brinde-card">
+    <div class="brinde-icon">🏆</div>
+    <div class="brinde-body">
+      <div class="brinde-top">
+        <h2>Desafio 21 Pregões</h2>
+      </div>
+      <p class="desc">21 pregões seguidos aplicando o risco máximo por operação e o limite diário de perda que você já usa na Planilha do Trader. Você só registra contratos, distância do stop e resultado do dia — a própria planilha calcula sozinha se você respeitou as regras. Nada de autoavaliação: é conta.</p>
+
+      <div class="brinde-premio">
+        <span class="brinde-premio-badge">🏆 Prêmio real</span>
+        <p class="brinde-premio-text">Complete os 21 pregões sem nenhuma violação de risco e ganhe <b>6 meses de Painel do Trader</b>.</p>
+      </div>
+
+      <form class="lead-form" id="formDesafio" novalidate>
+        <input type="email" id="emailDesafio" placeholder="seu@email.com" required autocomplete="email">
+        <input type="tel" id="whatsappDesafio" placeholder="WhatsApp (DDD + número)" required autocomplete="tel">
+        <button type="submit" id="btnDesafio">Quero participar</button>
+      </form>
+      <div class="lead-msg" id="msgDesafio"></div>
+
+      <p class="brinde-fineprint">Uma única violação de risco quebra o desafio. Regulamento completo e confirmação do prêmio são enviados por e-mail junto com a planilha.</p>
+    </div>
+  </div>
+
+  <div class="brinde-card">
     <div class="brinde-icon">📊</div>
     <div class="brinde-body">
       <div class="brinde-top">
@@ -238,6 +273,28 @@
     </div>
   </div>
 
+  <div class="brinde-card">
+    <div class="brinde-icon">🛡️</div>
+    <div class="brinde-body">
+      <div class="brinde-top">
+        <h2>Guia de Gestão de Risco</h2>
+      </div>
+      <p class="desc">Valor do ponto do WIN e do WDO, como calcular o tamanho da posição pelo seu risco, regras de stop loss/gain, limite diário e mensal, e os erros mais comuns que destroem contas. Leitura aberta no site, com o e-book completo pra baixar.</p>
+      <a href="guia-gestao-de-risco.html" class="pdt-ad-cta" style="display:inline-block;">Ler o guia →</a>
+    </div>
+  </div>
+
+  <div class="brinde-card">
+    <div class="brinde-icon">🧠</div>
+    <div class="brinde-body">
+      <div class="brinde-top">
+        <h2>Mapa Mental do Trader Consistente</h2>
+      </div>
+      <p class="desc">Os 7 pilares de quem opera com consistência — mindset, planejamento, execução, gestão emocional, registro e análise, evolução contínua e resultados — num mapa visual só.</p>
+      <a href="mapa-mental-trader-consistente.html" class="pdt-ad-cta" style="display:inline-block;">Ver o mapa mental →</a>
+    </div>
+  </div>
+
   <p class="disclaimer">Seu e-mail é usado pra te enviar esses materiais (o link de download vai só por lá) e o WhatsApp pra novidades do Morning do Trader e do Painel do Trader. Sem spam.</p>
 
 </main>
@@ -257,6 +314,7 @@
     const whatsappInput = document.getElementById(whatsappId);
     const msg = document.getElementById(msgId);
     const btn = document.getElementById(btnId);
+    const btnLabelOriginal = btn.textContent;
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -301,11 +359,12 @@
         msg.classList.add("show", "err");
       } finally {
         btn.disabled = false;
-        btn.textContent = "Quero baixar";
+        btn.textContent = btnLabelOriginal;
       }
     });
   }
 
+  setupLeadForm("formDesafio", "emailDesafio", "whatsappDesafio", "msgDesafio", "btnDesafio", "desafio-21-pregoes");
   setupLeadForm("formPlanilha", "emailPlanilha", "whatsappPlanilha", "msgPlanilha", "btnPlanilha", "planilha-trader");
   setupLeadForm("formDiario", "emailDiario", "whatsappDiario", "msgDiario", "btnDiario", "diario-trader");
 </script>

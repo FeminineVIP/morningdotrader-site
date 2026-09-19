@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Gestão de Risco — Mini Índice e Mini Dólar | Morning do Trader</title>
+<meta name="description" content="Guia completo de gestão de risco para operar mini índice (WIN) e mini dólar (WDO): valor do ponto, tamanho de posição, stop loss/gain, limites diário e mensal e os erros mais comuns.">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --red: #e5484d;
+    --amber: #f5a623;
+    --green: #3ecf8e;
+    --accent: #4da3ff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height:1.6;
+  }
+  a{color:var(--accent);}
+  .wrap{max-width: 900px; margin:0 auto; padding: 0 16px;}
+
+  .nav{background: var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px; position:sticky; top:0; z-index:51;}
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .brand-group{display:flex; align-items:center; gap:8px;}
+  .nav .links{display:flex; flex-wrap:wrap; align-items:center; gap:18px; font-size:0.88rem;}
+  .nav .links a{color:var(--muted); text-decoration:none;}
+  .nav .links a.active{color:var(--accent);}
+  .nav .links a:hover{color:var(--text);}
+
+  .hero{padding: 36px 0 30px; border-bottom: 1px solid var(--border); background:var(--bg-alt);}
+  .hero .wrap{display:flex; gap:32px; align-items:center; flex-wrap:wrap;}
+  .hero-text{flex:1; min-width:260px;}
+  .hero-badge{
+    display:inline-block; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;
+    color:var(--accent); border:1px solid var(--accent); border-radius:99px; padding:3px 12px; margin-bottom:14px;
+  }
+  .hero h1{font-size: 2rem; margin:0 0 10px; line-height:1.2;}
+  .hero h1 span{color:var(--accent);}
+  .hero p{color:var(--muted); font-size:1rem; margin:0 0 20px; max-width:520px;}
+  .hero-cover{
+    flex-shrink:0; width:220px; border-radius:14px; overflow:hidden; border:1px solid var(--border);
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  }
+  .hero-cover img{display:block; width:100%; height:auto;}
+  .hero-cta{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    padding:12px 24px; border-radius:8px; font-size:0.95rem; text-decoration:none;
+  }
+  .hero-cta:hover{filter:brightness(1.08);}
+
+  main{padding:36px 0 60px;}
+
+  .artigo-section{margin-bottom:44px;}
+  .artigo-section h2{font-size:1.4rem; margin:0 0 6px;}
+  .artigo-section .kicker{
+    color:var(--accent); font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 6px;
+  }
+  .artigo-section .lead{color:var(--muted); font-size:0.95rem; margin:0 0 20px;}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:640px){ .two-col{grid-template-columns:1fr;} }
+
+  .info-card{
+    background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px;
+  }
+  .info-card.blue{border-color:rgba(77,163,255,0.4);}
+  .info-card.amber{border-color:rgba(245,166,35,0.4);}
+  .info-card h3{margin:0 0 10px; font-size:1.05rem; display:flex; align-items:center; gap:8px;}
+  .info-card .valor{font-size:1.5rem; font-weight:800; color:var(--accent); margin:0 0 8px;}
+  .info-card.amber .valor{color:var(--amber);}
+  .info-card p{margin:0 0 8px; font-size:0.92rem; color:#c9d4de;}
+  .info-card p:last-child{margin-bottom:0;}
+
+  .formula-box{
+    background:var(--bg-alt); border:1px solid rgba(77,163,255,0.4); border-radius:12px;
+    padding:24px; text-align:center; margin-bottom:18px;
+  }
+  .formula-box .f{font-size:1.15rem; font-weight:700; line-height:1.6;}
+  .formula-box .note{color:var(--muted); font-size:0.85rem; margin-top:10px;}
+
+  .exemplo-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px;}
+  .exemplo-card .tag{font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;}
+  .exemplo-card.win .tag{color:var(--accent);}
+  .exemplo-card.wdo .tag{color:var(--amber);}
+  .exemplo-card p{margin:0 0 8px; font-size:0.9rem; color:#c9d4de;}
+  .exemplo-card .resultado{font-weight:700; color:var(--text);}
+
+  .regra-block{margin-bottom:20px;}
+  .regra-block h3{font-size:1.05rem; margin:0 0 8px;}
+  .regra-block h3.blue{color:var(--accent);}
+  .regra-block h3.green{color:var(--green);}
+  .regra-block h3.red{color:var(--red);}
+  .regra-block p{margin:0; color:#c9d4de; font-size:0.94rem;}
+
+  .erro-lista{list-style:none; margin:0; padding:0; counter-reset:erro;}
+  .erro-item{
+    counter-increment:erro; display:flex; gap:14px; align-items:flex-start;
+    background:var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px; margin-bottom:10px;
+  }
+  .erro-item::before{
+    content:counter(erro); flex-shrink:0; width:26px; height:26px; border-radius:50%;
+    background:rgba(229,72,77,0.15); color:var(--red); border:1px solid rgba(229,72,77,0.4);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem;
+  }
+  .erro-item p{margin:0; font-size:0.94rem; color:#c9d4de;}
+
+  .cta-download{
+    background: linear-gradient(135deg, rgba(77,163,255,0.12), rgba(20,28,38,0.4));
+    border:1px solid var(--accent); border-radius:14px; padding:30px 26px; text-align:center;
+  }
+  .cta-download h2{margin:0 0 8px; font-size:1.4rem;}
+  .cta-download p{color:var(--muted); margin:0 0 22px; font-size:0.95rem;}
+  .lead-form{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:520px; margin:0 auto;}
+  .lead-form input[type="email"],
+  .lead-form input[type="tel"]{
+    flex:1; min-width:160px; background:var(--bg-alt); border:1px solid var(--border); color:var(--text);
+    border-radius:8px; padding:11px 14px; font-size:0.92rem; outline:none;
+  }
+  .lead-form input[type="email"]:focus,
+  .lead-form input[type="tel"]:focus{border-color:var(--accent);}
+  .lead-form button{
+    background:var(--accent); border:none; color:#08131f; font-weight:700;
+    border-radius:8px; padding:11px 20px; font-size:0.92rem; cursor:pointer; white-space:nowrap;
+  }
+  .lead-form button:hover{filter:brightness(1.08);}
+  .lead-form button:disabled{opacity:0.6; cursor:default;}
+  .lead-msg{font-size:0.85rem; margin-top:12px; display:none;}
+  .lead-msg.show{display:block;}
+  .lead-msg.ok{color:var(--green);}
+  .lead-msg.err{color:var(--red);}
+  .cta-fineprint{font-size:0.75rem; color:var(--muted); margin-top:16px;}
+
+  footer{padding:24px 0 40px; text-align:center; color:var(--muted); font-size:0.8rem;}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a1020">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand-group">
+      <span id="pwa-nav-slot"></span>
+      <a class="brand" href="index.html">Morning do Trader</a>
+    </div>
+    <div class="links">
+      <a href="index.html">Morning Call</a>
+      <a href="ormuz.html">Crise do Ormuz</a>
+      <a href="noticias.html">Notícias</a>
+      <a href="glossario.html">Glossário</a>
+      <a href="painel-internacional.html">Painel Internacional</a>
+      <a href="futuro.html">Futuro Financeiro</a>
+      <a href="kit-do-trader.html" class="active">Kit do Trader</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-text">
+      <span class="hero-badge">Guia gratuito</span>
+      <h1>Guia de <span>Gestão de Risco</span></h1>
+      <p>Mini Índice (WIN) e Mini Dólar (WDO): quanto vale cada ponto, como calcular o tamanho da posição, stop loss/gain, limites diário e mensal, e os erros que mais destroem contas.</p>
+      <a href="#baixar" class="hero-cta">Baixar o e-book completo →</a>
+    </div>
+    <div class="hero-cover">
+      <img src="guia-risco-capa.webp" alt="Capa do Guia de Gestão de Risco — Mini Índice e Mini Dólar">
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <section class="artigo-section">
+    <p class="kicker">01</p>
+    <h2>Quanto vale cada ponto?</h2>
+    <p class="lead">Antes de qualquer cálculo de risco, você precisa saber exatamente quanto cada ponto de variação representa em dinheiro real na sua conta. Esses valores são fixos, definidos pela B3, e não mudam com o preço do ativo.</p>
+    <div class="two-col">
+      <div class="info-card blue">
+        <h3>📊 WIN — Mini Índice</h3>
+        <p class="valor">R$ 0,20 por ponto</p>
+        <p>Variação mínima (tick): <b>5 pontos = R$ 1,00</b></p>
+        <p>Ex.: um movimento de 100 pontos = <b>R$ 20,00</b> por contrato.</p>
+      </div>
+      <div class="info-card amber">
+        <h3>💲 WDO — Mini Dólar</h3>
+        <p class="valor">R$ 10,00 por ponto</p>
+        <p>Contrato equivalente a <b>US$ 10.000</b>.</p>
+        <p>Variação mínima (tick): <b>0,5 ponto = R$ 5,00</b></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="artigo-section">
+    <p class="kicker">02</p>
+    <h2>Quantos contratos operar?</h2>
+    <p class="lead">O tamanho da posição não é uma escolha aleatória — ele sai direto do seu capital de risco e da distância do seu stop.</p>
+    <div class="formula-box">
+      <div class="f">Nº de contratos = Capital de risco (R$) ÷ (Distância do stop em pontos × Valor do ponto)</div>
+      <div class="note">Arredonde sempre para baixo — nunca para cima.</div>
+    </div>
+    <div class="two-col">
+      <div class="exemplo-card win">
+        <p class="tag">Exemplo · WIN</p>
+        <p>Capital de risco: <b>R$ 100,00</b><br>Distância do stop: <b>100 pontos</b></p>
+        <p class="resultado">100 ÷ (100 × R$0,20) = 100 ÷ 20 = 5 contratos</p>
+      </div>
+      <div class="exemplo-card wdo">
+        <p class="tag">Exemplo · WDO</p>
+        <p>Capital de risco: <b>R$ 500,00</b><br>Distância do stop: <b>25 pontos</b></p>
+        <p class="resultado">500 ÷ (25 × R$10,00) = 500 ÷ 250 = 2 contratos</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="artigo-section">
+    <p class="kicker">03</p>
+    <h2>Stop loss e stop gain</h2>
+    <div class="regra-block">
+      <h3 class="blue">Defina os dois antes de entrar</h3>
+      <p>Antes de abrir a operação, defina o preço exato do stop loss (saída se der errado) e do stop gain (saída se der certo). Nunca decida isso no calor da operação.</p>
+    </div>
+    <div class="regra-block">
+      <h3 class="green">Risco:retorno mínimo</h3>
+      <p>Busque uma relação de pelo menos 1:1,5 — o potencial de ganho deve ser ao menos 1,5x maior que o risco assumido. Assim é possível ter mais operações perdedoras que ganhadoras e ainda fechar no positivo.</p>
+    </div>
+    <div class="regra-block" style="margin-bottom:0;">
+      <h3 class="red">Nunca mova o stop contra a operação</h3>
+      <p>Mover o stop loss para "dar mais espaço" depois que o preço já foi contra você é o erro mais comum e mais destrutivo em gestão de risco. O stop é definido antes — e respeitado depois.</p>
+    </div>
+  </section>
+
+  <section class="artigo-section">
+    <p class="kicker">04</p>
+    <h2>Limite diário e mensal de risco</h2>
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="info-card blue">
+        <h3>📅 Limite diário</h3>
+        <p>Defina um valor máximo de perda para o dia (ex.: 2% do capital da conta). Ao atingir esse valor, pare de operar — não importa o motivo.</p>
+      </div>
+      <div class="info-card amber">
+        <h3>🗓️ Limite mensal</h3>
+        <p>Defina também um limite de perda mensal (ex.: 6% do capital). Se for atingido, pare no mês e revise o que não está funcionando.</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-bottom:0;">O limite diário evita que um dia ruim vire uma semana ruim. O limite mensal evita que um mês ruim vire uma conta zerada. Escreva os dois valores em um lugar visível — e trate como regra, não como sugestão.</p>
+  </section>
+
+  <section class="artigo-section">
+    <p class="kicker">05</p>
+    <h2>Erros comuns de gestão de risco</h2>
+    <ul class="erro-lista">
+      <li class="erro-item"><p>Aumentar o tamanho da posição depois de uma perda, tentando recuperar rápido.</p></li>
+      <li class="erro-item"><p>Operar sem definir o stop loss antes de entrar na operação.</p></li>
+      <li class="erro-item"><p>Ignorar o limite diário de perda e continuar operando "só mais uma vez".</p></li>
+      <li class="erro-item"><p>Mover o stop loss para longe depois que o preço já foi contra a operação.</p></li>
+      <li class="erro-item"><p>Operar fora do horário ou do plano definido, por impulso ou tédio.</p></li>
+      <li class="erro-item"><p>Deixar a emoção — raiva, ansiedade ou vontade de vingança — decidir a próxima entrada.</p></li>
+    </ul>
+  </section>
+
+  <section class="cta-download" id="baixar">
+    <h2>Quer guardar esse guia?</h2>
+    <p>Baixe o e-book completo em PDF — com o mesmo conteúdo, em formato pra guardar, imprimir ou ler offline.</p>
+    <form class="lead-form" id="formGuia" novalidate>
+      <input type="email" id="emailGuia" placeholder="seu@email.com" required autocomplete="email">
+      <input type="tel" id="whatsappGuia" placeholder="WhatsApp (DDD + número)" required autocomplete="tel">
+      <button type="submit" id="btnGuia">Quero baixar o e-book</button>
+    </form>
+    <div class="lead-msg" id="msgGuia"></div>
+    <p class="cta-fineprint">Seu e-mail é usado pra te enviar o e-book (o link de download vai só por lá) e o WhatsApp pra novidades do Morning do Trader e do Painel do Trader. Sem spam.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Morning do Trader — conteúdo gratuito pra ajudar quem opera todo dia.
+  </div>
+</footer>
+
+<script>
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+
+  function setupLeadForm(formId, emailId, whatsappId, msgId, btnId, brinde) {
+    const form = document.getElementById(formId);
+    const emailInput = document.getElementById(emailId);
+    const whatsappInput = document.getElementById(whatsappId);
+    const msg = document.getElementById(msgId);
+    const btn = document.getElementById(btnId);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const whatsappDigits = whatsappInput.value.replace(/\D/g, "");
+      msg.className = "lead-msg";
+      msg.textContent = "";
+
+      if (!email || !email.includes("@")) {
+        msg.textContent = "Digite um e-mail válido.";
+        msg.classList.add("show", "err");
+        return;
+      }
+
+      if (whatsappDigits.length < 10 || whatsappDigits.length > 13) {
+        msg.textContent = "Digite um WhatsApp válido, com DDD.";
+        msg.classList.add("show", "err");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      try {
+        const resp = await fetch(WORKER_URL + "/api/leads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, whatsapp: whatsappDigits, brinde })
+        });
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || !data.ok) {
+          throw new Error(data.error || "Falha ao enviar");
+        }
+
+        msg.textContent = "Prontinho! Confira seu e-mail (e a caixa de spam) — enviamos o link de download.";
+        msg.classList.add("show", "ok");
+        form.reset();
+      } catch (err) {
+        console.warn("guia-risco: falha ao cadastrar lead", err);
+        msg.textContent = "Não foi possível enviar agora. Tenta de novo em instantes.";
+        msg.classList.add("show", "err");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Quero baixar o e-book";
+      }
+    });
+  }
+
+  setupLeadForm("formGuia", "emailGuia", "whatsappGuia", "msgGuia", "btnGuia", "guia-risco");
+</script>
+
+</body>
+</html>

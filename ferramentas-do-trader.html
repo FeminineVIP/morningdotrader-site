@@ -14,6 +14,8 @@
     --text: #e8edf2;
     --muted: #8fa1b3;
     --accent: #4da3ff;
+    --accent2: #1e6fd9;
+    --gold: #e6b23d;
     --green: #35c780;
     --red: #ef5566;
     --yellow: #e6b23d;
@@ -26,15 +28,48 @@
   }
   a{color:var(--accent);}
   .nav{background:var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px;}
-  .nav .wrap{max-width:920px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;}
+  .nav .wrap{max-width:960px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;}
   .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
   .nav .sair{color:var(--muted); text-decoration:none; font-size:0.82rem; cursor:pointer; background:none; border:none; font-family:inherit;}
   .nav .sair:hover{color:var(--text);}
-  .wrap{max-width:920px; margin:0 auto; padding:0 16px;}
+  .wrap{max-width:960px; margin:0 auto; padding:0 16px;}
 
-  header.hero{padding:32px 0 20px;}
-  header.hero h1{font-size:1.5rem; margin:0 0 6px;}
-  header.hero p{color:var(--muted); margin:0; font-size:0.95rem;}
+  /* ---- Cabecalho de marca (logo + titulo + tag) ---- */
+  .brand-banner{
+    position:relative; overflow:hidden; background:linear-gradient(135deg,#0c1119 0%,#0e1b2c 60%,#0c1119 100%);
+    border-bottom:1px solid var(--border); padding:26px 0;
+  }
+  .brand-banner .candles{
+    position:absolute; right:0; top:0; bottom:0; width:220px; max-width:30%; pointer-events:none;
+    background:url('ferramentas-candles.png') right center / cover no-repeat;
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, #000 30%);
+    mask-image:linear-gradient(90deg, transparent 0%, #000 30%);
+  }
+  .brand-banner .wrap{position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; gap:18px; flex-wrap:wrap;}
+  .brand-logo{display:flex; align-items:center; gap:9px; margin-bottom:14px;}
+  .brand-logo .bars{display:flex; align-items:flex-end; gap:2px; height:20px;}
+  .brand-logo .bars i{display:block; width:4px; background:var(--accent); border-radius:1px;}
+  .brand-logo .bars i:nth-child(1){height:40%;}
+  .brand-logo .bars i:nth-child(2){height:65%;}
+  .brand-logo .bars i:nth-child(3){height:100%; background:var(--gold);}
+  .brand-logo-text{line-height:1.1;}
+  .brand-logo-text strong{display:block; font-size:0.92rem; letter-spacing:0.01em;}
+  .brand-logo-text span{display:block; font-size:0.6rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase;}
+  .brand-titulo h1{
+    font-size:1.9rem; margin:0 0 4px; font-weight:800; letter-spacing:-0.01em;
+    background:linear-gradient(90deg,#fff 0%, var(--accent) 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .brand-titulo p{color:var(--muted); margin:0; font-size:0.92rem; max-width:480px;}
+  .brand-tags{
+    border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-size:0.68rem;
+    letter-spacing:0.04em; text-transform:uppercase; color:var(--muted); line-height:1.9; background:rgba(255,255,255,0.02);
+    white-space:nowrap;
+  }
+  @media (max-width:640px){
+    .brand-banner .candles{display:none;}
+    .brand-titulo h1{font-size:1.5rem;}
+    .brand-tags{display:none;}
+  }
 
   /* ---- Portao de login ---- */
   .gate{
@@ -75,20 +110,151 @@
   .painel.active{display:block;}
 
   .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 24px; margin-bottom:20px;}
-  .card h3{margin:0 0 4px; font-size:1.02rem;}
+  .card h3{margin:0 0 4px; font-size:1.02rem; display:flex; align-items:center; gap:10px;}
   .card .nota{color:var(--muted); font-size:0.82rem; margin:0 0 18px;}
   .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
   @media (max-width:560px){ .grid2{grid-template-columns:1fr;} }
+
+  .step-num{
+    flex-shrink:0; width:26px; height:26px; border-radius:50%; background:var(--accent); color:#08131f;
+    font-size:0.82rem; font-weight:800; display:flex; align-items:center; justify-content:center;
+  }
 
   .resultado{
     margin-top:18px; padding:16px 18px; background:var(--bg-alt); border:1px solid var(--border);
     border-radius:10px;
   }
-  .resultado .linha{display:flex; justify-content:space-between; padding:6px 0; font-size:0.92rem; border-bottom:1px solid var(--border);}
+  .resultado .linha{display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:0.92rem; border-bottom:1px solid var(--border);}
   .resultado .linha:last-child{border-bottom:none;}
   .resultado .valor{font-weight:700;}
   .resultado .valor.destaque{color:var(--accent); font-size:1.15rem;}
+  .resultado .valor.positivo{color:var(--green);}
+  .resultado .valor.negativo{color:var(--red);}
+  .resultado .valor.alerta{color:var(--gold);}
   .resultado .binding{font-size:0.78rem; color:var(--muted); margin-top:8px;}
+
+  .resultado-tiles{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px;}
+  @media (max-width:560px){ .resultado-tiles{grid-template-columns:1fr;} }
+  .tile{border-radius:10px; padding:14px 16px; border:1px solid var(--border); background:var(--bg-alt);}
+  .tile.tile-red{border-color:rgba(239,85,102,0.4); background:rgba(239,85,102,0.07);}
+  .tile.tile-green{border-color:rgba(53,199,128,0.4); background:rgba(53,199,128,0.07);}
+  .tile .tile-label{font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:4px;}
+  .tile .tile-valor{font-size:1.4rem; font-weight:800;}
+  .tile.tile-red .tile-valor{color:var(--red);}
+  .tile.tile-green .tile-valor{color:var(--green);}
+  .tile .tile-sub{font-size:0.78rem; color:var(--muted); margin-top:2px;}
+
+  .quote-box{
+    border-left:3px solid var(--accent); background:rgba(77,163,255,0.06); border-radius:0 8px 8px 0;
+    padding:12px 16px; margin-top:16px; font-size:0.86rem; font-style:italic; color:#c9d4de;
+  }
+  .quote-box .autor{display:block; margin-top:6px; font-style:normal; font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em;}
+
+  /* ---- Calculadora de Risco: fundo em imagem com campos/resultados sobrepostos ---- */
+  .calc-board{position:relative; max-width:900px; margin:0 auto; container-type:inline-size;}
+  .calc-board-img{width:100%; display:block; border-radius:12px;}
+  .calc-field{
+    position:absolute; background:transparent; border:none; outline:none; margin:0; padding:0 1.2cqw;
+    color:#eaf0f8; font-family:inherit; font-size:2.1cqw; font-weight:600; line-height:1;
+  }
+  .calc-field::placeholder{color:rgba(234,240,248,0.28);}
+  .calc-field:focus{background:rgba(77,163,255,0.08); border-radius:6px;}
+  input.calc-field::-webkit-inner-spin-button, input.calc-field::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
+  input.calc-field[type="number"]{-moz-appearance:textfield;}
+  select.calc-field{appearance:none; -webkit-appearance:none; cursor:pointer;}
+  .calc-board button.calc-btn-overlay{
+    position:absolute; background:transparent; border:none; cursor:pointer; padding:0;
+  }
+  .calc-tile{position:absolute; text-align:center; display:flex; flex-direction:column; justify-content:center;}
+  .calc-tile .num{font-size:2.7cqw; font-weight:800; line-height:1.15;}
+  .calc-tile .cap{font-size:1.35cqw; color:#a9b7c6; margin-top:0.3cqw; line-height:1.2;}
+  .calc-tile.azul .num{color:var(--accent);}
+  .calc-tile.dourado .num{color:var(--gold);}
+  .calc-tile.verde .num{color:var(--green);}
+  .calc-asset-tag{position:absolute; font-size:1.55cqw; font-weight:600; color:#eaf0f8; line-height:1;}
+  .calc-banner-txt{position:absolute; display:flex; flex-direction:column; justify-content:center; text-align:center;}
+  .calc-banner-txt .linha1{font-size:1.6cqw; color:#eaf0f8; line-height:1.3;}
+  .calc-banner-txt .linha1 strong{color:var(--green);}
+  .calc-banner-txt .linha2{font-size:1.3cqw; color:#a9c9b8; margin-top:0.2cqw;}
+  .calc-tile.vermelho .num{color:var(--red);}
+
+  .calc-unidade-toggle{
+    background:rgba(77,163,255,0.15); border:1px solid rgba(77,163,255,0.5); border-radius:4px;
+    color:var(--accent); font-weight:700; font-size:1.5cqw; cursor:pointer;
+  }
+  .calc-unidade-toggle:hover{background:rgba(77,163,255,0.28);}
+
+  .calc-chart{position:absolute; display:flex; flex-direction:column;}
+  .calc-chart svg{width:100%; height:100%; display:block;}
+
+  .calc-tabela-ref{position:absolute; overflow:hidden; font-size:1.5cqw;}
+  .calc-tabela-ref table{width:100%; height:100%; border-collapse:collapse; table-layout:fixed;}
+  .calc-tabela-ref tr{height:10%;}
+  .calc-tabela-ref td{padding:0; text-align:center; color:#dbe4ee; border-bottom:1px solid rgba(255,255,255,0.06); line-height:1;}
+  .calc-tabela-ref tr.linha-atual td{background:rgba(77,163,255,0.22); font-weight:700; color:#fff;}
+  .calc-tabela-ref tr:last-child td{border-bottom:none;}
+
+  .calc-textarea{
+    position:absolute; resize:none; background:transparent; border:none; outline:none; margin:0; padding:0.6cqw 1cqw;
+    color:#eaf0f8; font-family:inherit; font-size:1.65cqw; font-weight:500; line-height:1.4;
+  }
+  .calc-textarea::placeholder{color:rgba(234,240,248,0.28);}
+  .calc-textarea:focus{background:rgba(77,163,255,0.06); border-radius:6px;}
+  .calc-contador{position:absolute; text-align:right; font-size:1.15cqw; color:#7d8ea3; line-height:1;}
+
+  .calc-board .calc-ativo-btn{
+    position:absolute; display:flex; align-items:center; justify-content:center; gap:1.4cqw;
+    background:rgba(77,163,255,0.05); border:2px solid rgba(77,163,255,0.45); border-radius:1.1cqw;
+    cursor:pointer; color:#eaf0f8; padding:0; margin:0; font-size:inherit; transition:background .12s,border-color .12s;
+  }
+  .calc-board .calc-ativo-btn:hover{background:rgba(77,163,255,0.1);}
+  .calc-ativo-btn .ic{font-size:2.6cqw; line-height:1;}
+  .calc-ativo-btn .tx{font-size:1.7cqw; font-weight:800; text-align:left; line-height:1.3;}
+  .calc-ativo-btn .tx small{display:block; font-weight:500; color:#a9b7c6; font-size:0.72em;}
+  .calc-board .calc-ativo-btn.selecionado{background:linear-gradient(135deg, var(--accent), var(--accent2)); border-color:#8fcaff; color:#fff; box-shadow:0 0 0 1px rgba(143,202,255,0.4) inset;}
+  .calc-ativo-btn.selecionado .tx small{color:#e2f1ff;}
+
+  .calc-cenario-btn{
+    position:absolute; display:flex; align-items:center; justify-content:center; gap:0.9cqw;
+    background:rgba(255,255,255,0.02); border:2px solid; border-radius:0.9cqw; cursor:pointer; padding:0;
+    font-size:1.5cqw; font-weight:700; transition:background .12s;
+  }
+  .calc-cenario-btn .ic{font-size:1.7cqw; line-height:1;}
+  .calc-cenario-btn.alta{border-color:var(--green); color:var(--green);}
+  .calc-cenario-btn.baixa{border-color:var(--red); color:var(--red);}
+  .calc-cenario-btn.lateral{border-color:var(--gold); color:var(--gold);}
+  .calc-cenario-btn.indefinido{border-color:#8a97a8; color:#c3cbd6;}
+  .calc-cenario-btn.alta:hover{background:rgba(53,199,128,0.1);}
+  .calc-cenario-btn.baixa:hover{background:rgba(239,85,102,0.1);}
+  .calc-cenario-btn.lateral:hover{background:rgba(230,178,61,0.1);}
+  .calc-cenario-btn.indefinido:hover{background:rgba(138,151,168,0.1);}
+  .calc-cenario-btn.selecionado.alta{background:rgba(53,199,128,0.24);}
+  .calc-cenario-btn.selecionado.baixa{background:rgba(239,85,102,0.24);}
+  .calc-cenario-btn.selecionado.lateral{background:rgba(230,178,61,0.24);}
+  .calc-cenario-btn.selecionado.indefinido{background:rgba(138,151,168,0.24);}
+
+  .calc-board .calc-emoji-btn{
+    position:absolute; border-radius:50%; background:rgba(255,255,255,0.03); border:2px solid rgba(255,255,255,0.15);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:3.4cqw; padding:0; margin:0;
+    transition:background .12s,border-color .12s,box-shadow .12s;
+  }
+  .calc-board .calc-emoji-btn:hover{background:rgba(255,255,255,0.08);}
+  .calc-board .calc-emoji-btn.selecionado{border-color:var(--accent); background:rgba(77,163,255,0.18); box-shadow:0 0 0 3px rgba(77,163,255,0.22);}
+
+  .calc-board .check-lista .calc-check-input{position:absolute; opacity:0; margin:0; padding:0; cursor:pointer; width:auto; background:none; border:none;}
+  .calc-check-mark{
+    position:absolute; display:flex; align-items:center; justify-content:center; pointer-events:none;
+    color:var(--accent); font-weight:900; font-size:1.5cqw; opacity:0; transition:opacity .12s; line-height:1;
+  }
+  .calc-check-mark.ativo{opacity:1;}
+
+  .barras-comparativo{display:flex; align-items:flex-end; gap:28px; height:160px; margin-top:18px; padding:0 10px;}
+  .barra-col{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1;}
+  .barra-col .barra{width:100%; max-width:80px; border-radius:6px 6px 0 0; transition:height 0.3s;}
+  .barra-col .barra.azul{background:linear-gradient(180deg, var(--accent), var(--accent2));}
+  .barra-col .barra.vermelha{background:linear-gradient(180deg, #ff7a86, var(--red));}
+  .barra-col .barra-valor{font-size:0.85rem; font-weight:700;}
+  .barra-col .barra-label{font-size:0.72rem; color:var(--muted); text-align:center;}
 
   table.tabela{width:100%; border-collapse:collapse; font-size:0.86rem; margin-top:14px;}
   table.tabela th, table.tabela td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:right;}
@@ -111,7 +277,7 @@
   .emoji-group button.selecionado{border-color:var(--accent); background:rgba(77,163,255,0.15);}
 
   .check-lista label{display:flex; align-items:flex-start; gap:8px; font-size:0.88rem; margin-bottom:8px; cursor:pointer; color:var(--text);}
-  .check-lista input{margin-top:3px;}
+  .check-lista input[type="checkbox"]{width:auto; flex-shrink:0; margin-top:3px; padding:0; background:none; border:none; border-radius:0; accent-color:var(--accent);}
 
   .confirma-box{
     background:rgba(77,163,255,0.08); border:1px solid var(--accent); border-radius:10px; padding:16px 18px;
@@ -124,7 +290,20 @@
   .subseccao{border-top:1px solid var(--border); padding-top:18px; margin-top:18px;}
   .subseccao h4{margin:0 0 12px; font-size:0.88rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em;}
 
-  footer{padding:30px 0; text-align:center; color:var(--muted); font-size:0.8rem;}
+  footer.brand-footer{
+    position:relative; overflow:hidden; margin-top:20px; padding:20px 0;
+    background:#05070a url('ferramentas-bullbear.png') center 30% / cover no-repeat;
+    border-top:1px solid rgba(230,178,61,0.4);
+  }
+  footer.brand-footer::before{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(90deg, rgba(5,7,10,0.92) 0%, rgba(5,7,10,0.55) 45%, rgba(5,7,10,0.55) 55%, rgba(5,7,10,0.92) 100%);
+  }
+  footer.brand-footer .wrap{position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  footer.brand-footer .brand-logo{margin-bottom:0;}
+  footer.brand-footer .tagline{font-size:0.85rem; color:var(--text);}
+  footer.brand-footer .tagline strong{color:var(--gold);}
+  footer.brand-footer .aviso{width:100%; text-align:center; color:var(--muted); font-size:0.74rem; margin-top:14px;}
 </style>
 </head>
 <body>
@@ -136,12 +315,20 @@
   </div>
 </nav>
 
-<div class="wrap">
-  <header class="hero">
-    <h1>Ferramentas do Trader</h1>
-    <p>Calculadora de Risco, Recuperação de Prejuízo e Plano de Trade — as 3 ferramentas do Kit do Trader, num só acesso.</p>
-  </header>
-</div>
+<header class="brand-banner">
+  <div class="candles" aria-hidden="true" id="candlesDecor"></div>
+  <div class="wrap">
+    <div class="brand-titulo">
+      <div class="brand-logo">
+        <span class="bars"><i></i><i></i><i></i></span>
+        <span class="brand-logo-text"><strong>MORNING DO TRADER</strong><span>Informação que gera operações</span></span>
+      </div>
+      <h1>Ferramentas do Trader</h1>
+      <p>Calculadora de Risco, Recuperação de Prejuízo e Plano de Trade — as 3 ferramentas do Kit do Trader, num só acesso.</p>
+    </div>
+    <div class="brand-tags">Planejamento<br>Disciplina<br>Resultados</div>
+  </div>
+</header>
 
 <!-- ============ PORTAO DE LOGIN ============ -->
 <div class="gate" id="gateLogin">
@@ -172,87 +359,74 @@
 
   <!-- ---------- CALCULADORA DE RISCO ---------- -->
   <div class="painel active" id="painel-risco">
-    <div class="card">
-      <h3>Calculadora de Risco do Trader</h3>
-      <p class="nota">Calcula o número máximo de contratos considerando o seu risco por operação E a margem disponível na corretora — o resultado é sempre o menor dos dois (o que realmente te limita).</p>
+    <div class="calc-board">
+      <img src="calculadora-risco-bg.webp" class="calc-board-img" alt="Calculadora de Risco do Trader — Morning do Trader">
 
-      <div class="grid2">
-        <div class="campo">
-          <label for="riscoAtivo">Ativo</label>
-          <select id="riscoAtivo">
-            <option value="WIN">WIN — Mini Índice</option>
-            <option value="WDO">WDO — Mini Dólar</option>
-            <option value="IND">IND — Índice Cheio</option>
-            <option value="DOL">DOL — Dólar Cheio</option>
-          </select>
-        </div>
-        <div class="campo">
-          <label for="riscoCapital">Capital disponível (R$)</label>
-          <input type="number" id="riscoCapital" min="0" step="0.01" placeholder="10000">
-        </div>
-        <div class="campo">
-          <label for="riscoPercentual">Risco máximo por operação (%)</label>
-          <input type="number" id="riscoPercentual" min="0" step="0.1" placeholder="1">
-        </div>
-        <div class="campo">
-          <label for="riscoStop">Stop loss (em pontos)</label>
-          <input type="number" id="riscoStop" min="0" step="1" placeholder="100">
-        </div>
-        <div class="campo">
-          <label for="riscoMargem">Margem disponível na corretora (R$)</label>
-          <input type="number" id="riscoMargem" min="0" step="0.01">
-        </div>
-        <div class="campo">
-          <label for="riscoMargemContrato">Margem exigida por contrato (R$)</label>
-          <input type="number" id="riscoMargemContrato" min="0" step="0.01">
-        </div>
+      <select id="riscoAtivo" class="calc-field" style="left:20.81%; top:20.43%; width:26.45%; height:3.75%;">
+        <option value="WIN">WIN (Mini Índice)</option>
+        <option value="WDO">WDO (Mini Dólar)</option>
+        <option value="IND">IND (Índice Cheio)</option>
+        <option value="DOL">DOL (Dólar Cheio)</option>
+      </select>
+      <input type="number" id="riscoCapital" class="calc-field" min="0" step="0.01" placeholder="100.000,00" style="left:20.81%; top:25.02%; width:26.45%; height:3.75%;">
+      <input type="number" id="riscoPercentual" class="calc-field" min="0" step="0.1" placeholder="1" style="left:20.81%; top:30.28%; width:21.57%; height:3.92%;">
+      <input type="number" id="riscoStop" class="calc-field" min="0" step="1" placeholder="120" style="left:20.81%; top:35.70%; width:20.05%; height:3.92%;">
+      <input type="number" id="riscoMargem" class="calc-field" min="0" step="0.01" placeholder="10.000,00" style="left:20.81%; top:41.12%; width:26.45%; height:3.92%;">
+      <input type="number" id="riscoMargemContrato" class="calc-field" min="0" step="0.01" style="left:20.81%; top:46.54%; width:26.45%; height:3.92%;">
+      <button type="button" id="btnCalcularRisco" class="calc-btn-overlay" aria-label="Calcular" style="left:3.58%; top:52.38%; width:43.68%; height:4.17%;"></button>
+
+      <span class="calc-asset-tag" id="tagAtivoValorPonto" style="left:89.18%; top:21.85%; width:6.5%; height:2.2%;"></span>
+
+      <div class="calc-tile azul" id="tileValorRisco" style="left:51.07%; top:24.60%; width:24.77%; height:5.59%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile azul" id="tileValorPonto" style="left:80.41%; top:24.60%; width:17.91%; height:5.59%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile dourado" id="tileStopContrato" style="left:51.07%; top:34.61%; width:24.77%; height:6.67%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile verde" id="tileContratosRisco" style="left:78.51%; top:35.86%; width:19.82%; height:6.67%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile azul" id="tileContratosMargem" style="left:51.07%; top:45.45%; width:24.77%; height:7.09%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile verde" id="tileRecomendado" style="left:78.51%; top:45.45%; width:19.82%; height:7.92%;">
+        <div class="num"></div><div class="cap"></div>
       </div>
 
-      <p class="nota" style="margin-top:-6px;">Os valores de margem já vêm preenchidos com o padrão atual das corretoras (R$155 WIN / R$150 WDO — os de IND e DOL são uma estimativa de 5x o mini, ajuste pelo valor real da sua corretora). A "regra dos R$1.000 por contrato" que alguns mestres de daytrade recomendam é uma diretriz de gestão de risco pessoal — não é uma exigência da corretora, por isso não entra na conta acima.</p>
-
-      <div class="resultado" id="resultadoRisco" style="display:none;"></div>
+      <div class="calc-banner-txt" id="bannerRisco" style="left:57.16%; top:55.05%; width:41.16%; height:4.17%;">
+        <div class="linha1"></div><div class="linha2"></div>
+      </div>
     </div>
+    <p class="nota" style="max-width:900px; margin:14px auto 0;">Os valores de margem já vêm preenchidos com o padrão atual das corretoras (R$155 WIN / R$150 WDO — os de IND e DOL são uma estimativa de 5x o mini, ajuste pelo valor real da sua corretora). A "regra dos R$1.000 por contrato" que alguns mestres de daytrade recomendam é uma diretriz de gestão de risco pessoal — não é uma exigência da corretora, por isso não entra na conta acima.</p>
   </div>
 
   <!-- ---------- CALCULADORA DE RECUPERACAO ---------- -->
   <div class="painel" id="painel-recuperacao">
-    <div class="card">
-      <h3>Calculadora de Recuperação de Prejuízo</h3>
-      <p class="nota">Quanto maior a perda, desproporcionalmente maior precisa ser o ganho pra recuperar o capital. Veja o tamanho real do desafio antes de tentar "recuperar rápido".</p>
+    <div class="calc-board">
+      <img src="recuperacao-bg.webp" class="calc-board-img" alt="Calculadora de Recuperação de Prejuízo — Morning do Trader">
 
-      <div class="toggle-group" style="margin-bottom:14px;">
-        <button type="button" class="modo-perda selecionado" data-modo="pct">Informar em %</button>
-        <button type="button" class="modo-perda" data-modo="reais">Informar em R$</button>
+      <input type="number" id="recCapital" class="calc-field" min="0" step="0.01" placeholder="100.000,00" style="left:16.77%; top:21.10%; width:13.72%; height:3.34%;">
+      <input type="number" id="recPerda" class="calc-field" min="0" step="0.01" placeholder="20" style="left:16.77%; top:26.52%; width:10.29%; height:3.34%;">
+      <button type="button" id="recPerdaUnidade" class="calc-btn-overlay calc-unidade-toggle" title="Clique pra alternar entre % e R$" style="left:27.06%; top:26.52%; width:3.05%; height:3.34%;">%</button>
+      <input type="number" id="recGanhoMedio" class="calc-field" min="0" step="0.1" placeholder="0.5" style="left:16.77%; top:32.36%; width:10.29%; height:3.34%;">
+      <button type="button" id="btnCalcularRecuperacao" class="calc-btn-overlay" aria-label="Calcular" style="left:1.37%; top:38.37%; width:29.11%; height:3.34%;"></button>
+
+      <div class="calc-tile vermelho" id="tileNovoCapital" style="left:41.54%; top:17.93%; width:24.77%; height:6.09%;">
+        <div class="num"></div><div class="cap"></div>
+      </div>
+      <div class="calc-tile verde" id="tileGanhoNecessario" style="left:41.54%; top:27.11%; width:24.77%; height:6.26%;">
+        <div class="num"></div><div class="cap">sobre o novo capital</div>
+      </div>
+      <div class="calc-tile dourado" id="tilePregoes" style="left:41.54%; top:35.70%; width:24.77%; height:6.42%;">
+        <div class="num"></div><div class="cap"></div>
       </div>
 
-      <div class="grid2">
-        <div class="campo" id="campoPerdaPct">
-          <label for="perdaPercentual">Perda sofrida (%)</label>
-          <input type="number" id="perdaPercentual" min="0" max="99" step="0.1" placeholder="20">
-        </div>
-        <div class="campo" id="campoPerdaReais" style="display:none;">
-          <label for="perdaReais">Perda sofrida (R$)</label>
-          <input type="number" id="perdaReais" min="0" step="0.01" placeholder="2000">
-        </div>
-        <div class="campo" id="campoCapitalBase" style="display:none;">
-          <label for="capitalBase">Capital antes da perda (R$)</label>
-          <input type="number" id="capitalBase" min="0" step="0.01" placeholder="10000">
-        </div>
-        <div class="campo">
-          <label for="ganhoMedioDiario">Ganho médio diário esperado (%)</label>
-          <input type="number" id="ganhoMedioDiario" min="0" step="0.1" placeholder="0.5">
-        </div>
-      </div>
+      <div class="calc-chart" id="chartRecuperacao" style="left:68.60%; top:16.26%; width:29.73%; height:29.19%;"></div>
 
-      <div class="resultado" id="resultadoRecuperacao" style="display:none;"></div>
-
-      <div class="subseccao">
-        <h4>Tabela de referência</h4>
-        <table class="tabela">
-          <thead><tr><th>Perda</th><th>Ganho necessário</th></tr></thead>
-          <tbody id="tabelaRecuperacao"></tbody>
-        </table>
-      </div>
+      <div class="calc-tabela-ref" id="tabelaRecuperacaoOverlay" style="left:1.52%; top:60.22%; width:48.02%; height:28.36%;"></div>
     </div>
   </div>
 
@@ -265,139 +439,122 @@
 
     <!-- HOJE -->
     <div class="painel active" id="sub-hoje">
-      <div class="confirma-box" id="confirmaBox">
-        <p id="confirmaTexto">Você ainda não confirmou seu plano hoje.</p>
-        <button class="btn" id="btnConfirmarPlano">Li e confirmo meu plano hoje</button>
-      </div>
+      <div class="calc-board" id="boardPlanoHoje">
+        <img class="calc-board-img" src="plano-hoje-bg.webp" alt="Plano de Trade — Hoje">
 
-      <div class="card">
-        <h3>Meu dia — <span id="dataHoje"></span></h3>
+        <button type="button" class="calc-btn-overlay" id="btnConfirmarPlano" style="left:68.445%; top:12.344%; width:29.878%; height:4.087%;" aria-label="Confirmar meu plano hoje"></button>
+        <div id="confirmaStatus" style="display:none; position:absolute; left:68.445%; top:12.344%; width:29.878%; height:4.087%; align-items:center; justify-content:center; gap:0.8cqw; font-size:1.6cqw; font-weight:700; color:#eafff2; background:linear-gradient(135deg,#1c4a37,#0f2e22); border:2px solid var(--green); border-radius:1.1cqw;">✓ Plano confirmado hoje</div>
 
-        <div class="campo">
-          <label>Ativo do dia</label>
-          <div class="toggle-group" id="hojeAtivos">
-            <button type="button" data-ativo="WIN">WIN</button>
-            <button type="button" data-ativo="WDO">WDO</button>
-          </div>
+        <div id="dataHoje" style="position:absolute; left:39.634%; top:22.936%; width:11.280%; height:2.919%; display:flex; align-items:center; justify-content:center; font-size:1.7cqw; font-weight:700; color:#eaf0f8; white-space:nowrap;"></div>
+
+        <select id="hojeCenario" style="display:none;">
+          <option value="">Selecione</option>
+          <option value="alta">Tendência de alta</option>
+          <option value="baixa">Tendência de baixa</option>
+          <option value="lateral">Lateral / sem direção clara</option>
+          <option value="indefinido">Ainda não sei — vou esperar o mercado abrir</option>
+        </select>
+
+        <div class="toggle-group" id="hojeAtivos" style="display:contents;">
+          <button type="button" class="calc-ativo-btn" data-ativo="WIN" style="left:3.582%; top:31.777%; width:22.256%; height:6.005%;">
+            <span class="ic">📊</span><span class="tx">WIN<small>(Mini Índice)</small></span>
+          </button>
+          <button type="button" class="calc-ativo-btn" data-ativo="WDO" style="left:27.439%; top:31.777%; width:21.799%; height:6.005%;">
+            <span class="ic">💲</span><span class="tx">WDO<small>(Mini Dólar)</small></span>
+          </button>
         </div>
 
-        <div class="campo">
-          <label for="hojeCenario">Cenário do dia</label>
-          <select id="hojeCenario">
-            <option value="">Selecione</option>
-            <option value="alta">Tendência de alta</option>
-            <option value="baixa">Tendência de baixa</option>
-            <option value="lateral">Lateral / sem direção clara</option>
-            <option value="indefinido">Ainda não sei — vou esperar o mercado abrir</option>
-          </select>
+        <button type="button" class="calc-cenario-btn alta" data-cenario="alta" style="left:3.277%; top:43.370%; width:10.442%; height:4.170%;"><span class="ic">📈</span>Alta</button>
+        <button type="button" class="calc-cenario-btn baixa" data-cenario="baixa" style="left:14.939%; top:43.370%; width:10.518%; height:4.170%;"><span class="ic">📉</span>Baixa</button>
+        <button type="button" class="calc-cenario-btn lateral" data-cenario="lateral" style="left:26.677%; top:43.370%; width:10.518%; height:4.170%;"><span class="ic">➖</span>Lateral</button>
+        <button type="button" class="calc-cenario-btn indefinido" data-cenario="indefinido" style="left:38.491%; top:43.370%; width:11.052%; height:4.170%;"><span class="ic">❓</span>Indefinido</button>
+
+        <div class="emoji-group" id="emocionalManha" style="display:contents;">
+          <button type="button" class="calc-emoji-btn" data-valor="otimo" style="left:2.287%; top:52.961%; width:9.451%; height:6.589%;">😄</button>
+          <button type="button" class="calc-emoji-btn" data-valor="bem" style="left:11.661%; top:52.961%; width:9.451%; height:6.589%;">🙂</button>
+          <button type="button" class="calc-emoji-btn" data-valor="neutro" style="left:20.808%; top:52.961%; width:9.451%; height:6.589%;">😐</button>
+          <button type="button" class="calc-emoji-btn" data-valor="ansioso" style="left:29.954%; top:52.961%; width:9.451%; height:6.589%;">😟</button>
+          <button type="button" class="calc-emoji-btn" data-valor="mal" style="left:39.253%; top:52.961%; width:9.451%; height:6.589%;">😫</button>
         </div>
 
-        <div class="campo">
-          <label>Como você está emocionalmente agora (manhã)?</label>
-          <div class="emoji-group" id="emocionalManha">
-            <button type="button" data-valor="otimo">😄</button>
-            <button type="button" data-valor="bem">🙂</button>
-            <button type="button" data-valor="neutro">😐</button>
-            <button type="button" data-valor="ansioso">😟</button>
-            <button type="button" data-valor="mal">😫</button>
-          </div>
+        <textarea id="hojeAnotacoes" class="calc-textarea" maxlength="500" placeholder="Escreva suas anotações aqui..." style="left:1.677%; top:66.722%; width:48.476%; height:10.425%;"></textarea>
+        <div class="calc-contador" id="contadorAnotacoes" style="left:42.683%; top:75.062%; width:7.241%; height:1.835%;">0/500</div>
+
+        <button type="button" class="calc-btn-overlay" id="btnSalvarHoje" style="left:32.622%; top:78.565%; width:17.835%; height:5.505%;" aria-label="Salvar meu dia"></button>
+
+        <div class="emoji-group" id="emocionalNoite" style="display:contents;">
+          <button type="button" class="calc-emoji-btn" data-valor="otimo" style="left:52.591%; top:29.358%; width:9.909%; height:6.839%;">😄</button>
+          <button type="button" class="calc-emoji-btn" data-valor="bem" style="left:61.660%; top:29.358%; width:9.909%; height:6.839%;">🙂</button>
+          <button type="button" class="calc-emoji-btn" data-valor="neutro" style="left:70.655%; top:29.358%; width:9.909%; height:6.839%;">😐</button>
+          <button type="button" class="calc-emoji-btn" data-valor="ansioso" style="left:79.726%; top:29.358%; width:9.909%; height:6.839%;">😟</button>
+          <button type="button" class="calc-emoji-btn" data-valor="mal" style="left:88.796%; top:29.358%; width:9.909%; height:6.839%;">😫</button>
         </div>
 
-        <div class="campo">
-          <label for="hojeAnotacoes">Minhas anotações</label>
-          <textarea id="hojeAnotacoes" rows="4" placeholder="Observações livres sobre o dia..."></textarea>
+        <div class="check-lista" id="comportamentosRisco" style="display:contents;">
+          <input type="checkbox" class="calc-check-input" value="respeitou_plano" style="left:55.107%; top:42.411%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:42.411%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="operou_apenas_setups" style="left:55.107%; top:44.746%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:44.746%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="nao_aumentou_posicao_apos_perdas" style="left:55.107%; top:47.164%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:47.164%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="manteve_controle_emocional" style="left:55.107%; top:49.583%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:49.583%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="encerrou_horario_planejado" style="left:55.107%; top:52.002%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:52.002%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="aumentou_risco_apos_perda" style="left:55.107%; top:54.420%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:54.420%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="fora_horario" style="left:55.107%; top:56.839%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:56.839%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="ignorou_stop" style="left:55.107%; top:59.299%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:59.299%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="tedio_vinganca" style="left:55.107%; top:61.718%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:61.718%; width:1.601%; height:1.752%;">✓</span>
+          <input type="checkbox" class="calc-check-input" value="nenhum" style="left:55.107%; top:64.220%; width:1.601%; height:1.752%;">
+          <span class="calc-check-mark" style="left:55.107%; top:64.220%; width:1.601%; height:1.752%;">✓</span>
         </div>
 
-        <button class="btn secundario" id="btnSalvarHoje">Salvar</button>
-      </div>
+        <textarea id="hojeObservacoes" class="calc-textarea" maxlength="500" placeholder="Escreva suas observações aqui..." style="left:53.735%; top:71.810%; width:44.055%; height:5.588%;"></textarea>
+        <div class="calc-contador" id="contadorObservacoes" style="left:89.939%; top:74.896%; width:7.241%; height:1.835%;">0/500</div>
 
-      <div class="card" id="cardFechamento">
-        <h3>Fechamento do dia</h3>
-        <p class="nota">Preencha ao final do pregão.</p>
-
-        <div class="campo">
-          <label>Como você está emocionalmente agora (fim do dia)?</label>
-          <div class="emoji-group" id="emocionalNoite">
-            <button type="button" data-valor="otimo">😄</button>
-            <button type="button" data-valor="bem">🙂</button>
-            <button type="button" data-valor="neutro">😐</button>
-            <button type="button" data-valor="ansioso">😟</button>
-            <button type="button" data-valor="mal">😫</button>
-          </div>
-        </div>
-
-        <div class="campo">
-          <label>Comportamentos de risco hoje (marque os que aconteceram)</label>
-          <div class="check-lista" id="comportamentosRisco">
-            <label><input type="checkbox" value="aumentou_risco_apos_perda"> Aumentei o risco depois de uma perda</label>
-            <label><input type="checkbox" value="fora_horario"> Operei fora do horário planejado</label>
-            <label><input type="checkbox" value="ignorou_stop"> Ignorei meu stop loss</label>
-            <label><input type="checkbox" value="tedio_vinganca"> Operei por tédio ou vontade de "revanche"</label>
-            <label><input type="checkbox" value="nenhum"> Nenhum comportamento de risco hoje</label>
-          </div>
-        </div>
-
-        <button class="btn secundario" id="btnSalvarFechamento">Salvar fechamento</button>
+        <button type="button" class="calc-btn-overlay" id="btnSalvarFechamento" style="left:77.972%; top:78.565%; width:18.293%; height:5.505%;" aria-label="Salvar fechamento"></button>
       </div>
     </div>
 
     <!-- MEU PLANO -->
     <div class="painel" id="sub-meuplano">
-      <div class="card">
-        <h3>Meu Plano</h3>
-        <p class="nota">Preenchido uma vez, revisado raramente. É a base fixa das suas regras — não muda todo dia.</p>
+      <div class="calc-board" id="boardMeuPlano">
+        <img class="calc-board-img" src="meuplano-bg.webp" alt="Meu Plano">
 
-        <div class="subseccao" style="border-top:none; padding-top:0; margin-top:0;">
-          <h4>Meus limites</h4>
-          <div class="grid2">
-            <div class="campo">
-              <label for="limitePerdaDiaria">Perda máxima aceitável no dia (%)</label>
-              <input type="number" id="limitePerdaDiaria" min="0" step="0.1">
-            </div>
-            <div class="campo">
-              <label for="limiteMetaGanho">Meta de ganho no dia (%)</label>
-              <input type="number" id="limiteMetaGanho" min="0" step="0.1">
-            </div>
-            <div class="campo">
-              <label for="limiteMaxOperacoes">Número máximo de operações por dia</label>
-              <input type="number" id="limiteMaxOperacoes" min="0" step="1">
-            </div>
-            <div class="campo">
-              <label for="limiteMaxContratos">Número máximo de contratos</label>
-              <input type="number" id="limiteMaxContratos" min="0" step="1">
-            </div>
-          </div>
-        </div>
+        <input type="number" class="calc-field" id="limitePerdaDiaria" min="0" step="0.1" placeholder="0,0" style="left:4.729%; top:25.666%; width:43.853%; height:4.142%;">
+        <input type="number" class="calc-field" id="limiteMetaGanho" min="0" step="0.1" placeholder="0,0" style="left:51.590%; top:25.666%; width:43.422%; height:4.142%;">
+        <input type="number" class="calc-field" id="limiteMaxOperacoes" min="0" step="1" placeholder="0" style="left:4.729%; top:33.654%; width:43.853%; height:4.068%;">
+        <input type="number" class="calc-field" id="limiteMaxContratos" min="0" step="1" placeholder="0" style="left:51.590%; top:33.654%; width:43.422%; height:4.068%;">
 
-        <div class="subseccao">
-          <h4>Meus setups</h4>
-          <div class="campo">
-            <textarea id="meusSetups" rows="4" placeholder="Descreva os setups que você opera..."></textarea>
-          </div>
-        </div>
+        <textarea class="calc-textarea" id="meusSetups" maxlength="1000" placeholder="Descreva os setups que você opera..." style="left:4.729%; top:44.083%; width:90.283%; height:10.281%;"></textarea>
+        <textarea class="calc-textarea" id="regrasEntrada" maxlength="1000" placeholder="Em que condições você entra numa operação..." style="left:4.729%; top:60.281%; width:90.283%; height:10.355%;"></textarea>
+        <textarea class="calc-textarea" id="regrasSaida" maxlength="1000" placeholder="Em que condições você sai de uma operação (stop, alvo, tempo)..." style="left:4.729%; top:72.855%; width:90.283%; height:9.985%;"></textarea>
 
-        <div class="subseccao">
-          <h4>Regras de entrada</h4>
-          <div class="campo">
-            <textarea id="regrasEntrada" rows="4" placeholder="Em que condições você entra numa operação..."></textarea>
-          </div>
-        </div>
+        <div class="calc-contador" id="contadorSetups" style="left:88.564%; top:52.663%; width:6.020%; height:1.332%;">0/1000</div>
+        <div class="calc-contador" id="contadorEntrada" style="left:88.564%; top:68.935%; width:6.020%; height:1.332%;">0/1000</div>
+        <div class="calc-contador" id="contadorSaida" style="left:88.564%; top:81.145%; width:6.020%; height:1.332%;">0/1000</div>
 
-        <div class="subseccao">
-          <h4>Regras de saída</h4>
-          <div class="campo">
-            <textarea id="regrasSaida" rows="4" placeholder="Em que condições você sai de uma operação (stop, alvo, tempo)..."></textarea>
-          </div>
-        </div>
-
-        <button class="btn secundario" id="btnSalvarMeuPlano">Salvar Meu Plano</button>
-        <p class="msg" id="msgMeuPlano"></p>
+        <button type="button" class="calc-btn-overlay" id="btnSalvarMeuPlano" style="left:4.729%; top:83.580%; width:90.283%; height:4.807%;" aria-label="Salvar Meu Plano"></button>
+        <div class="calc-contador" id="msgMeuPlano" style="left:4.729%; top:89.128%; width:90.283%; height:1.849%; text-align:center; font-size:1.4cqw; font-weight:700;"></div>
       </div>
     </div>
   </div>
 </div>
 
-<footer>Morning do Trader — conteúdo educacional, não é recomendação de investimento.</footer>
+<footer class="brand-footer">
+  <div class="wrap">
+    <div class="brand-logo">
+      <span class="bars"><i></i><i></i><i></i></span>
+      <span class="brand-logo-text"><strong>MORNING DO TRADER</strong><span>Informação que gera operações</span></span>
+    </div>
+    <div class="tagline"><strong>Disciplina hoje</strong>, resultados sempre.</div>
+    <p class="aviso">Conteúdo educacional, não é recomendação de investimento.</p>
+  </div>
+</footer>
 
 <script>
 (function(){
@@ -543,18 +700,33 @@
   }
   document.getElementById("riscoAtivo").addEventListener("change", atualizarPadraoAtivo);
 
+  function fmtBRL(n){
+    return n.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function preencherTile(id, num, cap){
+    const el = document.getElementById(id);
+    el.querySelector(".num").textContent = num;
+    el.querySelector(".cap").textContent = cap || "";
+  }
+
   function calcularRisco(){
     const ativo = document.getElementById("riscoAtivo").value;
     const info = ATIVOS_RISCO[ativo];
+    document.getElementById("tagAtivoValorPonto").textContent = "(" + ativo + ")";
+
     const capital = parseFloat(document.getElementById("riscoCapital").value) || 0;
     const riscoPct = parseFloat(document.getElementById("riscoPercentual").value) || 0;
     const stopPontos = parseFloat(document.getElementById("riscoStop").value) || 0;
     const margemDisponivel = parseFloat(document.getElementById("riscoMargem").value) || 0;
     const margemContrato = parseFloat(document.getElementById("riscoMargemContrato").value) || info.margemPadrao;
 
-    const box = document.getElementById("resultadoRisco");
     if (!capital || !riscoPct || !stopPontos){
-      box.style.display = "none";
+      ["tileValorRisco","tileValorPonto","tileStopContrato","tileContratosRisco","tileContratosMargem","tileRecomendado"].forEach(function(id){
+        preencherTile(id, "—", "");
+      });
+      document.getElementById("bannerRisco").querySelector(".linha1").innerHTML = "Preencha capital, risco % e stop pra calcular.";
+      document.getElementById("bannerRisco").querySelector(".linha2").textContent = "";
       return;
     }
 
@@ -566,95 +738,179 @@
     const contratosFinal = Math.max(0, margemInformada ? Math.min(contratosPorRisco, contratosPorMargem) : contratosPorRisco);
     const binding = margemInformada && contratosPorMargem < contratosPorRisco ? "margem" : "risco";
 
-    box.style.display = "block";
-    box.innerHTML =
-      '<div class="linha"><span>Valor de risco no dia (' + riscoPct + '% do capital)</span><span class="valor">R$ ' + valorRiscoR$.toFixed(2) + '</span></div>' +
-      '<div class="linha"><span>Risco por contrato (stop de ' + stopPontos + ' pts)</span><span class="valor">R$ ' + riscoPorContrato.toFixed(2) + '</span></div>' +
-      '<div class="linha"><span>Contratos permitidos pelo risco</span><span class="valor">' + contratosPorRisco + '</span></div>' +
-      '<div class="linha"><span>Contratos permitidos pela margem</span><span class="valor">' + (margemInformada ? contratosPorMargem : "—") + '</span></div>' +
-      '<div class="linha"><span>Máximo de contratos recomendado</span><span class="valor destaque">' + contratosFinal + '</span></div>' +
-      '<p class="binding">Fator que está te limitando agora: <strong>' + (binding === "risco" ? "seu risco por operação" : "sua margem disponível") + '</strong>.</p>';
+    const riscoReal = contratosFinal * riscoPorContrato;
+    const riscoRealPct = capital > 0 ? (riscoReal / capital) * 100 : 0;
+
+    preencherTile("tileValorRisco", "R$ " + fmtBRL(valorRiscoR$), "(" + riscoPct + "% do seu capital)");
+    preencherTile("tileValorPonto", "R$ " + fmtBRL(info.valorPonto), "(por contrato)");
+    preencherTile("tileStopContrato", "R$ " + fmtBRL(riscoPorContrato), "(" + stopPontos + " pontos × R$ " + fmtBRL(info.valorPonto) + ")");
+    preencherTile("tileContratosRisco", contratosPorRisco, "contratos");
+    preencherTile("tileContratosMargem", margemInformada ? contratosPorMargem : "—", margemInformada ? "(R$ " + fmtBRL(margemDisponivel) + " ÷ R$ " + fmtBRL(margemContrato) + ")" : "informe a margem");
+    preencherTile("tileRecomendado", contratosFinal, binding === "margem" ? "(limitado pela margem)" : "(limitado pelo risco)");
+
+    document.getElementById("bannerRisco").querySelector(".linha1").innerHTML =
+      "Com <strong>" + contratosFinal + "</strong> contrato(s), seu risco será de R$ " + fmtBRL(riscoReal);
+    document.getElementById("bannerRisco").querySelector(".linha2").textContent =
+      "(" + riscoRealPct.toFixed(2) + "% do seu capital)";
   }
 
   ["riscoCapital","riscoPercentual","riscoStop","riscoMargem","riscoMargemContrato"].forEach(function(id){
     document.getElementById(id).addEventListener("input", calcularRisco);
   });
+  document.getElementById("btnCalcularRisco").addEventListener("click", calcularRisco);
   atualizarPadraoAtivo();
 
   // ---------------- Calculadora de Recuperacao ----------------
-
-  document.querySelectorAll(".modo-perda").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      document.querySelectorAll(".modo-perda").forEach(function(b){ b.classList.remove("selecionado"); });
-      btn.classList.add("selecionado");
-      const modo = btn.dataset.modo;
-      document.getElementById("campoPerdaPct").style.display = modo === "pct" ? "block" : "none";
-      document.getElementById("campoPerdaReais").style.display = modo === "reais" ? "block" : "none";
-      document.getElementById("campoCapitalBase").style.display = modo === "reais" ? "block" : "none";
-      calcularRecuperacao();
-    });
-  });
 
   function ganhoNecessarioPct(perdaPct){
     if (perdaPct <= 0 || perdaPct >= 100) return null;
     return (perdaPct / (100 - perdaPct)) * 100;
   }
 
-  function calcularRecuperacao(){
-    const modoReais = document.querySelector(".modo-perda.selecionado").dataset.modo === "reais";
-    let perdaPct = null;
-    let perdaReaisValor = null;
+  let recModoReais = false;
+  document.getElementById("recPerdaUnidade").addEventListener("click", function(){
+    recModoReais = !recModoReais;
+    this.textContent = recModoReais ? "R$" : "%";
+    document.getElementById("recPerda").placeholder = recModoReais ? "20000,00" : "20";
+    calcularRecuperacao();
+  });
 
-    if (modoReais){
-      const perdaR = parseFloat(document.getElementById("perdaReais").value) || 0;
-      const capitalBase = parseFloat(document.getElementById("capitalBase").value) || 0;
-      if (perdaR > 0 && capitalBase > 0){
-        perdaPct = (perdaR / capitalBase) * 100;
-        perdaReaisValor = perdaR;
-      }
-    } else {
-      perdaPct = parseFloat(document.getElementById("perdaPercentual").value) || 0;
+  function niceMax(v){
+    if (v <= 0) return 100;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    const n = v / mag;
+    let step;
+    if (n <= 1) step = 1; else if (n <= 2) step = 2; else if (n <= 5) step = 5; else step = 10;
+    return step * mag;
+  }
+
+  function montarGraficoRecuperacao(capitalInicial, capitalDepois, perdaPct){
+    const max = niceMax(Math.max(capitalInicial, capitalDepois) * 1.05);
+    const ticks = 5;
+    const W = 390, H = 300;
+    const padL = 62, padR = 14, padT = 44, padB = 46;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    const y0 = padT + chartH;
+
+    let gridSvg = "";
+    for (let i = 0; i <= ticks; i++){
+      const val = (max / ticks) * i;
+      const y = y0 - (val / max) * chartH;
+      gridSvg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>';
+      gridSvg += '<text x="' + (padL - 8) + '" y="' + (y + 4) + '" text-anchor="end" font-size="11" fill="#8ea0b3">' + fmtMil(val) + '</text>';
     }
 
-    const ganhoMedio = parseFloat(document.getElementById("ganhoMedioDiario").value) || 0;
-    const box = document.getElementById("resultadoRecuperacao");
+    const barW = chartW * 0.30;
+    const x1 = padL + chartW * 0.20, x2 = padL + chartW * 0.62;
+    const h1 = (capitalInicial / max) * chartH, h2 = (capitalDepois / max) * chartH;
+    const y1 = y0 - h1, y2b = y0 - h2;
 
-    if (!perdaPct || perdaPct <= 0){
-      box.style.display = "none";
+    const svg =
+      '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">' +
+        '<text x="' + (W/2) + '" y="18" text-anchor="middle" font-size="13" fill="var(--accent)" font-weight="700">Comparativo do capital</text>' +
+        gridSvg +
+        '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + y0 + '" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>' +
+        '<rect x="' + x1 + '" y="' + y1 + '" width="' + barW + '" height="' + h1 + '" rx="4" fill="var(--accent)"/>' +
+        '<rect x="' + x2 + '" y="' + y2b + '" width="' + barW + '" height="' + h2 + '" rx="4" fill="var(--red)"/>' +
+        '<text x="' + (x1 + barW/2) + '" y="' + (y1 - 8) + '" text-anchor="middle" font-size="12" fill="var(--accent)" font-weight="700">R$ ' + fmtMil(capitalInicial) + '</text>' +
+        '<text x="' + (x2 + barW/2) + '" y="' + (y2b - 8) + '" text-anchor="middle" font-size="12" fill="var(--red)" font-weight="700">R$ ' + fmtMil(capitalDepois) + '</text>' +
+        '<text x="' + (x1 + barW/2) + '" y="' + (y0 + 18) + '" text-anchor="middle" font-size="10.5" fill="#a9b7c6">Capital inicial</text>' +
+        '<text x="' + (x2 + barW/2) + '" y="' + (y0 + 18) + '" text-anchor="middle" font-size="10.5" fill="#a9b7c6">Após a perda</text>' +
+        '<text x="' + (x2 + barW/2) + '" y="' + (y0 + 31) + '" text-anchor="middle" font-size="10.5" fill="#a9b7c6">de ' + perdaPct.toFixed(0) + '%</text>' +
+      '</svg>';
+
+    document.getElementById("chartRecuperacao").innerHTML = svg;
+  }
+
+  function fmtMil(v){
+    return Math.round(v).toLocaleString("pt-BR");
+  }
+
+  function fmtBRL2(v){
+    return v.toLocaleString("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function calcularRecuperacao(){
+    const capitalInicial = parseFloat(document.getElementById("recCapital").value) || 0;
+    const perdaInput = parseFloat(document.getElementById("recPerda").value) || 0;
+    const ganhoMedio = parseFloat(document.getElementById("recGanhoMedio").value) || 0;
+
+    let perdaPct, perdaReaisValor = null;
+    if (recModoReais){
+      perdaReaisValor = perdaInput;
+      perdaPct = capitalInicial > 0 ? (perdaInput / capitalInicial) * 100 : 0;
+    } else {
+      perdaPct = perdaInput;
+      perdaReaisValor = capitalInicial > 0 ? capitalInicial * (perdaPct / 100) : null;
+    }
+
+    if (!capitalInicial || !perdaPct || perdaPct <= 0 || perdaPct >= 100){
+      ["tileNovoCapital","tileGanhoNecessario","tilePregoes"].forEach(function(id){
+        document.getElementById(id).querySelector(".num").textContent = "—";
+      });
+      document.getElementById("tileNovoCapital").querySelector(".cap").textContent = "";
+      document.getElementById("tilePregoes").querySelector(".cap").textContent = "";
+      document.getElementById("chartRecuperacao").innerHTML = "";
       return;
     }
 
     const ganhoNec = ganhoNecessarioPct(perdaPct);
-    box.style.display = "block";
-    let html = '<div class="linha"><span>Perda sofrida</span><span class="valor">' + perdaPct.toFixed(2) + '%' + (perdaReaisValor ? " (R$ " + perdaReaisValor.toFixed(2) + ")" : "") + '</span></div>';
-    html += '<div class="linha"><span>Ganho necessário pra voltar ao ponto inicial</span><span class="valor destaque">' + (ganhoNec ? ganhoNec.toFixed(2) + "%" : "—") + '</span></div>';
+    const capitalDepois = capitalInicial * (1 - perdaPct / 100);
+
+    document.getElementById("tileNovoCapital").querySelector(".num").textContent = "R$ " + fmtBRL2(capitalDepois);
+    document.getElementById("tileNovoCapital").querySelector(".cap").textContent = "(após uma perda de " + perdaPct.toFixed(perdaPct % 1 === 0 ? 0 : 1) + "%)";
+
+    document.getElementById("tileGanhoNecessario").querySelector(".num").textContent = ganhoNec ? ganhoNec.toFixed(2) + "%" : "—";
 
     if (ganhoNec && ganhoMedio > 0){
       const dias = Math.ceil(ganhoNec / ganhoMedio);
-      html += '<div class="linha"><span>Estimativa de pregões necessários (sem juros compostos)</span><span class="valor">' + dias + '</span></div>';
-      html += '<p class="binding">Estimativa conservadora: soma o ganho diário esperado sem reaplicar sobre o saldo recuperado. Na prática, quem consegue manter a consistência tende a levar menos tempo — mas não é seguro contar com isso.</p>';
+      document.getElementById("tilePregoes").querySelector(".num").textContent = dias + " pregões";
+      document.getElementById("tilePregoes").querySelector(".cap").textContent = "(com ganho médio de " + ganhoMedio + "% ao dia)";
+    } else {
+      document.getElementById("tilePregoes").querySelector(".num").textContent = "—";
+      document.getElementById("tilePregoes").querySelector(".cap").textContent = "informe o ganho médio diário";
     }
-    box.innerHTML = html;
+
+    montarGraficoRecuperacao(capitalInicial, capitalDepois, perdaPct);
+    atualizarLinhaAtualTabela(perdaPct);
   }
 
-  ["perdaPercentual","perdaReais","capitalBase","ganhoMedioDiario"].forEach(function(id){
+  ["recCapital","recPerda","recGanhoMedio"].forEach(function(id){
     document.getElementById(id).addEventListener("input", calcularRecuperacao);
   });
+  document.getElementById("btnCalcularRecuperacao").addEventListener("click", calcularRecuperacao);
+
+  const VALORES_TABELA_RECUPERACAO = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90];
+
+  function atualizarLinhaAtualTabela(perdaPct){
+    let maisProximo = null, menorDist = Infinity;
+    VALORES_TABELA_RECUPERACAO.forEach(function(v){
+      const dist = Math.abs(v - perdaPct);
+      if (dist < menorDist){ menorDist = dist; maisProximo = v; }
+    });
+    document.querySelectorAll("#tabelaRecuperacaoOverlay tr").forEach(function(tr){
+      tr.classList.toggle("linha-atual", parseInt(tr.dataset.v, 10) === maisProximo);
+    });
+  }
 
   (function montarTabelaRecuperacao(){
-    const valores = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70];
-    const corpo = document.getElementById("tabelaRecuperacao");
-    corpo.innerHTML = valores.map(function(v){
+    const linhas = VALORES_TABELA_RECUPERACAO.map(function(v){
+      const capitalRestante = 100000 * (1 - v / 100);
       const ganho = ganhoNecessarioPct(v);
-      return '<tr><td>' + v + '%</td><td>' + (ganho ? ganho.toFixed(1) + "%" : "—") + '</td></tr>';
+      return '<tr data-v="' + v + '"' + (v === 20 ? ' class="linha-atual"' : '') + '>' +
+        '<td>' + v + '%</td>' +
+        '<td>R$ ' + fmtMil(capitalRestante) + '</td>' +
+        '<td>' + (ganho ? ganho.toFixed(2) + "%" : "—") + '</td>' +
+      '</tr>';
     }).join("");
+    document.getElementById("tabelaRecuperacaoOverlay").innerHTML = '<table><tbody>' + linhas + '</tbody></table>';
   })();
 
   // ---------------- Plano de Trade ----------------
 
   let planoAtual = { meuPlano: {}, historico: {} };
   let hojeChave = new Date().toISOString().slice(0, 10);
-  document.getElementById("dataHoje").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
+  document.getElementById("dataHoje").textContent = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   function selecionarToggle(grupoEl, valor, multi){
     const botoes = grupoEl.querySelectorAll("button");
@@ -680,6 +936,49 @@
       btn.classList.add("selecionado");
     });
   });
+
+  // Cenário do dia — botões visuais espelham o <select id="hojeCenario"> oculto
+  document.querySelectorAll(".calc-cenario-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".calc-cenario-btn").forEach(function(b){ b.classList.remove("selecionado"); });
+      btn.classList.add("selecionado");
+      document.getElementById("hojeCenario").value = btn.dataset.cenario;
+    });
+  });
+  function sincronizarCenarioVisual(){
+    const valor = document.getElementById("hojeCenario").value;
+    document.querySelectorAll(".calc-cenario-btn").forEach(function(b){
+      b.classList.toggle("selecionado", b.dataset.cenario === valor);
+    });
+  }
+
+  // Checklist de comportamento — o quadrado/numeração já vêm na imagem; o input fica
+  // invisível sobre o quadrado e um "✓" é ligado/desligado ao lado dele.
+  document.querySelectorAll("#comportamentosRisco .calc-check-input").forEach(function(chk, i){
+    const marca = document.querySelectorAll("#comportamentosRisco .calc-check-mark")[i];
+    chk.addEventListener("change", function(){ marca.classList.toggle("ativo", chk.checked); });
+  });
+  function sincronizarChecklistVisual(){
+    document.querySelectorAll("#comportamentosRisco .calc-check-input").forEach(function(chk, i){
+      const marca = document.querySelectorAll("#comportamentosRisco .calc-check-mark")[i];
+      marca.classList.toggle("ativo", chk.checked);
+    });
+  }
+
+  // Contadores de caracteres das anotações/observações
+  function ligarContador(idCampo, idContador){
+    const campo = document.getElementById(idCampo);
+    const contador = document.getElementById(idContador);
+    const max = campo.getAttribute("maxlength") || 500;
+    function atualizar(){ contador.textContent = campo.value.length + "/" + max; }
+    campo.addEventListener("input", atualizar);
+    atualizar();
+  }
+  ligarContador("hojeAnotacoes", "contadorAnotacoes");
+  ligarContador("hojeObservacoes", "contadorObservacoes");
+  ligarContador("meusSetups", "contadorSetups");
+  ligarContador("regrasEntrada", "contadorEntrada");
+  ligarContador("regrasSaida", "contadorSaida");
 
   function coletarAtivosHoje(){
     return Array.from(document.querySelectorAll("#hojeAtivos button.selecionado")).map(function(b){ return b.dataset.ativo; });
@@ -707,32 +1006,38 @@
     document.getElementById("meusSetups").value = mp.meusSetups || "";
     document.getElementById("regrasEntrada").value = mp.regrasEntrada || "";
     document.getElementById("regrasSaida").value = mp.regrasSaida || "";
+    document.getElementById("contadorSetups").textContent = document.getElementById("meusSetups").value.length + "/1000";
+    document.getElementById("contadorEntrada").textContent = document.getElementById("regrasEntrada").value.length + "/1000";
+    document.getElementById("contadorSaida").textContent = document.getElementById("regrasSaida").value.length + "/1000";
 
     const hoje = (planoAtual.historico || {})[hojeChave] || {};
     if (hoje.ativos) selecionarToggle(document.getElementById("hojeAtivos"), hoje.ativos, true);
     if (hoje.cenario) document.getElementById("hojeCenario").value = hoje.cenario;
+    sincronizarCenarioVisual();
     if (hoje.emocionalManha) selecionarToggle(document.getElementById("emocionalManha"), hoje.emocionalManha, false);
     if (hoje.anotacoes) document.getElementById("hojeAnotacoes").value = hoje.anotacoes;
     if (hoje.emocionalNoite) selecionarToggle(document.getElementById("emocionalNoite"), hoje.emocionalNoite, false);
+    if (hoje.observacoes) document.getElementById("hojeObservacoes").value = hoje.observacoes;
     if (Array.isArray(hoje.comportamentos)){
       document.querySelectorAll("#comportamentosRisco input").forEach(function(c){
         c.checked = hoje.comportamentos.indexOf(c.value) >= 0;
       });
     }
+    sincronizarChecklistVisual();
+    document.getElementById("contadorAnotacoes").textContent = document.getElementById("hojeAnotacoes").value.length + "/500";
+    document.getElementById("contadorObservacoes").textContent = document.getElementById("hojeObservacoes").value.length + "/500";
     atualizarConfirmaBox(!!hoje.confirmado);
   }
 
   function atualizarConfirmaBox(confirmado){
-    const box = document.getElementById("confirmaBox");
-    const texto = document.getElementById("confirmaTexto");
     const btn = document.getElementById("btnConfirmarPlano");
+    const status = document.getElementById("confirmaStatus");
     if (confirmado){
-      box.style.borderColor = "var(--green)";
-      texto.innerHTML = '<span class="badge-ok">✓ Plano confirmado hoje</span>';
       btn.style.display = "none";
+      status.style.display = "flex";
     } else {
-      texto.textContent = "Você ainda não confirmou seu plano hoje.";
-      btn.style.display = "inline-block";
+      btn.style.display = "block";
+      status.style.display = "none";
     }
   }
 
@@ -765,6 +1070,7 @@
     await salvarHoje({
       emocionalNoite: coletarEmocional("emocionalNoite"),
       comportamentos: coletarComportamentos(),
+      observacoes: document.getElementById("hojeObservacoes").value,
     });
   });
 
@@ -782,10 +1088,10 @@
     try {
       await apiFetch("/api/plano-trade", { method: "POST", body: JSON.stringify({ meuPlano }) });
       msg.textContent = "Salvo.";
-      msg.className = "msg ok";
+      msg.style.color = "var(--green)";
     } catch(e){
       msg.textContent = "Falha ao salvar.";
-      msg.className = "msg erro";
+      msg.style.color = "var(--red)";
     }
   });
 

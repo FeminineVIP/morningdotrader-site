@@ -1,0 +1,41 @@
+KIT DO TRADER — pacote completo pra subir (6 brindes)
+=======================================================
+
+WORKER (Cloudflare Workers):
+  worker.js
+    -> substitui o worker.js atual. Contém as rotas /api/leads,
+       /api/acesso-*, /api/plano-trade, /api/fedwatch-* e agora também
+       a entrada "desafio-21-pregoes" no objeto BRINDES.
+
+PÁGINAS (Cloudflare Pages, raiz do site):
+  kit-do-trader.html               -> página com os 6 cards de brindes
+  ferramentas-do-trader.html       -> Calculadora de Risco / Recuperação / Plano de Trade
+  guia-gestao-de-risco.html        -> Guia de Gestão de Risco (artigo + download)
+  mapa-mental-trader-consistente.html
+
+ARQUIVOS PRA DOWNLOAD (mesma raiz do site, ao lado das páginas acima):
+  planilha-trader.xlsx             -> brinde "Planilha do Trader"
+  diario-do-trader.xlsx            -> brinde "Diário do Trader"
+  guia-gestao-risco.pdf            -> brinde "Guia de Gestão de Risco"
+  desafio-21-pregoes.xlsx          -> brinde "Desafio 21 Pregões" (novo)
+
+IMAGENS (mesma raiz do site):
+  painel-trader-ad-bg.webp         -> banner do Painel do Trader em kit-do-trader.html
+  calculadora-risco-bg.webp        -> usada em ferramentas-do-trader.html
+  meuplano-bg.webp                 -> usada em ferramentas-do-trader.html
+  plano-hoje-bg.webp               -> usada em ferramentas-do-trader.html
+  recuperacao-bg.webp              -> usada em ferramentas-do-trader.html
+  guia-risco-capa.webp             -> capa em guia-gestao-de-risco.html
+  mapa-mental-trader-consistente.png -> imagem em mapa-mental-trader-consistente.html
+
+NÃO precisa subir de novo (não mudaram nessa leva):
+  index.html, la13.html e os demais arquivos do site — só entram aqui os
+  arquivos dos 6 brindes do Kit do Trader.
+
+Os 6 brindes do Kit do Trader:
+  1. Planilha do Trader        (cadastro obrigatório)
+  2. Diário do Trader          (cadastro obrigatório)
+  3. Ferramentas do Trader     (cadastro obrigatório, fluxo próprio)
+  4. Guia de Gestão de Risco   (cadastro obrigatório)
+  5. Mapa Mental do Trader Consistente (acesso livre, sem cadastro)
+  6. Desafio 21 Pregões        (cadastro obrigatório) — NOVO
