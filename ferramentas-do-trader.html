@@ -713,7 +713,9 @@
   function calcularRisco(){
     const ativo = document.getElementById("riscoAtivo").value;
     const info = ATIVOS_RISCO[ativo];
-    document.getElementById("tagAtivoValorPonto").textContent = "(" + ativo + ")";
+    // O "(" já vem desenhado na imagem de fundo logo antes desse span —
+    // por isso aqui só escrevemos o ativo + o fecha-parênteses.
+    document.getElementById("tagAtivoValorPonto").textContent = ativo + ")";
 
     const capital = parseFloat(document.getElementById("riscoCapital").value) || 0;
     const riscoPct = parseFloat(document.getElementById("riscoPercentual").value) || 0;
