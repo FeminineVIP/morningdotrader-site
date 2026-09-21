@@ -11,6 +11,41 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://morningdotrader.com.br/noticias.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/painel-internacional.html</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/kit-do-trader.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/futuro.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/ferramentas-do-trader.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/guia-gestao-de-risco.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://morningdotrader.com.br/mapa-mental-trader-consistente.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://morningdotrader.com.br/glossario.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
