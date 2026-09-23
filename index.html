@@ -260,6 +260,16 @@
   .fcb-board{position:relative; max-width:100%; margin:0 auto;}
   .fcb-board-img{width:100%; display:block; border-radius:12px;}
 
+  /* Trade Hunter — lideres de posicao em WIN/WDO */
+  .th-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:18px;}
+  .th-row{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid var(--border);}
+  .th-row:last-child{border-bottom:none;}
+  .th-player{font-size:0.9rem; font-weight:700; color:var(--text);}
+  .th-saldo{font-size:0.95rem; font-weight:800; text-align:right;}
+  .th-saldo.negative{color:var(--red);}
+  .th-saldo.positive{color:var(--green);}
+  .th-sub{font-size:0.72rem; color:var(--muted); margin-top:1px;}
+
   .wrap-wide{max-width:1450px;}
   .layout-grid{display:grid; grid-template-columns: 1fr 300px; gap:32px;}
   .main-col{min-width:0;}
@@ -648,6 +658,22 @@
       </div>
 
     </div>
+  </section>
+
+  <section id="trade-hunter-flow">
+    <h2><span class="tag">Trade Hunter</span>Futuros — Saldo dos Players (WIN e WDO)</h2>
+    <p class="section-note">Os 4 maiores compradores e os 4 maiores vendedores de cada contrato, posicao ao vivo as 15:00 do ultimo pregao — nao e o total do mercado, so os maiores players. Fonte: Trade Hunter.</p>
+    <div class="th-grid">
+      <div class="widget-card">
+        <div class="wtitle">WIN — Mini Indice</div>
+        <div id="thWinRows"><p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p></div>
+      </div>
+      <div class="widget-card">
+        <div class="wtitle">WDO — Mini Dolar</div>
+        <div id="thWdoRows"><p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p></div>
+      </div>
+    </div>
+    <div class="manual-updated" id="upd-trade-hunter" style="margin-top:10px;"></div>
   </section>
 
   <section id="fluxo-cambial-bc">
@@ -1406,6 +1432,29 @@
     "fluxo_outros_vista", "fluxo_outros_total"
   ];
 
+  // Trade Hunter (futuros WIN/WDO) — alimentado sozinho pela rotina agendada
+  // (nao tem input manual; os campos guardam listas de objetos {player, saldo,
+  // preco_medio, resultado_aberto}, ja no formato pronto pra exibir).
+  function renderTradeHunter(lista, containerId) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!Array.isArray(lista) || lista.length === 0) {
+      el.innerHTML = '<p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p>';
+      return;
+    }
+    el.innerHTML = lista.map(function(p) {
+      const saldoTexto = String(p.saldo || "");
+      const negativo = saldoTexto.trim().startsWith("-");
+      const cls = negativo ? "negative" : "positive";
+      return '<div class="th-row">' +
+        '<div><div class="th-player">' + (p.player || "") + '</div>' +
+        '<div class="th-sub">Preco medio: ' + (p.preco_medio || "—") + '</div></div>' +
+        '<div><div class="th-saldo ' + cls + '">' + saldoTexto + ' ctr</div>' +
+        '<div class="th-sub">' + (p.resultado_aberto || "—") + '</div></div>' +
+        '</div>';
+    }).join("");
+  }
+
   function preencherDisplay(data) {
     window.__lastManualData = data;
     SR_FIELDS.forEach(campo => {
@@ -1449,6 +1498,15 @@
       const inputEl = document.getElementById("input-" + campo);
       if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
     });
+
+    renderTradeHunter(data.trade_hunter_win, "thWinRows");
+    renderTradeHunter(data.trade_hunter_wdo, "thWdoRows");
+    const thUpd = document.getElementById("upd-trade-hunter");
+    if (thUpd) {
+      thUpd.textContent = data.trade_hunter_relatorio_data
+        ? ("Relatorio do pregao de " + data.trade_hunter_relatorio_data + " — Trade Hunter")
+        : "";
+    }
 
     const briefingEl = document.getElementById("briefingTexto");
     if (data.briefing && data.briefing.trim()) {
