@@ -270,6 +270,26 @@
   .th-saldo.positive{color:var(--green);}
   .th-sub{font-size:0.72rem; color:var(--muted); margin-top:1px;}
 
+  /* Trade Hunter — Placar do fluxo (resumo do topo) e Destaques (sintese do fim) */
+  .th-subhead{display:flex; align-items:center; gap:8px; font-size:1rem; font-weight:800; color:var(--text); margin:4px 0 8px;}
+  .th-subhead::before{content:""; width:4px; height:16px; background:var(--accent); border-radius:2px; display:inline-block; flex-shrink:0;}
+  .th-lead{font-size:0.85rem; color:var(--muted); line-height:1.55; margin:0 0 16px;}
+  .th-dash-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:10px; margin-bottom:24px;}
+  .th-dash-card{background:var(--bg-alt); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
+  .th-dash-label{font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-bottom:4px;}
+  .th-dash-value{font-size:1.1rem; font-weight:800; color:var(--text);}
+  .th-dash-sub{font-size:0.74rem; color:var(--muted); margin-top:2px;}
+  .th-dash-card .pos{color:var(--green);}
+  .th-dash-card .neg{color:var(--red);}
+  .th-callouts{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+  .th-callout{background:var(--bg-alt); border-left:3px solid var(--accent); border-radius:6px; padding:10px 14px; font-size:0.82rem; color:var(--text); line-height:1.55;}
+  .th-callout strong{color:var(--text);}
+  .th-callout .pos{color:var(--green);}
+  .th-callout .neg{color:var(--red);}
+  .th-callout.down{border-left-color:var(--red);}
+  .th-callout.up{border-left-color:var(--green);}
+  .th-callout.warn{border-left-color:var(--amber);}
+
   .wrap-wide{max-width:1450px;}
   .layout-grid{display:grid; grid-template-columns: 1fr 300px; gap:32px;}
   .main-col{min-width:0;}
@@ -661,8 +681,13 @@
   </section>
 
   <section id="trade-hunter-flow">
-    <h2><span class="tag">Trade Hunter</span>Futuros — Saldo dos Players (WIN e WDO)</h2>
-    <p class="section-note">Os 4 maiores compradores e os 4 maiores vendedores de cada contrato, posicao ao vivo as 15:00 do ultimo pregao — nao e o total do mercado, so os maiores players. Fonte: Trade Hunter.</p>
+    <h2>Futuros — Saldo dos Players (WIN e WDO)</h2>
+    <p class="section-note">Os 4 maiores compradores e os 4 maiores vendedores de cada contrato, posicao ao vivo as 15:00 do ultimo pregao — nao e o total do mercado, so os maiores players.</p>
+
+    <div class="th-subhead" id="thPlacarTitulo" style="display:none;"></div>
+    <p class="th-lead" id="thPlacarLead"></p>
+    <div class="th-dash-grid" id="thPlacarCards"></div>
+
     <div class="th-grid">
       <div class="widget-card">
         <div class="wtitle">WIN — Mini Indice</div>
@@ -674,6 +699,9 @@
       </div>
     </div>
     <div class="manual-updated" id="upd-trade-hunter" style="margin-top:10px;"></div>
+
+    <div class="th-subhead" style="margin-top:24px;">Destaques e síntese</div>
+    <div class="th-callouts" id="thDestaques"><p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p></div>
   </section>
 
   <section id="fluxo-cambial-bc">
@@ -1455,6 +1483,48 @@
     }).join("");
   }
 
+  // "Placar do fluxo" (resumo do topo do relatorio - Ibovespa, WIN, WDO,
+  // maior comprador/vendedor etc). Os campos value_html/sub_html ja vem
+  // prontos do worker (podem trazer um <span class="pos/neg"> dentro).
+  function renderTradeHunterPlacar(data) {
+    const tituloEl = document.getElementById("thPlacarTitulo");
+    const leadEl = document.getElementById("thPlacarLead");
+    const cardsEl = document.getElementById("thPlacarCards");
+    if (!tituloEl || !leadEl || !cardsEl) return;
+
+    if (data.trade_hunter_placar_titulo) {
+      tituloEl.textContent = data.trade_hunter_placar_titulo;
+      tituloEl.style.display = "flex";
+    } else {
+      tituloEl.style.display = "none";
+    }
+    leadEl.textContent = data.trade_hunter_placar_lead || "";
+
+    const cards = Array.isArray(data.trade_hunter_placar_cards) ? data.trade_hunter_placar_cards : [];
+    cardsEl.innerHTML = cards.map(function(c) {
+      return '<div class="th-dash-card">' +
+        '<div class="th-dash-label">' + (c.label || "") + '</div>' +
+        '<div class="th-dash-value">' + (c.value_html || "") + '</div>' +
+        '<div class="th-dash-sub">' + (c.sub_html || "") + '</div>' +
+        '</div>';
+    }).join("");
+  }
+
+  // "Destaques e sintese" (analise do fim do relatorio, 4 blocos coloridos
+  // por tipo: info/down/up/warn). O campo html ja vem pronto do worker
+  // (texto em negrito + spans pos/neg incluidos).
+  function renderTradeHunterDestaques(lista) {
+    const el = document.getElementById("thDestaques");
+    if (!el) return;
+    if (!Array.isArray(lista) || lista.length === 0) {
+      el.innerHTML = '<p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p>';
+      return;
+    }
+    el.innerHTML = lista.map(function(d) {
+      return '<div class="th-callout ' + (d.tipo || "info") + '">' + (d.html || "") + '</div>';
+    }).join("");
+  }
+
   function preencherDisplay(data) {
     window.__lastManualData = data;
     SR_FIELDS.forEach(campo => {
@@ -1499,8 +1569,10 @@
       if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
     });
 
+    renderTradeHunterPlacar(data);
     renderTradeHunter(data.trade_hunter_win, "thWinRows");
     renderTradeHunter(data.trade_hunter_wdo, "thWdoRows");
+    renderTradeHunterDestaques(data.trade_hunter_destaques);
     const thUpd = document.getElementById("upd-trade-hunter");
     if (thUpd) {
       thUpd.textContent = data.trade_hunter_relatorio_data
