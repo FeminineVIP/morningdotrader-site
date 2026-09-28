@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acesso Especial — Painel do Trader</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --bg-raised: #141c26;
+    --line: #223041;
+    --text: #e8edf2;
+    --text-dim: #8fa1b3;
+    --accent: #4da3ff;
+    --accent-dim: #2c6fb3;
+    --green: #3ecf8e;
+    --mono: 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image: url('/assets/bg-assinar.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 64px 24px 120px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .hero-row {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 780px) {
+    .hero-row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    display: block;
+  }
+
+  @media (max-width: 780px) {
+    .hero-image {
+      max-width: 260px;
+      margin: 0 auto;
+    }
+  }
+
+  .intro {
+    background: rgba(11, 15, 20, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  @media (max-width: 780px) {
+    .intro {
+      padding: 16px;
+    }
+  }
+
+  .intro h1,
+  .intro .sub {
+    margin: 0 0 12px;
+    max-width: none;
+  }
+
+  .intro .sub {
+    margin-bottom: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+
+  .mark {
+    width: 10px;
+    height: 10px;
+    background: var(--green);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  header span {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--text-dim);
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(62, 207, 142, 0.12);
+    border: 1px solid rgba(62, 207, 142, 0.35);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    max-width: 18ch;
+  }
+
+  .sub {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 46ch;
+    margin: 0 0 48px;
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 620px) {
+    .plans { grid-template-columns: 1fr; }
+  }
+
+  .plan {
+    background: rgba(20, 28, 38, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 16px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text);
+    font-family: var(--sans);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    position: relative;
+  }
+
+  .plan:hover {
+    border-color: #2a3644;
+  }
+
+  .plan.selected {
+    border-color: var(--green);
+    background: rgba(15, 26, 38, 0.65);
+  }
+
+  .plan.selected::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  .plan-name {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: none;
+    margin-bottom: 10px;
+  }
+
+  .plan-price {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .plan-period {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .checkout {
+    background: rgba(20, 28, 38, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .checkout label {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .checkout input[type="email"] {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .checkout input[type="email"]:focus {
+    border-color: var(--green);
+  }
+
+  .checkout button {
+    background: var(--green);
+    color: #061019;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+
+  .checkout button:hover:not(:disabled) {
+    background: #5be0a3;
+  }
+
+  .checkout button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .checkout button.secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    font-weight: 500;
+    font-size: 13.5px;
+    margin-top: 8px;
+    padding: 11px;
+  }
+
+  .checkout button.secondary:hover:not(:disabled) {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--green);
+  }
+
+  .status {
+    font-size: 13.5px;
+    min-height: 18px;
+  }
+
+  .status.error { color: #ff8a8a; }
+  .status.ok { color: var(--text-dim); }
+
+  footer {
+    margin-top: 40px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  footer a { color: var(--text-dim); }
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Painel Trader">
+<meta name="robots" content="noindex, nofollow">
+<script src="/pwa-install.js" defer></script>
+</head>
+<body>
+
+  <div class="wrap">
+
+    <header>
+      <div class="mark"></div>
+      <span>PAINEL DO TRADER</span>
+    </header>
+
+    <div class="hero-row">
+
+      <div class="hero">
+        <img class="hero-image" src="/assets/parceria-topgain-dom.jpg" alt="Parceria Top Gain e Dom Investimentos (XP)">
+      </div>
+
+      <div class="intro">
+        <div class="badge">PARCERIA TOP GAIN × DOM INVESTIMENTOS</div>
+
+        <h1>Sua condição exclusiva por indicação da Top Gain e Dom Investimentos</h1>
+        <p class="sub">Você chegou até aqui pela nossa parceria com a Top Gain e a Dom Investimentos (XP). Como agradecimento, preparamos planos com preço especial só pra essa comunidade.</p>
+      </div>
+
+    </div>
+
+    <div class="plans" id="plans">
+          <button class="plan" data-plano="especial_mensal">
+            <div class="plan-name">Mensal</div>
+            <div class="plan-price">R$ 13,90</div>
+            <div class="plan-period">por mês</div>
+          </button>
+
+          <button class="plan" data-plano="especial_semestral">
+            <div class="plan-name">Semestral</div>
+            <div class="plan-price">R$ 79,90</div>
+            <div class="plan-period">a cada 6 meses</div>
+          </button>
+
+          <button class="plan" data-plano="especial_anual">
+            <div class="plan-name">Anual</div>
+            <div class="plan-price">R$ 119,90</div>
+            <div class="plan-period">por ano</div>
+          </button>
+
+          <button class="plan" data-plano="especial_bianual">
+            <div class="plan-name">Bianual</div>
+            <div class="plan-price">R$ 199,90</div>
+            <div class="plan-period">a cada 2 anos</div>
+          </button>
+        </div>
+
+        <div class="checkout">
+          <label for="email">Seu e-mail</label>
+          <input type="email" id="email" placeholder="voce@exemplo.com" autocomplete="email">
+          <button id="submit" disabled>Selecione um plano</button>
+          <button id="submit-pix" class="secondary" disabled>Pagar com Pix (avulso, sem renovação automática)</button>
+          <div class="status" id="status"></div>
+        </div>
+
+    <footer>
+      Pagamento processado com segurança pelo Mercado Pago. Cartão e saldo Mercado Pago renovam automaticamente; Pix libera o acesso por um período fixo, sem renovar sozinho.
+    </footer>
+
+  </div>
+
+<script>
+  const API_URL = "https://api.paineldotrader.com.br";
+
+  let planoSelecionado = null;
+
+  const plans = document.querySelectorAll(".plan");
+  const submitBtn = document.getElementById("submit");
+  const submitPixBtn = document.getElementById("submit-pix");
+  const emailInput = document.getElementById("email");
+  const statusEl = document.getElementById("status");
+
+  function atualizarBotao() {
+    if (!planoSelecionado) {
+      submitBtn.textContent = "Selecione um plano";
+      submitBtn.disabled = true;
+      submitPixBtn.disabled = true;
+      return;
+    }
+    submitBtn.textContent = "Continuar para pagamento";
+    submitBtn.disabled = false;
+    submitPixBtn.disabled = false;
+  }
+
+  plans.forEach(btn => {
+    btn.addEventListener("click", () => {
+      plans.forEach(p => p.classList.remove("selected"));
+      btn.classList.add("selected");
+      planoSelecionado = btn.dataset.plano;
+      atualizarBotao();
+    });
+  });
+
+  function validarAntesDeEnviar() {
+    statusEl.textContent = "";
+    statusEl.className = "status";
+
+    const email = emailInput.value.trim();
+
+    if (!email || !email.includes("@")) {
+      statusEl.textContent = "Digite um e-mail válido.";
+      statusEl.className = "status error";
+      return null;
+    }
+
+    if (!planoSelecionado) {
+      statusEl.textContent = "Selecione um plano.";
+      statusEl.className = "status error";
+      return null;
+    }
+
+    return email;
+  }
+
+  submitBtn.addEventListener("click", async () => {
+    const email = validarAntesDeEnviar();
+    if (!email) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Gerando pagamento...";
+
+    try {
+      const resp = await fetch(`${API_URL}/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, plano: planoSelecionado })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.ok || !data.init_point) {
+        throw new Error(data.error?.message || "Não foi possível gerar o pagamento.");
+      }
+
+      statusEl.textContent = "Redirecionando para o pagamento...";
+      statusEl.className = "status ok";
+
+      window.location.href = data.init_point;
+
+    } catch (err) {
+      statusEl.textContent = "Algo deu errado: " + err.message;
+      statusEl.className = "status error";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Continuar para pagamento";
+    }
+  });
+
+  submitPixBtn.addEventListener("click", async () => {
+    const email = validarAntesDeEnviar();
+    if (!email) return;
+
+    submitPixBtn.disabled = true;
+    submitPixBtn.textContent = "Gerando Pix...";
+
+    try {
+      const resp = await fetch(`${API_URL}/subscribe-pix`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, plano: planoSelecionado })
+      });
+
+      const data = await resp.json();
+
+      if (!resp.ok || !data.ok || !data.ticket_url) {
+        throw new Error(data.error?.message || "Não foi possível gerar o Pix.");
+      }
+
+      statusEl.textContent = "Redirecionando para o Pix...";
+      statusEl.className = "status ok";
+
+      window.location.href = data.ticket_url;
+
+    } catch (err) {
+      statusEl.textContent = "Algo deu errado: " + err.message;
+      statusEl.className = "status error";
+      submitPixBtn.disabled = false;
+      submitPixBtn.textContent = "Pagar com Pix (avulso, sem renovação automática)";
+    }
+  });
+</script>
+
+</body>
+</html>
