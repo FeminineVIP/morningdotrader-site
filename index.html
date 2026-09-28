@@ -270,26 +270,6 @@
   .th-saldo.positive{color:var(--green);}
   .th-sub{font-size:0.72rem; color:var(--muted); margin-top:1px;}
 
-  /* Trade Hunter — Placar do fluxo (resumo do topo) e Destaques (sintese do fim) */
-  .th-subhead{display:flex; align-items:center; gap:8px; font-size:1rem; font-weight:800; color:var(--text); margin:4px 0 8px;}
-  .th-subhead::before{content:""; width:4px; height:16px; background:var(--accent); border-radius:2px; display:inline-block; flex-shrink:0;}
-  .th-lead{font-size:0.85rem; color:var(--muted); line-height:1.55; margin:0 0 16px;}
-  .th-dash-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:10px; margin-bottom:24px;}
-  .th-dash-card{background:var(--bg-alt); border:1px solid var(--border); border-radius:8px; padding:10px 12px;}
-  .th-dash-label{font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-bottom:4px;}
-  .th-dash-value{font-size:1.1rem; font-weight:800; color:var(--text);}
-  .th-dash-sub{font-size:0.74rem; color:var(--muted); margin-top:2px;}
-  .th-dash-card .pos{color:var(--green);}
-  .th-dash-card .neg{color:var(--red);}
-  .th-callouts{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
-  .th-callout{background:var(--bg-alt); border-left:3px solid var(--accent); border-radius:6px; padding:10px 14px; font-size:0.82rem; color:var(--text); line-height:1.55;}
-  .th-callout strong{color:var(--text);}
-  .th-callout .pos{color:var(--green);}
-  .th-callout .neg{color:var(--red);}
-  .th-callout.down{border-left-color:var(--red);}
-  .th-callout.up{border-left-color:var(--green);}
-  .th-callout.warn{border-left-color:var(--amber);}
-
   .wrap-wide{max-width:1450px;}
   .layout-grid{display:grid; grid-template-columns: 1fr 300px; gap:32px;}
   .main-col{min-width:0;}
@@ -681,13 +661,8 @@
   </section>
 
   <section id="trade-hunter-flow">
-    <h2>Futuros — Saldo dos Players (WIN e WDO)</h2>
-    <p class="section-note">Os 4 maiores compradores e os 4 maiores vendedores de cada contrato, posicao ao vivo as 15:00 do ultimo pregao — nao e o total do mercado, so os maiores players.</p>
-
-    <div class="th-subhead" id="thPlacarTitulo" style="display:none;"></div>
-    <p class="th-lead" id="thPlacarLead"></p>
-    <div class="th-dash-grid" id="thPlacarCards"></div>
-
+    <h2><span class="tag">Trade Hunter</span>Futuros — Saldo dos Players (WIN e WDO)</h2>
+    <p class="section-note">Os 4 maiores compradores e os 4 maiores vendedores de cada contrato, posicao ao vivo as 15:00 do ultimo pregao — nao e o total do mercado, so os maiores players. Fonte: Trade Hunter.</p>
     <div class="th-grid">
       <div class="widget-card">
         <div class="wtitle">WIN — Mini Indice</div>
@@ -699,9 +674,6 @@
       </div>
     </div>
     <div class="manual-updated" id="upd-trade-hunter" style="margin-top:10px;"></div>
-
-    <div class="th-subhead" style="margin-top:24px;">Destaques e síntese</div>
-    <div class="th-callouts" id="thDestaques"><p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p></div>
   </section>
 
   <section id="fluxo-cambial-bc">
@@ -1360,18 +1332,20 @@
   // CONFIGURAR: troque pela URL real do seu Worker depois do deploy.
   const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
   const POLYMARKET_MARKETS = [
-    // Linha 1: risco político/monetário doméstico
+    // Linha 1: risco político doméstico
     { slug: "brazil-presidential-election", label: "Eleição presidencial no Brasil" },
-    { slug: "bank-of-brazil-decision-in-september-20260616232552895", label: "Decisão do Banco Central do Brasil em setembro" },
-    // Linha 2: risco monetário/geopolítico internacional
-    { slug: "fed-decision-in-september-762", label: "Decisão do Fed em setembro" },
-    { slug: "strait-of-hormuz-traffic-returns-to-normal-by-august-31-20260702154212320", label: "Tráfego no Estreito de Ormuz volta ao normal" },
-    // Linha 3: geopolítica Irã
-    { slug: "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080", label: "EUA anunciam fim do bloqueio iraniano" },
-    { slug: "iran-x-israelus-conflict-ends-by", label: "Guerra Irã-Israel termina em 2026" },
-    // Linha 4: mercado financeiro (EUA/cripto)
-    { slug: "us-recession-by-end-of-2026", label: "Recessão nos EUA até o fim de 2026" },
+    // Linha 2: risco monetário internacional
+    { slug: "fed-decision-in-october-20260617190323537", label: "Decisão do Fed em outubro" },
+    // Linha 3: geopolítica Irã (mesmo evento que antes rotulávamos de "bloqueio iraniano" —
+    // a Polymarket manteve este slug vivo e rolando as datas; o antigo slug do Estreito de
+    // Ormuz "by-august-31" já encerrou, então trocamos o rótulo em vez de duplicar o card).
+    { slug: "us-announces-end-of-iranian-blockade-byptptpt-20260713152715080", label: "Tráfego no Estreito de Ormuz volta ao normal" },
+    // Linha 4: mercado financeiro (cripto)
     { slug: "what-price-will-bitcoin-hit-before-2027", label: "Meta de preço do Bitcoin em 2026" }
+    // Nota: o card do Banco Central do Brasil (Copom) foi removido porque a Polymarket
+    // não tem, no momento, um mercado ativo para as reuniões de novembro/dezembro de 2026.
+    // No lugar, o 5º card do painel (Boletim Focus) é estático/manual — ver bannerPesquisas
+    // e cardFocus logo abaixo, em carregarPolymarket().
   ];
 
   // Saudação e status simples de mercado (B3: 10h-17h, seg-sex, horário de Brasília)
@@ -1483,48 +1457,6 @@
     }).join("");
   }
 
-  // "Placar do fluxo" (resumo do topo do relatorio - Ibovespa, WIN, WDO,
-  // maior comprador/vendedor etc). Os campos value_html/sub_html ja vem
-  // prontos do worker (podem trazer um <span class="pos/neg"> dentro).
-  function renderTradeHunterPlacar(data) {
-    const tituloEl = document.getElementById("thPlacarTitulo");
-    const leadEl = document.getElementById("thPlacarLead");
-    const cardsEl = document.getElementById("thPlacarCards");
-    if (!tituloEl || !leadEl || !cardsEl) return;
-
-    if (data.trade_hunter_placar_titulo) {
-      tituloEl.textContent = data.trade_hunter_placar_titulo;
-      tituloEl.style.display = "flex";
-    } else {
-      tituloEl.style.display = "none";
-    }
-    leadEl.textContent = data.trade_hunter_placar_lead || "";
-
-    const cards = Array.isArray(data.trade_hunter_placar_cards) ? data.trade_hunter_placar_cards : [];
-    cardsEl.innerHTML = cards.map(function(c) {
-      return '<div class="th-dash-card">' +
-        '<div class="th-dash-label">' + (c.label || "") + '</div>' +
-        '<div class="th-dash-value">' + (c.value_html || "") + '</div>' +
-        '<div class="th-dash-sub">' + (c.sub_html || "") + '</div>' +
-        '</div>';
-    }).join("");
-  }
-
-  // "Destaques e sintese" (analise do fim do relatorio, 4 blocos coloridos
-  // por tipo: info/down/up/warn). O campo html ja vem pronto do worker
-  // (texto em negrito + spans pos/neg incluidos).
-  function renderTradeHunterDestaques(lista) {
-    const el = document.getElementById("thDestaques");
-    if (!el) return;
-    if (!Array.isArray(lista) || lista.length === 0) {
-      el.innerHTML = '<p class="manual-value empty" style="font-size:0.9rem;">Aguardando atualizacao.</p>';
-      return;
-    }
-    el.innerHTML = lista.map(function(d) {
-      return '<div class="th-callout ' + (d.tipo || "info") + '">' + (d.html || "") + '</div>';
-    }).join("");
-  }
-
   function preencherDisplay(data) {
     window.__lastManualData = data;
     SR_FIELDS.forEach(campo => {
@@ -1569,10 +1501,8 @@
       if (inputEl && !inputEl.value) inputEl.value = data[campo] || "";
     });
 
-    renderTradeHunterPlacar(data);
     renderTradeHunter(data.trade_hunter_win, "thWinRows");
     renderTradeHunter(data.trade_hunter_wdo, "thWdoRows");
-    renderTradeHunterDestaques(data.trade_hunter_destaques);
     const thUpd = document.getElementById("upd-trade-hunter");
     if (thUpd) {
       thUpd.textContent = data.trade_hunter_relatorio_data
@@ -2059,10 +1989,22 @@
   async function carregarPolymarket() {
     const wrap = document.getElementById("polymarketPanels");
     const resultados = await Promise.all(POLYMARKET_MARKETS.map(carregarUmMercado));
+    // Card estático (não vem da Polymarket): Boletim Focus, pesquisa semanal do Banco
+    // Central com a mediana das expectativas do mercado pra Selic. Serve de substituto
+    // pro card do Copom, já que a Polymarket não tem mercado ativo pra isso agora.
+    // Atualizar manualmente sempre que sair um Focus mais recente (toda segunda-feira).
+    const cardFocus = `<div class="pm-card">
+      <div class="pm-title">Boletim Focus — Selic (fim de 2026)</div>
+      <div class="pm-row">
+        <div class="pm-row-top"><span class="pm-row-label">Mediana das expectativas do mercado</span><span class="pm-row-pct">13,50%</span></div>
+        <div class="pm-bar-track"><div class="pm-bar-fill" style="width:13.5%"></div></div>
+      </div>
+      <div class="election-note" style="margin-top:8px;">Fonte: Banco Central do Brasil — Boletim Focus (28/09/2026)</div>
+    </div>`;
     const bannerPesquisas = `<a href="https://flex.pollingdata.com.br/" target="_blank" rel="noopener" style="display:block; border-radius:12px; overflow:hidden;">
       <img src="pesquisas-eleitorais-banner.webp" alt="Pesquisas eleitorais 2026 — média ponderada, PollingData" style="width:100%; display:block;">
     </a>`;
-    wrap.innerHTML = resultados.join("") + bannerPesquisas;
+    wrap.innerHTML = resultados.join("") + cardFocus + bannerPesquisas;
   }
 
   // Fear & Greed - painel proprio, sem depender de iframe de terceiro
