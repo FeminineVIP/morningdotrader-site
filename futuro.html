@@ -972,6 +972,9 @@ footer{
         >
           Futuro Financeiro
         </a>
+        <a href="desafio-moedinha.html">
+          Desafio da Moedinha
+        </a>
         <a href="kit-do-trader.html">
           Kit do Trader
         </a>
@@ -1065,6 +1068,25 @@ footer{
     <span class="field-hint" id="tradeHint">
       Sugestão: 10% do valor disponível. Você conhece
       seu perfil — pode ajustar esse valor livremente.
+    </span>
+  </div>
+  <div class="form-group">
+    <label for="tradeRatePercent">
+      RENTABILIDADE MÉDIA DO DAY TRADE (% AO MÊS)
+    </label>
+    <input
+      id="tradeRatePercent"
+      class="money-input"
+      type="number"
+      min="0"
+      step="0.5"
+      value="30"
+    >
+    <span class="field-hint">
+      Indicativo de referência: média de ~1,5% ao dia em
+      20 pregões no mês (1,5% × 20 = 30%, sem compor dia a
+      dia). É só uma sugestão de ponto de partida — ajuste
+      pra refletir sua própria média real.
     </span>
   </div>
   <button
@@ -1273,8 +1295,8 @@ footer{
   </div>
   <div class="alloc-rate">
     Rentabilidade Média
-    <strong>
-      20% a.m.
+    <strong id="tradeRateDisplay">
+      30% a.m.
     </strong>
   </div>
   <div class="alloc-desc" style="margin-top:6px;">
@@ -1505,15 +1527,24 @@ const portfolio = [
 */
 const tradeSuggestionWeight = .10;
 /*
-   Taxa mensal do Day Trade (não é mais convertida a partir
-   de uma taxa anual): 20% ao mês, equivalente a ~791,6%
-   ao ano. É um número deliberadamente agressivo — reflete
-   uma meta de trader profissional em fase boa, já descontando
-   dias laterais, perdas e feriados (bem abaixo dos ~48,6%
-   a.m. que 2% ao dia em 20 pregões daria se fosse composto
-   sem nenhuma interrupção).
+   Taxa mensal do Day Trade: agora é o próprio usuário quem
+   escolhe, no campo "Rentabilidade média do Day Trade (%
+   ao mês)" — não é mais um número fixo no código. O valor
+   sugerido por padrão (30%) é só uma referência de partida
+   (~1,5% ao dia em 20 pregões, somado sem compor dia a dia);
+   a pessoa pode ajustar livremente pra refletir sua própria
+   média real. getTradeRate() lê esse campo.
 */
-const tradeMonthlyRate = 0.20;
+function getTradeRate(){
+  return Math.max(
+    0,
+    Number(
+      document
+        .getElementById("tradeRatePercent")
+        .value
+    ) || 0
+  ) / 100;
+}
 /*
    Teto fixo (em R$) do valor alocado no Day Trade: uma vez
    atingido, o valor alocado para de crescer e só o lucro
@@ -1663,6 +1694,13 @@ function allocation(){
     .getElementById("trade")
     .textContent =
     brl(trade);
+  document
+    .getElementById("tradeRateDisplay")
+    .textContent =
+    (getTradeRate() * 100)
+      .toFixed(1)
+      .replace(/\.0$/, "") +
+    "% a.m.";
   document
     .getElementById("reserve")
     .textContent =
@@ -1866,6 +1904,7 @@ function simulate(){
      resultado do mês em vez de deixar a banca crescer
      indefinidamente.
   */
+  const tradeMonthlyRate = getTradeRate();
   let dayTradeBase = trade;
   function totalPatrimonio(){
     return (
