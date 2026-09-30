@@ -1274,8 +1274,13 @@ footer{
   <div class="alloc-rate">
     Rentabilidade Média
     <strong>
-      120% a.a.
+      20% a.m.
     </strong>
+  </div>
+  <div class="alloc-desc" style="margin-top:6px;">
+    Teto de R$ 30.000: ao atingir esse valor, o capital
+    alocado para de crescer e só o lucro mensal continua
+    sendo redistribuído para as outras frentes.
   </div>
 </div>
 </div>
@@ -1499,7 +1504,24 @@ const portfolio = [
    campo, a sugestão para de ser recalculada.
 */
 const tradeSuggestionWeight = .10;
-const tradeAnnualRate = 1.20;
+/*
+   Taxa mensal do Day Trade (não é mais convertida a partir
+   de uma taxa anual): 20% ao mês, equivalente a ~791,6%
+   ao ano. É um número deliberadamente agressivo — reflete
+   uma meta de trader profissional em fase boa, já descontando
+   dias laterais, perdas e feriados (bem abaixo dos ~48,6%
+   a.m. que 2% ao dia em 20 pregões daria se fosse composto
+   sem nenhuma interrupção).
+*/
+const tradeMonthlyRate = 0.20;
+/*
+   Teto fixo (em R$) do valor alocado no Day Trade: uma vez
+   atingido, o valor alocado para de crescer e só o lucro
+   mensal gerado sobre ele passa a ser redistribuído para as
+   outras 3 frentes. Fixo mesmo — não escala com o capital
+   inicial de cada pessoa.
+*/
+const dayTradeCap = 30000;
 const reserveWeight = .10;
 /*
    Peso relativo de Renda Fixa / Dividendos / Cripto entre
@@ -1827,30 +1849,24 @@ function simulate(){
      =====================================================
      CAPACIDADE DO DAY TRADE
      =====================================================
-     Day Trade não é tratado como um ativo que "fica
-     comprado e composto" por anos: o valor alocado nele
-     (dayTradeBase, escolhido pelo usuário no campo "Valor
-     alocado no Day Trade") fica FIXO mês a mês. O lucro
-     mensal gerado sobre esse valor (à taxa de 120% a.a.) é
-     redistribuído todo mês para as outras 3 frentes, na
-     mesma proporção relativa entre elas — exatamente como
-     um trader profissional faria ao realocar o resultado
-     do mês em vez de deixá-lo "comprado" indefinidamente.
+     O valor alocado no Day Trade (dayTradeBase, escolhido
+     pelo usuário no campo "Valor alocado no Day Trade")
+     agora COMPÕE sozinho, reinvestindo 100% do lucro mensal
+     nele mesmo, até atingir o teto fixo de R$30.000
+     (dayTradeCap). Isso reproduz o efeito de uma banca de
+     day trade sendo capitalizada mês a mês enquanto ainda é
+     pequena.
 
-     O valor alocado no Day Trade só aumenta (5x) quando o
-     patrimônio total investido também cresce 5x em relação
-     ao último patamar — e esse reforço de capacidade é
-     financiado puxando capital das outras 3 frentes na
-     mesma proporção (o patrimônio total não muda, só a
-     divisão interna).
+     Assim que o valor alocado bate o teto, ele PARA de
+     crescer: fica travado em R$30.000 pelo resto da
+     simulação, e só o lucro mensal gerado sobre esse valor
+     passa a ser redistribuído todo mês para as outras 3
+     frentes, na mesma proporção relativa entre elas —
+     como um trader profissional faria ao realocar o
+     resultado do mês em vez de deixar a banca crescer
+     indefinidamente.
   */
-  const tradeMonthlyRate =
-    Math.pow(
-      1 + tradeAnnualRate,
-      1 / 12
-    ) - 1;
   let dayTradeBase = trade;
-  let referencia = initial;
   function totalPatrimonio(){
     return (
       balances.reduce(
@@ -1872,9 +1888,28 @@ function simulate(){
     month++
   ){
     if(month > 0){
-      const pool =
-        dayTradeBase *
-        tradeMonthlyRate;
+      /*
+         Enquanto não bate o teto, o lucro mensal fica
+         "comprado" dentro do próprio Day Trade (efeito
+         composto). Se o reinvestimento ultrapassar o teto
+         nesse mês, só o excedente sobre R$30.000 é que já
+         sai pra redistribuição — o resto continua fixo lá.
+      */
+      let pool = 0;
+      if(dayTradeBase < dayTradeCap){
+        dayTradeBase =
+          dayTradeBase *
+          (1 + tradeMonthlyRate);
+        if(dayTradeBase > dayTradeCap){
+          pool =
+            dayTradeBase - dayTradeCap;
+          dayTradeBase = dayTradeCap;
+        }
+      } else {
+        pool =
+          dayTradeBase *
+          tradeMonthlyRate;
+      }
       balances.forEach(
         (balance,index) => {
           const redistShare =
@@ -1893,50 +1928,6 @@ function simulate(){
       );
       reserve +=
         reserveMonthly;
-      /*
-         "while" (e não "if") porque, em tese, mais de um
-         reforço de capacidade poderia acontecer no mesmo
-         mês se o patrimônio saltasse muito rápido — na
-         prática isso quase nunca ocorre com essas taxas.
-      */
-      /*
-         Guarda de segurança: se "referencia" for 0 (ex.:
-         valor inicial 0), "referencia * 5" também é 0 e
-         qualquer total >= 0 é sempre verdadeiro — sem a
-         checagem "referencia > 0" isso travaria o
-         navegador num loop infinito. O limite de 20
-         repetições é uma segunda trava, só por precaução.
-      */
-      let total =
-        totalPatrimonio();
-      let safety = 0;
-      while(
-        referencia > 0 &&
-        total >=
-        referencia * 5 &&
-        safety < 20
-      ){
-        const oldBase =
-          dayTradeBase;
-        const newBase =
-          oldBase * 5;
-        const delta =
-          newBase - oldBase;
-        balances.forEach(
-          (balance,index) => {
-            balances[index] =
-              balance -
-              delta *
-              redistWeights[index];
-          }
-        );
-        dayTradeBase = newBase;
-        referencia =
-          referencia * 5;
-        total =
-          totalPatrimonio();
-        safety++;
-      }
     }
     /*
        Um ponto por ano
