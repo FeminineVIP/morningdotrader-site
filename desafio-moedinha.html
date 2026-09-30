@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O DESAFIO DA MOEDINHA</title>
+<meta
+  name="description"
+  content="Uma moeda de um centavo que dobra de valor todo dia, por 30 dias. Pareceria uma proposta ridícula perto de um produto caro — até você fazer a conta. Ajuste os números e veja o poder dos juros compostos na prática."
+>
+<style>
+:root{
+  --bg:#05090e;
+  --card:#0c141e;
+  --border:#1d3043;
+  --text:#f5f7fa;
+  --muted:#8fa0b4;
+  --gold:#f5b63c;
+  --green:#21d987;
+  --blue:#248cf4;
+  --orange:#ff7a24;
+  --purple:#9a4df3;
+  --yellow:#f8cd42;
+  --positive:#5dde9c;
+}
+*{
+  box-sizing:border-box;
+}
+html{
+  scroll-behavior:smooth;
+}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -15%,rgba(46,103,151,.12),transparent 35%),
+    radial-gradient(circle at 90% 30%,rgba(245,182,60,.05),transparent 25%),
+    linear-gradient(180deg,#05090e,#07101a 60%,#05090e);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+a{
+  color:inherit;
+}
+.wrap{
+  width:min(1220px,calc(100% - 32px));
+  margin:auto;
+}
+/* =========================================================
+   TOPO
+========================================================= */
+.topbar{
+  border-bottom:1px solid var(--border);
+  background:rgba(5,9,14,.9);
+  backdrop-filter:blur(16px);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.topbar-inner{
+  min-height:64px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+.brand{
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.04em;
+  font-size:1.05rem;
+}
+.brand span{
+  color:var(--gold);
+}
+.nav{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:18px;
+  font-size:.78rem;
+  font-weight:700;
+}
+.nav .links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:18px;
+}
+.nav a{
+  text-decoration:none;
+  color:var(--muted);
+}
+.nav a:hover,
+.nav .active{
+  color:var(--gold);
+}
+/* =========================================================
+   HERO
+========================================================= */
+.hero{
+  padding:42px 0 26px;
+}
+.hero-kicker{
+  color:var(--gold);
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.hero h1{
+  margin:8px 0 10px;
+  font-size:clamp(2rem,4vw,3.4rem);
+  line-height:1.04;
+}
+.hero h1 span{
+  color:var(--gold);
+}
+.hero p{
+  color:var(--muted);
+  max-width:760px;
+  line-height:1.6;
+  margin:0;
+}
+/* =========================================================
+   PROPOSTA
+========================================================= */
+.proposta{
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#0b141e;
+  padding:22px 24px;
+  margin-top:26px;
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+}
+.proposta-symbol{
+  font-size:2.6rem;
+  line-height:1;
+}
+.proposta-text{
+  color:#c7d1dd;
+  line-height:1.65;
+  font-size:.94rem;
+}
+.proposta-text strong{
+  color:#fff;
+}
+/* =========================================================
+   PAINEL PRINCIPAL
+========================================================= */
+.main-panel{
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(14,24,35,.97),
+      rgba(6,12,19,.97)
+    );
+  box-shadow:0 30px 80px rgba(0,0,0,.24);
+  overflow:hidden;
+  margin-top:26px;
+}
+.main-grid{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+}
+.module{
+  padding:30px;
+}
+.module + .module{
+  border-left:1px solid var(--border);
+}
+.section-label{
+  color:var(--gold);
+  font-weight:900;
+  font-size:.8rem;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+.module h2{
+  font-size:1.7rem;
+  margin:8px 0 10px;
+}
+.module h2 span{
+  color:var(--gold);
+}
+.module p{
+  color:var(--muted);
+  line-height:1.55;
+  margin-top:0;
+}
+/* FORMULÁRIO */
+.form-group{
+  margin-top:20px;
+}
+label{
+  display:block;
+  font-size:.78rem;
+  color:#d4dce5;
+  font-weight:800;
+  margin-bottom:8px;
+}
+.money-input{
+  width:100%;
+  background:#08111a;
+  border:1px solid #2a4258;
+  color:#fff;
+  font-size:1.1rem;
+  font-weight:700;
+  padding:15px 16px;
+  border-radius:11px;
+  outline:none;
+}
+.money-input:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(245,182,60,.08);
+}
+.field-hint{
+  display:block;
+  margin-top:7px;
+  color:var(--muted);
+  font-size:.7rem;
+  line-height:1.5;
+}
+.invest-button{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:15px;
+  margin-top:18px;
+  background:
+    linear-gradient(
+      180deg,
+      #ffd45e,
+      #eaa323
+    );
+  color:#241801;
+  font-weight:900;
+  font-size:.88rem;
+  cursor:pointer;
+  box-shadow:0 8px 30px rgba(245,182,60,.15);
+}
+.invest-button:active{
+  transform:translateY(1px);
+}
+.fixed-note{
+  margin-top:18px;
+  padding:14px 15px;
+  border:1px solid var(--border);
+  background:#0b1520;
+  border-radius:11px;
+}
+.fixed-note strong{
+  display:block;
+  font-size:.8rem;
+  margin-bottom:4px;
+}
+.fixed-note span{
+  color:var(--muted);
+  font-size:.72rem;
+  line-height:1.5;
+}
+/* RESULTADO */
+.result-module{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:420px;
+}
+.placeholder{
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.6;
+  text-align:center;
+  margin:auto;
+  max-width:320px;
+}
+.result-body{
+  display:none;
+}
+.result-body.show{
+  display:block;
+}
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.kpi{
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:#0b141e;
+  padding:16px;
+  min-width:0;
+}
+.kpi span{
+  display:block;
+  color:#8e9daf;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.05em;
+}
+.kpi strong{
+  display:block;
+  margin-top:8px;
+  font-size:clamp(1.05rem,2vw,1.5rem);
+  overflow-wrap:anywhere;
+}
+.kpi.projected strong{
+  color:var(--gold);
+}
+.kpi.growth strong{
+  color:var(--positive);
+}
+.impact{
+  margin-top:16px;
+  padding:18px;
+  border:1px solid rgba(245,182,60,.28);
+  border-radius:14px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(245,182,60,.08),
+      rgba(245,182,60,.02)
+    );
+}
+.impact-label{
+  color:var(--gold);
+  font-size:.72rem;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+.impact p{
+  color:#b6c0cc;
+  line-height:1.55;
+  margin-bottom:0;
+  margin-top:6px;
+}
+/* GRÁFICO */
+.future-card{
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:#09121b;
+  padding:18px;
+  margin-top:16px;
+  position:relative;
+}
+.chart{
+  height:280px;
+  border:1px solid #1d3043;
+  border-radius:13px;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(139,158,180,.05) 1px,
+      transparent 1px
+    );
+  background-size:100% 20%;
+  overflow:hidden;
+  position:relative;
+}
+.chart svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.chart-tooltip{
+  position:absolute;
+  pointer-events:none;
+  background:#0c141e;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:.72rem;
+  line-height:1.5;
+  color:#e7edf3;
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+  opacity:0;
+  transform:translate(-50%,-110%);
+  white-space:nowrap;
+  z-index:5;
+}
+.chart-tooltip strong{
+  color:var(--gold);
+}
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  color:#94a2b2;
+  font-size:.74rem;
+  margin-top:12px;
+}
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.legend-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+}
+.legend-line{
+  width:14px;
+  height:2px;
+}
+.legend-gold{background:var(--gold);}
+.legend-green{background:var(--positive);}
+.legend-gray{background:#7f93a8;}
+.table-toggle{
+  margin-top:10px;
+  background:none;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:.74rem;
+  font-weight:700;
+  padding:8px 14px;
+  border-radius:9px;
+  cursor:pointer;
+}
+.table-toggle:hover{
+  color:var(--gold);
+  border-color:var(--gold);
+}
+.table-wrap{
+  display:none;
+  max-height:260px;
+  overflow:auto;
+  margin-top:12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.table-wrap.show{
+  display:block;
+}
+table.moedinha-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.78rem;
+}
+table.moedinha-table th,
+table.moedinha-table td{
+  padding:8px 12px;
+  text-align:right;
+  border-bottom:1px solid #17222e;
+  white-space:nowrap;
+}
+table.moedinha-table th:first-child,
+table.moedinha-table td:first-child{
+  text-align:left;
+}
+table.moedinha-table th{
+  position:sticky;
+  top:0;
+  background:#0c141e;
+  color:var(--muted);
+  font-size:.68rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+table.moedinha-table td{
+  color:#dbe4ec;
+}
+table.moedinha-table tr.cross-row td{
+  color:var(--gold);
+  font-weight:800;
+}
+/* AVISO */
+.disclaimer{
+  margin:26px auto 0;
+  max-width:900px;
+  text-align:center;
+  color:#68798c;
+  font-size:.68rem;
+  line-height:1.55;
+}
+/* RODAPÉ */
+footer{
+  margin-top:40px;
+  border-top:1px solid var(--border);
+  padding:26px 0 38px;
+  color:#738295;
+  font-size:.72rem;
+}
+.footer-inner{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+main{
+  padding-bottom:40px;
+}
+/* TABLET */
+@media(max-width:1000px){
+  .main-grid{
+    grid-template-columns:1fr;
+  }
+  .module + .module{
+    border-left:0;
+    border-top:1px solid var(--border);
+  }
+  .result-module{
+    min-height:auto;
+  }
+}
+/* CELULAR */
+@media(max-width:700px){
+  .wrap{
+    width:min(100% - 22px,1220px);
+  }
+  .topbar{
+    position:relative;
+  }
+  .topbar-inner{
+    justify-content:center;
+    padding:12px 0;
+    flex-wrap:wrap;
+  }
+  .brand{
+    width:100%;
+    text-align:center;
+  }
+  .kpis{
+    grid-template-columns:1fr;
+  }
+  .proposta{
+    flex-direction:column;
+  }
+  .footer-inner{
+    display:block;
+    text-align:center;
+  }
+  .footer-inner div + div{
+    margin-top:8px;
+  }
+}
+</style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#05090e">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Morning Trader">
+<script src="/pwa-install.js" defer></script>
+</head>
+<body>
+<!-- ======================================================
+     NAVEGAÇÃO
+====================================================== -->
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      MORNING <span>DO TRADER</span>
+    </a>
+    <nav class="nav">
+      <span class="links">
+        <a href="index.html">Morning Call</a>
+        <a href="ormuz.html">Crise do Ormuz</a>
+        <a href="noticias.html">Notícias</a>
+        <a href="glossario.html">Glossário</a>
+        <a href="painel-internacional.html">Painel Internacional</a>
+        <a href="futuro.html">Futuro Financeiro</a>
+        <a href="desafio-moedinha.html" class="active">Desafio da Moedinha</a>
+        <a href="kit-do-trader.html">Kit do Trader</a>
+      </span>
+    </nav>
+  </div>
+</div>
+<!-- ======================================================
+     HERO
+====================================================== -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-kicker">
+      Percepção • Exponencial • Juros Compostos
+    </div>
+    <h1>
+      O DESAFIO DA <span>MOEDINHA</span>
+    </h1>
+    <p>
+      Uma moeda de R$ 0,01 que dobra de valor todo dia. Parece
+      ridículo perto de um produto caro — até alguém fazer a
+      conta até o fim. Ajuste os números abaixo e veja em que
+      dia a proposta vira um super negócio.
+    </p>
+    <div class="proposta">
+      <div class="proposta-symbol">🪙</div>
+      <div class="proposta-text">
+        <strong>A proposta clássica:</strong> imagine que você
+        vende um produto e o comprador propõe pagar com uma
+        moeda de <strong>R$ 0,01</strong> no primeiro dia — e a
+        cada dia seguinte o valor pago <strong>dobra</strong>
+        (dia 1: R$ 0,01 · dia 2: R$ 0,02 · dia 3: R$ 0,04 ·
+        e assim por diante) até completar o número de dias
+        combinado. A maioria recusa por achar o valor inicial
+        irrisório perto do produto. Quem já fez a conta sabe
+        que a resposta certa depende só de até quando a moeda
+        continua dobrando.
+      </div>
+    </div>
+  </div>
+</header>
+<!-- ======================================================
+     PAINEL PRINCIPAL
+====================================================== -->
+<main>
+  <div class="wrap">
+    <div class="main-panel">
+      <div class="main-grid">
+        <!-- ENTRADAS -->
+        <div class="module">
+          <div class="section-label">Monte o seu desafio</div>
+          <h2>Você <span>venderia</span>?</h2>
+          <p>
+            Digite o valor do produto que você estaria vendendo
+            e por quantos dias a moeda continuaria dobrando.
+          </p>
+          <div class="form-group">
+            <label for="productPrice">Valor do produto (R$)</label>
+            <input
+              id="productPrice"
+              class="money-input"
+              type="number"
+              min="0"
+              step="1000"
+              value="1000000"
+            >
+          </div>
+          <div class="form-group">
+            <label for="numDays">Número de dias</label>
+            <input
+              id="numDays"
+              class="money-input"
+              type="number"
+              min="1"
+              max="60"
+              step="1"
+              value="30"
+            >
+            <span class="field-hint">
+              No exemplo clássico são 30 dias corridos (não dias
+              de pregão). Até 60 dias pra manter os números
+              legíveis — a partir daí a calculadora de qualquer
+              celular já não dá conta de mostrar o total inteiro.
+            </span>
+          </div>
+          <button class="invest-button" onclick="revelar()">
+            REVELAR O RESULTADO
+          </button>
+          <div class="fixed-note">
+            <strong>Isso é matemática, não um investimento</strong>
+            <span>
+              Dobrar de valor todo dia não existe em nenhum
+              ativo real — é um experimento mental clássico pra
+              mostrar como a intuição humana subestima o
+              crescimento exponencial. Pra uma projeção realista
+              de investimentos, use o
+              <a href="futuro.html" style="color:var(--gold);text-decoration:underline;">Futuro Financeiro</a>.
+            </span>
+          </div>
+        </div>
+        <!-- RESULTADO -->
+        <div class="module result-module">
+          <div class="placeholder" id="placeholder">
+            Ajuste os valores ao lado e clique em
+            "Revelar o resultado" pra ver a conta completa.
+          </div>
+          <div class="result-body" id="resultBody">
+            <div class="section-label">Resultado</div>
+            <div class="kpis">
+              <div class="kpi">
+                <span>Pago só no último dia</span>
+                <strong id="kpiLastDay">—</strong>
+              </div>
+              <div class="kpi projected">
+                <span>Total acumulado</span>
+                <strong id="kpiTotal">—</strong>
+              </div>
+              <div class="kpi growth">
+                <span>Vs. o produto</span>
+                <strong id="kpiMultiple">—</strong>
+              </div>
+            </div>
+            <div class="impact">
+              <div class="impact-label">O que isso significa</div>
+              <p id="veredito"></p>
+            </div>
+            <div class="future-card">
+              <div class="chart" id="chartWrap">
+                <svg id="chart"></svg>
+                <div class="chart-tooltip" id="tooltip"></div>
+              </div>
+              <div class="legend">
+                <div class="legend-item">
+                  <span class="legend-dot legend-gold"></span>
+                  Valor pago naquele dia
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot legend-green"></span>
+                  Total acumulado
+                </div>
+                <div class="legend-item">
+                  <span class="legend-line legend-gray"></span>
+                  Valor do produto
+                </div>
+              </div>
+              <button class="table-toggle" onclick="toggleTabela()" id="tableToggleBtn">
+                Ver tabela dia a dia
+              </button>
+              <div class="table-wrap" id="tableWrap">
+                <table class="moedinha-table">
+                  <thead>
+                    <tr>
+                      <th>Dia</th>
+                      <th>Valor pago no dia</th>
+                      <th>Total acumulado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- AVISO -->
+    <div class="disclaimer">
+      Esta ferramenta possui finalidade exclusivamente educativa
+      e ilustrativa, para demonstrar de forma didática o efeito
+      da progressão geométrica. A duplicação diária de valor não
+      corresponde a nenhum produto financeiro real e não deve ser
+      interpretada como recomendação de investimento.
+    </div>
+  </div>
+</main>
+<!-- ======================================================
+     RODAPÉ
+====================================================== -->
+<footer>
+  <div class="wrap footer-inner">
+    <div>PLANEJE • DIVERSIFIQUE • EXECUTE • EVOLUA</div>
+    <div>MORNING DO TRADER</div>
+  </div>
+</footer>
+<script>
+/* =========================================================
+   FORMATAÇÃO
+========================================================= */
+function brl(value, maxDigits){
+  return new Intl.NumberFormat(
+    "pt-BR",
+    {
+      style:"currency",
+      currency:"BRL",
+      maximumFractionDigits: maxDigits === undefined ? 2 : maxDigits
+    }
+  ).format(value);
+}
+function getInputs(){
+  const productPrice = Math.max(
+    0,
+    Number(document.getElementById("productPrice").value) || 0
+  );
+  let numDays = Math.round(
+    Number(document.getElementById("numDays").value) || 0
+  );
+  numDays = Math.min(60, Math.max(1, numDays));
+  return { productPrice, numDays };
+}
+/* =========================================================
+   SÉRIE DA MOEDINHA
+========================================================= */
+function buildSeries(days){
+  const series = [];
+  let value = 0.01;
+  let total = 0;
+  for(let day = 1; day <= days; day++){
+    if(day > 1){
+      value = value * 2;
+    }
+    total += value;
+    series.push({ day, value, total });
+  }
+  return series;
+}
+/*
+   Se o total acumulado nos "days" dias combinados ainda não
+   ultrapassou o valor do produto, descobre quantos dias A MAIS
+   seriam necessários pra ultrapassar (limite de segurança: 200
+   dias, mais que suficiente já que o valor dobra a cada dia).
+*/
+function diasParaUltrapassar(productPrice){
+  let value = 0.01;
+  let total = 0;
+  for(let day = 1; day <= 200; day++){
+    if(day > 1){
+      value = value * 2;
+    }
+    total += value;
+    if(total >= productPrice){
+      return day;
+    }
+  }
+  return null;
+}
+/* =========================================================
+   REVELAR
+========================================================= */
+function toggleTabela(){
+  const wrap = document.getElementById("tableWrap");
+  const btn = document.getElementById("tableToggleBtn");
+  const show = !wrap.classList.contains("show");
+  wrap.classList.toggle("show", show);
+  btn.textContent = show
+    ? "Esconder tabela dia a dia"
+    : "Ver tabela dia a dia";
+}
+function revelar(){
+  const { productPrice, numDays } = getInputs();
+  const series = buildSeries(numDays);
+  const last = series[series.length - 1];
+  const crossDay = series.find(item => item.total >= productPrice);
+
+  document.getElementById("placeholder").style.display = "none";
+  document.getElementById("resultBody").classList.add("show");
+
+  document.getElementById("kpiLastDay").textContent = brl(last.value, 2);
+  document.getElementById("kpiTotal").textContent = brl(last.total, 2);
+
+  if(crossDay){
+    const multiple = last.total / productPrice;
+    document.getElementById("kpiMultiple").textContent =
+      multiple >= 1
+        ? `${multiple.toFixed(1)}x o produto`
+        : `${Math.round(multiple * 100)}% do produto`;
+    document.getElementById("veredito").innerHTML =
+      `Com ${numDays} dias combinados, você receberia ` +
+      `<strong>${brl(last.total, 2)}</strong> no total — ` +
+      (multiple >= 1
+        ? `${multiple.toFixed(1)}x o valor do seu produto de ${brl(productPrice, 0)}. `
+        : `ainda ${(100 - multiple*100).toFixed(0)}% abaixo do valor do seu produto de ${brl(productPrice, 0)}. `
+      ) +
+      `A proposta só passa a valer mais que o produto a partir ` +
+      `do <strong>dia ${crossDay.day}</strong> (quando o total ` +
+      `acumulado chega a ${brl(crossDay.total, 2)}).`;
+  } else {
+    const extraDay = diasParaUltrapassar(productPrice);
+    document.getElementById("kpiMultiple").textContent =
+      `${((last.total/productPrice)*100).toFixed(2)}% do produto`;
+    document.getElementById("veredito").innerHTML =
+      `Nos ${numDays} dias combinados, o total ficaria em ` +
+      `<strong>${brl(last.total, 2)}</strong> — ainda abaixo do ` +
+      `valor do seu produto (${brl(productPrice, 0)}). ` +
+      (extraDay
+        ? `Bastariam mais ${extraDay - numDays} dia(s) de duplicação ` +
+          `pra ultrapassar o valor do produto (no dia ${extraDay} no total).`
+        : `Com esse valor de produto, seriam necessários mais de ` +
+          `200 dias de duplicação — nesse ponto os números já não ` +
+          `fazem mais sentido prático, e é exatamente esse o ponto: ` +
+          `a duplicação diária é um experimento mental, não uma ` +
+          `taxa real de mercado.`
+      );
+  }
+
+  drawChart(series, productPrice);
+  drawTable(series, crossDay);
+}
+/* =========================================================
+   TABELA
+========================================================= */
+function drawTable(series, crossDay){
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = series.map(item => {
+    const isCross = crossDay && item.day === crossDay.day;
+    return (
+      `<tr${isCross ? ' class="cross-row"' : ''}>` +
+      `<td>Dia ${item.day}</td>` +
+      `<td>${brl(item.value, 2)}</td>` +
+      `<td>${brl(item.total, 2)}</td>` +
+      `</tr>`
+    );
+  }).join("");
+}
+/* =========================================================
+   GRÁFICO (escala logarítmica — os valores variam de
+   centavos a milhões dentro do mesmo período, então uma
+   escala linear deixaria os primeiros dias invisíveis)
+========================================================= */
+function drawChart(series, productPrice){
+  const svg = document.getElementById("chart");
+  const wrap = document.getElementById("chartWrap");
+  const width = wrap.clientWidth || 600;
+  const height = wrap.clientHeight || 280;
+  const left = 56;
+  const right = 14;
+  const top = 16;
+  const bottom = 26;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+
+  const allValues = series
+    .map(item => item.value)
+    .concat(series.map(item => item.total))
+    .concat([productPrice > 0 ? productPrice : 0.01]);
+  const maxValue = Math.max(...allValues) * 1.15;
+  const minValue = 0.01;
+
+  function x(day){
+    return left + (plotWidth * (day - 1)) / Math.max(1, series.length - 1);
+  }
+  function y(value){
+    const v = Math.max(value, minValue);
+    const logMin = Math.log10(minValue);
+    const logMax = Math.log10(maxValue);
+    const t = (Math.log10(v) - logMin) / (logMax - logMin);
+    return top + plotHeight * (1 - t);
+  }
+
+  function path(key){
+    return series.map((item, i) => {
+      const cmd = i === 0 ? "M" : "L";
+      return `${cmd}${x(item.day).toFixed(1)},${y(item[key]).toFixed(1)}`;
+    }).join(" ");
+  }
+
+  const productY = y(productPrice > 0 ? productPrice : minValue).toFixed(1);
+
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.innerHTML = `
+    <line x1="${left}" y1="${productY}" x2="${width - right}" y2="${productY}"
+      stroke="#7f93a8" stroke-width="1.5" stroke-dasharray="5,4" />
+    <text x="${width - right}" y="${productY - 6}" text-anchor="end"
+      font-size="10" fill="#94a2b2">Produto: ${brl(productPrice, 0)}</text>
+    <path d="${path('total')}" fill="none" stroke="var(--positive)" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <path d="${path('value')}" fill="none" stroke="var(--gold)" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round" />
+    <circle id="hoverDot1" r="4" fill="var(--gold)" style="display:none" />
+    <circle id="hoverDot2" r="4" fill="var(--positive)" style="display:none" />
+    <line id="hoverLine" x1="0" y1="${top}" x2="0" y2="${top + plotHeight}"
+      stroke="#334455" stroke-width="1" style="display:none" />
+    <rect x="${left}" y="${top}" width="${plotWidth}" height="${plotHeight}"
+      fill="transparent" id="hoverCatcher" style="cursor:crosshair" />
+  `;
+
+  const tooltip = document.getElementById("tooltip");
+  const catcher = document.getElementById("hoverCatcher");
+  catcher.onmousemove = function(evt){
+    const rect = wrap.getBoundingClientRect();
+    const mouseX = evt.clientX - rect.left;
+    const ratio = Math.min(1, Math.max(0, (mouseX - left) / plotWidth));
+    const dayIndex = Math.round(ratio * (series.length - 1));
+    const item = series[dayIndex];
+    if(!item) return;
+
+    document.getElementById("hoverLine").style.display = "";
+    document.getElementById("hoverLine").setAttribute("x1", x(item.day));
+    document.getElementById("hoverLine").setAttribute("x2", x(item.day));
+
+    const dot1 = document.getElementById("hoverDot1");
+    const dot2 = document.getElementById("hoverDot2");
+    dot1.style.display = "";
+    dot2.style.display = "";
+    dot1.setAttribute("cx", x(item.day));
+    dot1.setAttribute("cy", y(item.value));
+    dot2.setAttribute("cx", x(item.day));
+    dot2.setAttribute("cy", y(item.total));
+
+    tooltip.style.opacity = "1";
+    tooltip.style.left = `${(x(item.day) / width) * 100}%`;
+    tooltip.style.top = `${(y(item.total) / height) * 100}%`;
+    tooltip.innerHTML =
+      `<strong>Dia ${item.day}</strong><br>` +
+      `Pago no dia: ${brl(item.value, 2)}<br>` +
+      `Acumulado: ${brl(item.total, 2)}`;
+  };
+  catcher.onmouseleave = function(){
+    tooltip.style.opacity = "0";
+    document.getElementById("hoverLine").style.display = "none";
+    document.getElementById("hoverDot1").style.display = "none";
+    document.getElementById("hoverDot2").style.display = "none";
+  };
+}
+window.addEventListener("resize", function(){
+  if(document.getElementById("resultBody").classList.contains("show")){
+    revelar();
+  }
+});
+</script>
+</body>
+</html>
