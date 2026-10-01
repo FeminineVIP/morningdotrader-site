@@ -17,8 +17,10 @@
     --green: #3ecf8e;
     /* Quanto o painel de cotações é "ampliado" visualmente (fonte maior),
        sem alterar a largura real da coluna (400px). Ajuste este valor
-       para deixar a fonte ainda maior ou menor. */
-    --quote-zoom: 1.35;
+       para deixar a fonte ainda maior ou menor.
+       Deixado em 1 (sem zoom): as cotações individuais já têm fonte grande
+       por padrão, e o zoom estava cortando os números em 2 colunas. */
+    --quote-zoom: 1;
     /* Altura de cada janela de gráfico (candle 5min). Ajuste este valor
        para deixar os gráficos maiores ou menores. */
     --chart-height: 400px;
@@ -79,8 +81,8 @@
   .quote-group--asia{ --qg-color:#a78bfa; }
 
   .quote-item-grid{
-    display:grid;
-    grid-template-columns: repeat(2, 1fr);
+    display:flex;
+    flex-wrap:wrap;
     gap:1px;
     background: var(--border);
   }
@@ -89,6 +91,7 @@
     background: var(--bg-alt);
     overflow:hidden;
     min-height:70px;
+    flex:1 1 150px;
   }
 
   .widget-grid{
