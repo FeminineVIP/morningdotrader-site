@@ -353,24 +353,21 @@
     </div>
 
     <!--
-      TESTE: Heatmap de ações B3 por setor, tamanho por valor de mercado e cor
-      pela variação do dia — igual ao painel do BlackArrow que você mandou.
-      A TradingView confirmou (blog oficial) que passou a oferecer dados da B3
-      de graça nos widgets via prefixo "BMFBOVESPA:", mas a documentação não
-      confirma 100% se o parâmetro abaixo ("exchanges":["BMFBOVESPA"]) filtra
-      certinho pro heatmap. É só testar ao vivo.
+      Heatmap do S&P 500 (mercado internacional/EUA) por setor, tamanho por
+      valor de mercado e cor pela variação do dia — igual ao painel do
+      BlackArrow, só que ações americanas em vez de B3.
     -->
     <div class="sidebar-header">
       <span class="sidebar-dot"></span>
-      <span>Heatmap B3 (teste)</span>
+      <span>Heatmap S&P 500</span>
     </div>
     <div class="embed-card" style="padding:8px; height:600px;">
       <div class="tradingview-widget-container" style="height:100%;">
         <div class="tradingview-widget-container__widget" style="height:100%;"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
         {
-          "exchanges": ["BMFBOVESPA"],
-          "dataSource": "",
+          "exchanges": [],
+          "dataSource": "SPX500",
           "grouping": "sector",
           "blockSize": "market_cap_basic",
           "blockColor": "change",
