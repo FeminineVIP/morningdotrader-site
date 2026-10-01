@@ -63,6 +63,21 @@
     transform-origin: top left;
   }
 
+  /* --- Agrupamento colorido das cotações por categoria --- */
+  .quote-group{
+    border-left:4px solid var(--qg-color, var(--accent));
+    border-radius:6px;
+    overflow:hidden;
+    margin-bottom:10px;
+    background: rgba(255,255,255,0.02);
+  }
+  .quote-group:last-child{ margin-bottom:0; }
+  .quote-group--americas{ --qg-color:#ef5350; }
+  .quote-group--europa{ --qg-color:#4da3ff; }
+  .quote-group--commodities{ --qg-color:#3ecf8e; }
+  .quote-group--cripto{ --qg-color:#f5c242; }
+  .quote-group--asia{ --qg-color:#a78bfa; }
+
   .widget-grid{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
@@ -152,42 +167,102 @@
       -->
       <div class="quote-zoom-outer">
         <div class="quote-zoom-inner">
-          <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <div class="tradingview-widget-copyright"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-            {
-              "colorTheme": "dark",
-              "dateRange": "1D",
-              "showChart": false,
-              "locale": "br",
-              "isTransparent": true,
-              "width": "100%",
-              "height": "900",
-              "tabs": [
-                {
-                  "title": "Cotações",
-                  "symbols": [
+
+          <div class="quote-group quote-group--americas">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
+                "isTransparent": true, "width": "100%", "height": "210",
+                "tabs": [
+                  { "title": "Américas", "symbols": [
                     { "s": "CAPITALCOM:US30", "d": "US30" },
                     { "s": "CAPITALCOM:US500", "d": "US500 MINI" },
-                    { "s": "CAPITALCOM:US100", "d": "UT100 MINI" },
+                    { "s": "CAPITALCOM:US100", "d": "UT100 MINI" }
+                  ] }
+                ]
+              }
+              </script>
+            </div>
+          </div>
+
+          <div class="quote-group quote-group--europa">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
+                "isTransparent": true, "width": "100%", "height": "210",
+                "tabs": [
+                  { "title": "Europa", "symbols": [
                     { "s": "CAPITALCOM:EU50", "d": "EU50" },
                     { "s": "OANDA:FR40EUR", "d": "FR40" },
-                    { "s": "CAPITALCOM:DE40", "d": "DE40" },
+                    { "s": "CAPITALCOM:DE40", "d": "DE40" }
+                  ] }
+                ]
+              }
+              </script>
+            </div>
+          </div>
+
+          <div class="quote-group quote-group--commodities">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
+                "isTransparent": true, "width": "100%", "height": "250",
+                "tabs": [
+                  { "title": "Commodities", "symbols": [
                     { "s": "TVC:UKOIL", "d": "UKOIL" },
                     { "s": "TVC:USOIL", "d": "USOIL" },
                     { "s": "TVC:GOLD", "d": "GOLD" },
-                    { "s": "TVC:SILVER", "d": "SILVER" },
+                    { "s": "TVC:SILVER", "d": "SILVER" }
+                  ] }
+                ]
+              }
+              </script>
+            </div>
+          </div>
+
+          <div class="quote-group quote-group--cripto">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
+                "isTransparent": true, "width": "100%", "height": "170",
+                "tabs": [
+                  { "title": "Cripto", "symbols": [
                     { "s": "COINBASE:BTCUSD", "d": "BTC/USD" },
-                    { "s": "COINBASE:ETHUSD", "d": "ETH/USD" },
+                    { "s": "COINBASE:ETHUSD", "d": "ETH/USD" }
+                  ] }
+                ]
+              }
+              </script>
+            </div>
+          </div>
+
+          <div class="quote-group quote-group--asia">
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <div class="tradingview-widget-copyright"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
+                "isTransparent": true, "width": "100%", "height": "170",
+                "tabs": [
+                  { "title": "Ásia", "symbols": [
                     { "s": "CAPITALCOM:HK50", "d": "HK50" },
                     { "s": "FOREXCOM:JP225", "d": "JP225" }
-                  ]
-                }
-              ]
-            }
-            </script>
+                  ] }
+                ]
+              }
+              </script>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
