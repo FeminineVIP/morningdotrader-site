@@ -78,6 +78,19 @@
   .quote-group--cripto{ --qg-color:#f5c242; }
   .quote-group--asia{ --qg-color:#a78bfa; }
 
+  .quote-item-grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:1px;
+    background: var(--border);
+  }
+  .quote-item{
+    position:relative;
+    background: var(--bg-alt);
+    overflow:hidden;
+    min-height:70px;
+  }
+
   .widget-grid{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
@@ -169,97 +182,153 @@
         <div class="quote-zoom-inner">
 
           <div class="quote-group quote-group--americas">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-              {
-                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
-                "isTransparent": true, "width": "100%", "height": "210",
-                "tabs": [
-                  { "title": "Américas", "symbols": [
-                    { "s": "CAPITALCOM:US30", "d": "US30" },
-                    { "s": "CAPITALCOM:US500", "d": "US500 MINI" },
-                    { "s": "CAPITALCOM:US100", "d": "UT100 MINI" }
-                  ] }
-                ]
-              }
-              </script>
+            <div class="quote-item-grid">
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:US30", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:US500", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:US100", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
             </div>
           </div>
 
           <div class="quote-group quote-group--europa">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-              {
-                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
-                "isTransparent": true, "width": "100%", "height": "210",
-                "tabs": [
-                  { "title": "Europa", "symbols": [
-                    { "s": "CAPITALCOM:EU50", "d": "EU50" },
-                    { "s": "OANDA:FR40EUR", "d": "FR40" },
-                    { "s": "CAPITALCOM:DE40", "d": "DE40" }
-                  ] }
-                ]
-              }
-              </script>
+            <div class="quote-item-grid">
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:EU50", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "OANDA:FR40EUR", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:DE40", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
             </div>
           </div>
 
           <div class="quote-group quote-group--commodities">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-              {
-                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
-                "isTransparent": true, "width": "100%", "height": "250",
-                "tabs": [
-                  { "title": "Commodities", "symbols": [
-                    { "s": "TVC:UKOIL", "d": "UKOIL" },
-                    { "s": "TVC:USOIL", "d": "USOIL" },
-                    { "s": "TVC:GOLD", "d": "GOLD" },
-                    { "s": "TVC:SILVER", "d": "SILVER" }
-                  ] }
-                ]
-              }
-              </script>
+            <div class="quote-item-grid">
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "TVC:UKOIL", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "TVC:USOIL", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "TVC:GOLD", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "TVC:SILVER", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
             </div>
           </div>
 
           <div class="quote-group quote-group--cripto">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-              {
-                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
-                "isTransparent": true, "width": "100%", "height": "170",
-                "tabs": [
-                  { "title": "Cripto", "symbols": [
-                    { "s": "COINBASE:BTCUSD", "d": "BTC/USD" },
-                    { "s": "COINBASE:ETHUSD", "d": "ETH/USD" }
-                  ] }
-                ]
-              }
-              </script>
+            <div class="quote-item-grid">
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "COINBASE:BTCUSD", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "COINBASE:ETHUSD", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
             </div>
           </div>
 
           <div class="quote-group quote-group--asia">
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <div class="tradingview-widget-copyright"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-              {
-                "colorTheme": "dark", "dateRange": "1D", "showChart": false, "locale": "br",
-                "isTransparent": true, "width": "100%", "height": "170",
-                "tabs": [
-                  { "title": "Ásia", "symbols": [
-                    { "s": "CAPITALCOM:HK50", "d": "HK50" },
-                    { "s": "FOREXCOM:JP225", "d": "JP225" }
-                  ] }
-                ]
-              }
-              </script>
+            <div class="quote-item-grid">
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "CAPITALCOM:HK50", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
+              <div class="quote-item">
+                <div class="tradingview-widget-container">
+                  <div class="tradingview-widget-container__widget"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>
+                  { "symbol": "FOREXCOM:JP225", "width": "100%", "colorTheme": "dark", "isTransparent": true, "locale": "br" }
+                  </script>
+                </div>
+                <div class="logo-cover logo-cover--quote"></div>
+              </div>
             </div>
           </div>
 
