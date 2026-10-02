@@ -1,0 +1,29 @@
+name = "morningdotrader-api"
+main = "worker.js"
+compatibility_date = "2026-10-02"
+
+# ---- KV Namespaces (ja existentes, mesmos bindings de antes) ----
+[[kv_namespaces]]
+binding = "LEADS_KV"
+id = "ea673dd93264418d8da8126fe3903498"
+
+[[kv_namespaces]]
+binding = "MANUAL_DATA"
+id = "fa0ce4b46c824bc1b9b2ed8e2538c24e"
+
+# ---- D1 Database (novo, para o Diario Semanal) ----
+[[d1_databases]]
+binding = "DIARIO_DB"
+database_name = "diario-trader-db"
+database_id = "aa8f7bde-f214-4b66-a581-c21755720660"
+
+# ---- Cron Triggers (mesmos 2 de antes: FedWatch + Trade Hunter) ----
+[triggers]
+crons = ["0 10 * * *", "50 10 * * 2-6"]
+
+# ---- Secrets (NAO ficam aqui -- continuam configuradas direto no painel
+# da Cloudflare em Settings > Variables > Secrets, e o deploy via Git nao
+# mexe nelas):
+#   EDIT_KEY, RESEND_API_KEY, EMAIL_FROM (ja existentes)
+#   ANTHROPIC_API_KEY (nova, necessaria para o chat do Diario Semanal)
+#   ANTHROPIC_MODEL (opcional, default "claude-sonnet-5" se nao definida)

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário Semanal — Morning do Trader</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --bg-alt: #101720;
+    --card: #141c26;
+    --border: #223041;
+    --text: #e8edf2;
+    --muted: #8fa1b3;
+    --accent: #4da3ff;
+    --green: #35c780;
+    --red: #ef5566;
+    --yellow: #e6b23d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    line-height:1.5;
+  }
+  a{color:var(--accent);}
+  .nav{background:var(--bg-alt); border-bottom:1px solid var(--border); padding:12px 16px;}
+  .nav .wrap{max-width:980px; margin:0 auto; display:flex; align-items:center; justify-content:space-between;}
+  .nav .brand{font-weight:700; color:var(--text); text-decoration:none; font-size:1rem;}
+  .nav .sair{color:var(--muted); text-decoration:none; font-size:0.82rem; cursor:pointer; background:none; border:none; font-family:inherit;}
+  .nav .sair:hover{color:var(--text);}
+  .wrap{max-width:980px; margin:0 auto; padding:0 16px;}
+
+  header.hero{padding:32px 0 20px;}
+  header.hero h1{font-size:1.5rem; margin:0 0 6px;}
+  header.hero p{color:var(--muted); margin:0; font-size:0.95rem;}
+
+  .gate{
+    max-width:420px; margin:40px auto; background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:28px 26px;
+  }
+  .gate h2{margin:0 0 6px; font-size:1.15rem;}
+  .gate p.desc{color:var(--muted); font-size:0.88rem; margin:0 0 20px;}
+  .campo{margin-bottom:14px;}
+  .campo label{display:block; font-size:0.78rem; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.03em;}
+  .campo input, .campo select, .campo textarea{
+    width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--bg-alt); color:var(--text); font-size:0.95rem; font-family:inherit;
+  }
+  .campo input:focus, .campo select:focus, .campo textarea:focus{outline:none; border-color:var(--accent);}
+  .campo textarea{resize:vertical; min-height:70px;}
+  .btn{
+    display:inline-block; background:var(--accent); color:#08131f; font-weight:700;
+    border:none; border-radius:8px; padding:12px 20px; font-size:0.92rem; cursor:pointer;
+    font-family:inherit; width:100%;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:disabled{opacity:0.6; cursor:default;}
+  .btn.secundario{background:transparent; border:1px solid var(--border); color:var(--text); width:auto;}
+  .btn.auto{width:auto;}
+  .msg{font-size:0.85rem; margin-top:12px;}
+  .msg.ok{color:var(--green);}
+  .msg.erro{color:var(--red);}
+
+  #areaDiario{display:none;}
+  .tabs{display:flex; gap:6px; border-bottom:1px solid var(--border); margin-bottom:24px; flex-wrap:wrap;}
+  .tab-btn{
+    background:none; border:none; color:var(--muted); font-family:inherit; font-size:0.88rem;
+    padding:10px 14px; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px;
+  }
+  .tab-btn.active{color:var(--accent); border-bottom-color:var(--accent);}
+  .tab-btn:hover{color:var(--text);}
+  .painel{display:none;}
+  .painel.active{display:block;}
+
+  .card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px 24px; margin-bottom:20px;}
+  .card h3{margin:0 0 4px; font-size:1.02rem;}
+  .card .nota{color:var(--muted); font-size:0.82rem; margin:0 0 18px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;}
+  @media (max-width:640px){ .grid2, .grid3{grid-template-columns:1fr;} }
+
+  table.tabela{width:100%; border-collapse:collapse; font-size:0.86rem; margin-top:14px;}
+  table.tabela th, table.tabela td{padding:8px 10px; border-bottom:1px solid var(--border); text-align:right;}
+  table.tabela th:first-child, table.tabela td:first-child{text-align:left;}
+  table.tabela th{color:var(--muted); font-weight:600; font-size:0.75rem; text-transform:uppercase;}
+  table.tabela td.positivo{color:var(--green);}
+  table.tabela td.negativo{color:var(--red);}
+  table.tabela button.excluir{background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.9rem;}
+  table.tabela button.excluir:hover{color:var(--red);}
+
+  .resumo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:16px;}
+  @media (max-width:640px){ .resumo-grid{grid-template-columns:1fr 1fr;} }
+  .resumo-item{background:var(--bg-alt); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center;}
+  .resumo-item .valor{font-size:1.3rem; font-weight:700;}
+  .resumo-item .rotulo{font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-top:4px;}
+
+  .dropzone{
+    border:2px dashed var(--border); border-radius:10px; padding:24px; text-align:center;
+    color:var(--muted); cursor:pointer; font-size:0.9rem;
+  }
+  .dropzone:hover{border-color:var(--accent); color:var(--text);}
+
+  .chat-janela{
+    background:var(--bg-alt); border:1px solid var(--border); border-radius:10px;
+    padding:16px; height:420px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
+  }
+  .bolha{max-width:80%; padding:10px 14px; border-radius:12px; font-size:0.9rem; white-space:pre-wrap;}
+  .bolha.user{align-self:flex-end; background:var(--accent); color:#08131f;}
+  .bolha.assistant{align-self:flex-start; background:var(--card); border:1px solid var(--border);}
+  .chat-form{display:flex; gap:8px; margin-top:14px;}
+  .chat-form textarea{flex:1; min-height:48px;}
+  .chat-form .btn{width:auto;}
+
+  footer{padding:30px 0; text-align:center; color:var(--muted); font-size:0.8rem;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="/">Morning do Trader</a>
+    <button class="sair" id="btnSair" style="display:none;">Sair</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Diário Semanal</h1>
+    <p>Registro diário, controle de trades e coaching com IA — tudo num só lugar, com base nos seus próprios dados.</p>
+  </header>
+</div>
+
+<!-- ============ PORTAO DE LOGIN ============ -->
+<div class="gate" id="gateLogin">
+  <h2>Entrar no Diário Semanal</h2>
+  <p class="desc" id="gateDesc">Mesmo login das Ferramentas do Trader. Se já tiver conta, é só pedir o link de novo.</p>
+
+  <form id="formAcesso">
+    <div class="campo">
+      <label for="inputEmail">E-mail</label>
+      <input type="email" id="inputEmail" required autocomplete="email" placeholder="voce@email.com">
+    </div>
+    <div class="campo" id="campoWhatsapp">
+      <label for="inputWhatsapp">WhatsApp — DDD + número (obrigatório só no 1º acesso)</label>
+      <input type="tel" id="inputWhatsapp" autocomplete="tel" placeholder="11999998888">
+    </div>
+    <button type="submit" class="btn" id="btnAcesso">Receber link de acesso</button>
+    <p class="msg" id="msgAcesso"></p>
+  </form>
+</div>
+
+<!-- ============ AREA LOGADA ============ -->
+<div class="wrap" id="areaDiario">
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="registro">Registro do Dia</button>
+    <button class="tab-btn" data-tab="trades">Trades</button>
+    <button class="tab-btn" data-tab="resumo">Resumo Semanal</button>
+    <button class="tab-btn" data-tab="chat">Chat com a IA</button>
+  </div>
+
+  <!-- ---- Registro do Dia ---- -->
+  <div class="painel active" id="painel-registro">
+    <div class="card">
+      <h3>Registro de hoje</h3>
+      <p class="nota">Gráfico, suportes/resistências, tendência e observações do dia.</p>
+      <div class="campo">
+        <label for="regData">Data</label>
+        <input type="date" id="regData">
+      </div>
+      <div class="campo">
+        <label for="regTendencia">Tendência do mercado</label>
+        <input type="text" id="regTendencia" placeholder="Ex: alta, lateral, baixa...">
+      </div>
+      <div class="campo">
+        <label for="regSR">Suportes e resistências</label>
+        <textarea id="regSR" placeholder="Ex: WIN suporte 128.400, resistência 129.100..."></textarea>
+      </div>
+      <div class="campo">
+        <label for="regGrafico">Nota sobre o gráfico (sem upload de imagem nesta versão)</label>
+        <textarea id="regGrafico" placeholder="Descreva o que viu no gráfico pré-abertura"></textarea>
+      </div>
+      <div class="campo">
+        <label for="regObs">Observações do dia</label>
+        <textarea id="regObs" placeholder="Como foi o dia, o que evitar amanhã..."></textarea>
+      </div>
+      <button class="btn auto" id="btnSalvarRegistro">Salvar registro do dia</button>
+      <p class="msg" id="msgRegistro"></p>
+    </div>
+  </div>
+
+  <!-- ---- Trades ---- -->
+  <div class="painel" id="painel-trades">
+    <div class="card">
+      <h3>Adicionar trade</h3>
+      <div class="grid3">
+        <div class="campo">
+          <label for="tData">Data</label>
+          <input type="date" id="tData">
+        </div>
+        <div class="campo">
+          <label for="tHorario">Horário</label>
+          <input type="time" id="tHorario">
+        </div>
+        <div class="campo">
+          <label for="tAtivo">Ativo</label>
+          <select id="tAtivo">
+            <option value="WIN">WIN</option>
+            <option value="WDO">WDO</option>
+            <option value="IND">IND</option>
+            <option value="DOL">DOL</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="campo">
+          <label for="tDirecao">Direção</label>
+          <select id="tDirecao">
+            <option value="compra">Compra</option>
+            <option value="venda">Venda</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="tEntrada">Preço entrada</label>
+          <input type="number" step="any" id="tEntrada">
+        </div>
+        <div class="campo">
+          <label for="tSaida">Preço saída</label>
+          <input type="number" step="any" id="tSaida">
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="campo">
+          <label for="tQuantidade">Quantidade (contratos)</label>
+          <input type="number" step="1" id="tQuantidade">
+        </div>
+        <div class="campo">
+          <label for="tResultado">Resultado (R$ ou pontos)</label>
+          <input type="number" step="any" id="tResultado">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="tMotivo">Motivo da entrada / observação</label>
+        <input type="text" id="tMotivo" placeholder="Ex: rompimento de resistência, seguindo fluxo...">
+      </div>
+      <button class="btn auto" id="btnAddTrade">Adicionar trade</button>
+      <p class="msg" id="msgTrade"></p>
+    </div>
+
+    <div class="card">
+      <h3>Trades do dia</h3>
+      <div class="campo" style="max-width:220px;">
+        <label for="tradesFiltroData">Filtrar por data</label>
+        <input type="date" id="tradesFiltroData">
+      </div>
+      <table class="tabela" id="tabelaTrades">
+        <thead>
+          <tr><th>Horário</th><th>Ativo</th><th>Direção</th><th>Entrada</th><th>Saída</th><th>Qtd</th><th>Resultado</th><th>Motivo</th><th></th></tr>
+        </thead>
+        <tbody id="corpoTabelaTrades"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ---- Resumo Semanal ---- -->
+  <div class="painel" id="painel-resumo">
+    <div class="card">
+      <h3>Resumo do período</h3>
+      <div class="grid2">
+        <div class="campo">
+          <label for="resumoInicio">Início</label>
+          <input type="date" id="resumoInicio">
+        </div>
+        <div class="campo">
+          <label for="resumoFim">Fim</label>
+          <input type="date" id="resumoFim">
+        </div>
+      </div>
+      <button class="btn auto" id="btnCalcularResumo">Calcular resumo</button>
+      <div class="resumo-grid" id="resumoGrid" style="display:none;">
+        <div class="resumo-item"><div class="valor" id="resTotal">—</div><div class="rotulo">Trades</div></div>
+        <div class="resumo-item"><div class="valor" id="resWinRate">—</div><div class="rotulo">Taxa de acerto</div></div>
+        <div class="resumo-item"><div class="valor" id="resGanhos">—</div><div class="rotulo">Ganhos</div></div>
+        <div class="resumo-item"><div class="valor" id="resAcumulado">—</div><div class="rotulo">Resultado acumulado</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Importar relatório semanal do Profit (PDF)</h3>
+      <p class="nota">O texto é extraído no seu navegador e enviado para a IA estruturar — o PDF em si não é enviado a nenhum servidor.</p>
+      <div class="grid2">
+        <div class="campo">
+          <label for="relInicio">Semana — início</label>
+          <input type="date" id="relInicio">
+        </div>
+        <div class="campo">
+          <label for="relFim">Semana — fim</label>
+          <input type="date" id="relFim">
+        </div>
+      </div>
+      <div class="dropzone" id="dropzonePdf">Clique para escolher o PDF do relatório semanal do Profit</div>
+      <input type="file" id="inputPdf" accept="application/pdf" style="display:none;">
+      <p class="msg" id="msgRelatorio"></p>
+      <div id="resultadoRelatorio" style="display:none; margin-top:14px;"></div>
+    </div>
+  </div>
+
+  <!-- ---- Chat com a IA ---- -->
+  <div class="painel" id="painel-chat">
+    <div class="card">
+      <h3>Converse sobre seus trades</h3>
+      <p class="nota">A IA usa o registro de hoje e seus últimos trades como contexto — ela não dá sinais de entrada/saída, só te ajuda a enxergar padrões.</p>
+      <div class="chat-janela" id="chatJanela"></div>
+      <form class="chat-form" id="formChat">
+        <textarea id="inputChat" placeholder="Escreva aqui..." required></textarea>
+        <button type="submit" class="btn" id="btnEnviarChat">Enviar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>Morning do Trader — conteúdo educacional, não é recomendação de investimento.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  const WORKER_URL = "https://morningdotrader-api.luiz-sso.workers.dev";
+  const LS_KEY = "mdt_sessao";
+
+  if (window["pdfjsLib"]) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.js";
+  }
+
+  // ---------------- Sessao / login (identico ao Ferramentas do Trader) ----------------
+
+  function getSessaoSalva(){
+    try { return localStorage.getItem(LS_KEY) || ""; } catch(e){ return ""; }
+  }
+  function salvarSessao(token){
+    try { localStorage.setItem(LS_KEY, token); } catch(e){}
+  }
+  function limparSessao(){
+    try { localStorage.removeItem(LS_KEY); } catch(e){}
+  }
+
+  async function apiFetch(path, opts){
+    opts = opts || {};
+    const headers = Object.assign({ "Content-Type": "application/json" }, opts.headers || {});
+    const sessao = getSessaoSalva();
+    if (sessao) headers["x-sessao"] = sessao;
+    return fetch(WORKER_URL + path, Object.assign({}, opts, { headers }));
+  }
+
+  function mostrarArea(mostrar){
+    document.getElementById("gateLogin").style.display = mostrar ? "none" : "block";
+    document.getElementById("areaDiario").style.display = mostrar ? "block" : "none";
+    document.getElementById("btnSair").style.display = mostrar ? "inline-block" : "none";
+  }
+
+  async function checarSessao(){
+    const sessao = getSessaoSalva();
+    if (!sessao){ mostrarArea(false); return; }
+    try {
+      const resp = await apiFetch("/api/acesso-status");
+      if (resp.ok){
+        mostrarArea(true);
+        iniciarPaginaLogada();
+      } else {
+        limparSessao();
+        mostrarArea(false);
+      }
+    } catch(e){
+      mostrarArea(false);
+    }
+  }
+
+  (function capturarSessaoDaURL(){
+    const params = new URLSearchParams(window.location.search);
+    const sessao = params.get("sessao");
+    if (sessao){
+      salvarSessao(sessao);
+      params.delete("sessao");
+      const novaQuery = params.toString();
+      const novaURL = window.location.pathname + (novaQuery ? "?" + novaQuery : "");
+      window.history.replaceState({}, "", novaURL);
+    }
+  })();
+
+  document.getElementById("formAcesso").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const email = document.getElementById("inputEmail").value.trim().toLowerCase();
+    const whatsapp = document.getElementById("inputWhatsapp").value.trim();
+    const btn = document.getElementById("btnAcesso");
+    const msg = document.getElementById("msgAcesso");
+    btn.disabled = true; msg.textContent = ""; msg.className = "msg";
+    try {
+      const resp = await fetch(WORKER_URL + "/api/acesso-solicitar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, whatsapp, redirect: "diario-semanal.html" })
+      });
+      const data = await resp.json().catch(function(){ return {}; });
+      if (resp.ok){
+        msg.textContent = "Pronto! Verifique seu e-mail (e a caixa de spam) e clique no link pra entrar.";
+        msg.className = "msg ok";
+      } else if (data.error === "cadastro_necessario"){
+        msg.textContent = "Esse é seu primeiro acesso — informe um WhatsApp válido (DDD + número) acima e envie de novo.";
+        msg.className = "msg erro";
+        document.getElementById("inputWhatsapp").focus();
+      } else {
+        msg.textContent = "Não deu certo: " + (data.error || "tente novamente em instantes.");
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha de conexão. Tente novamente.";
+      msg.className = "msg erro";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById("btnSair").addEventListener("click", async function(){
+    try { await apiFetch("/api/acesso-sair", { method: "POST" }); } catch(e){}
+    limparSessao();
+    mostrarArea(false);
+  });
+
+  // ---------------- Tabs ----------------
+  document.querySelectorAll(".tabs .tab-btn[data-tab]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".tabs .tab-btn[data-tab]").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll("#areaDiario > .painel").forEach(function(p){ p.classList.remove("active"); });
+      document.getElementById("painel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  function hojeISO(){
+    const d = new Date();
+    const tz = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return tz.toISOString().slice(0, 10);
+  }
+
+  // ---------------- Registro do Dia ----------------
+  async function carregarRegistro(data){
+    const resp = await apiFetch("/api/diario/registro?data=" + encodeURIComponent(data));
+    const reg = await resp.json().catch(function(){ return {}; });
+    document.getElementById("regTendencia").value = reg.tendencia || "";
+    document.getElementById("regSR").value = reg.suportes_resistencias || "";
+    document.getElementById("regGrafico").value = reg.grafico_nota || "";
+    document.getElementById("regObs").value = reg.observacoes || "";
+  }
+
+  document.getElementById("regData").addEventListener("change", function(){
+    carregarRegistro(this.value);
+  });
+
+  document.getElementById("btnSalvarRegistro").addEventListener("click", async function(){
+    const msg = document.getElementById("msgRegistro");
+    const btn = this;
+    btn.disabled = true; msg.textContent = "";
+    try {
+      const resp = await apiFetch("/api/diario/registro", {
+        method: "POST",
+        body: JSON.stringify({
+          data: document.getElementById("regData").value || hojeISO(),
+          tendencia: document.getElementById("regTendencia").value,
+          suportes_resistencias: document.getElementById("regSR").value,
+          grafico_nota: document.getElementById("regGrafico").value,
+          observacoes: document.getElementById("regObs").value,
+        }),
+      });
+      if (resp.ok){
+        msg.textContent = "Registro salvo.";
+        msg.className = "msg ok";
+      } else {
+        msg.textContent = "Não foi possível salvar.";
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha de conexão.";
+      msg.className = "msg erro";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ---------------- Trades ----------------
+  function formatarResultado(valor){
+    const num = Number(valor) || 0;
+    return num.toFixed(2);
+  }
+
+  async function carregarTrades(data){
+    const resp = await apiFetch("/api/diario/trades?data=" + encodeURIComponent(data));
+    const trades = await resp.json().catch(function(){ return []; });
+    const corpo = document.getElementById("corpoTabelaTrades");
+    corpo.innerHTML = "";
+    trades.forEach(function(t){
+      const tr = document.createElement("tr");
+      const positivo = Number(t.resultado) > 0;
+      tr.innerHTML = '<td style="text-align:left">' + (t.horario || "") + '</td>'
+        + '<td style="text-align:left">' + t.ativo + '</td>'
+        + '<td style="text-align:left">' + t.direcao + '</td>'
+        + '<td>' + (t.preco_entrada != null ? t.preco_entrada : "—") + '</td>'
+        + '<td>' + (t.preco_saida != null ? t.preco_saida : "—") + '</td>'
+        + '<td>' + (t.quantidade != null ? t.quantidade : "—") + '</td>'
+        + '<td class="' + (positivo ? "positivo" : "negativo") + '">' + formatarResultado(t.resultado) + '</td>'
+        + '<td style="text-align:left">' + (t.motivo || "") + '</td>'
+        + '<td><button class="excluir" data-id="' + t.id + '" title="Excluir">✕</button></td>';
+      corpo.appendChild(tr);
+    });
+    corpo.querySelectorAll("button.excluir").forEach(function(b){
+      b.addEventListener("click", async function(){
+        await apiFetch("/api/diario/trades-excluir", { method: "POST", body: JSON.stringify({ id: this.dataset.id }) });
+        carregarTrades(document.getElementById("tradesFiltroData").value || hojeISO());
+      });
+    });
+  }
+
+  document.getElementById("tradesFiltroData").addEventListener("change", function(){
+    carregarTrades(this.value);
+  });
+
+  document.getElementById("btnAddTrade").addEventListener("click", async function(){
+    const msg = document.getElementById("msgTrade");
+    const btn = this;
+    btn.disabled = true; msg.textContent = "";
+    const data = document.getElementById("tData").value || hojeISO();
+    try {
+      const resp = await apiFetch("/api/diario/trades", {
+        method: "POST",
+        body: JSON.stringify({
+          data: data,
+          horario: document.getElementById("tHorario").value,
+          ativo: document.getElementById("tAtivo").value,
+          direcao: document.getElementById("tDirecao").value,
+          preco_entrada: document.getElementById("tEntrada").value,
+          preco_saida: document.getElementById("tSaida").value,
+          quantidade: document.getElementById("tQuantidade").value,
+          resultado: document.getElementById("tResultado").value,
+          motivo: document.getElementById("tMotivo").value,
+        }),
+      });
+      if (resp.ok){
+        msg.textContent = "Trade adicionado.";
+        msg.className = "msg ok";
+        document.getElementById("tradesFiltroData").value = data;
+        carregarTrades(data);
+      } else {
+        msg.textContent = "Não foi possível adicionar.";
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha de conexão.";
+      msg.className = "msg erro";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ---------------- Resumo Semanal ----------------
+  document.getElementById("btnCalcularResumo").addEventListener("click", async function(){
+    const inicio = document.getElementById("resumoInicio").value;
+    const fim = document.getElementById("resumoFim").value;
+    if (!inicio || !fim) return;
+    const resp = await apiFetch("/api/diario/resumo-semana?inicio=" + inicio + "&fim=" + fim);
+    const dados = await resp.json().catch(function(){ return {}; });
+    document.getElementById("resumoGrid").style.display = "grid";
+    document.getElementById("resTotal").textContent = dados.total_trades != null ? dados.total_trades : "—";
+    document.getElementById("resWinRate").textContent = dados.win_rate != null ? dados.win_rate + "%" : "—";
+    document.getElementById("resGanhos").textContent = dados.ganhos != null ? dados.ganhos : "—";
+    document.getElementById("resAcumulado").textContent = dados.resultado_acumulado != null ? formatarResultado(dados.resultado_acumulado) : "—";
+  });
+
+  // ---------------- Importar PDF do relatorio semanal ----------------
+  document.getElementById("dropzonePdf").addEventListener("click", function(){
+    document.getElementById("inputPdf").click();
+  });
+
+  document.getElementById("inputPdf").addEventListener("change", async function(){
+    const arquivo = this.files[0];
+    const msg = document.getElementById("msgRelatorio");
+    const caixaResultado = document.getElementById("resultadoRelatorio");
+    const inicio = document.getElementById("relInicio").value;
+    const fim = document.getElementById("relFim").value;
+    if (!arquivo) return;
+    if (!inicio || !fim){
+      msg.textContent = "Preencha o início e o fim da semana antes de escolher o PDF.";
+      msg.className = "msg erro";
+      this.value = "";
+      return;
+    }
+    msg.textContent = "Lendo o PDF...";
+    msg.className = "msg";
+    caixaResultado.style.display = "none";
+    try {
+      const buffer = await arquivo.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+      let textoCompleto = "";
+      for (let i = 1; i <= pdf.numPages; i++){
+        const pagina = await pdf.getPage(i);
+        const conteudo = await pagina.getTextContent();
+        textoCompleto += conteudo.items.map(function(it){ return it.str; }).join(" ") + "\n";
+      }
+      msg.textContent = "Enviando para a IA estruturar...";
+      const resp = await apiFetch("/api/diario/relatorio-semanal", {
+        method: "POST",
+        body: JSON.stringify({ semana_inicio: inicio, semana_fim: fim, texto_pdf: textoCompleto, pdf_nome: arquivo.name }),
+      });
+      const data = await resp.json().catch(function(){ return {}; });
+      if (resp.ok){
+        msg.textContent = "Relatório importado.";
+        msg.className = "msg ok";
+        const r = data.resumo || {};
+        caixaResultado.style.display = "block";
+        caixaResultado.innerHTML = '<div class="resumo-grid" style="grid-template-columns:repeat(3,1fr);">'
+          + '<div class="resumo-item"><div class="valor">' + (r.resultado_liquido != null ? r.resultado_liquido : "—") + '</div><div class="rotulo">Resultado líquido</div></div>'
+          + '<div class="resumo-item"><div class="valor">' + (r.total_trades != null ? r.total_trades : "—") + '</div><div class="rotulo">Total de trades</div></div>'
+          + '<div class="resumo-item"><div class="valor">' + (r.ativo_mais_operado || "—") + '</div><div class="rotulo">Ativo mais operado</div></div>'
+          + '</div>'
+          + (r.observacoes ? '<p class="nota" style="margin-top:12px;">' + r.observacoes + '</p>' : "");
+      } else {
+        msg.textContent = "Não foi possível importar: " + (data.error || "tente novamente.");
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha ao ler o PDF.";
+      msg.className = "msg erro";
+    } finally {
+      this.value = "";
+    }
+  });
+
+  // ---------------- Chat com a IA ----------------
+  function adicionarBolha(papel, texto){
+    const janela = document.getElementById("chatJanela");
+    const div = document.createElement("div");
+    div.className = "bolha " + (papel === "assistant" ? "assistant" : "user");
+    div.textContent = texto;
+    janela.appendChild(div);
+    janela.scrollTop = janela.scrollHeight;
+  }
+
+  async function carregarHistoricoChat(){
+    const resp = await apiFetch("/api/diario/chat-historico");
+    const historico = await resp.json().catch(function(){ return []; });
+    document.getElementById("chatJanela").innerHTML = "";
+    if (!historico.length){
+      adicionarBolha("assistant", "Oi! Pode me contar como foi o seu dia, ou perguntar algo sobre seus trades recentes.");
+      return;
+    }
+    historico.forEach(function(m){ adicionarBolha(m.papel, m.mensagem); });
+  }
+
+  document.getElementById("formChat").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const input = document.getElementById("inputChat");
+    const btn = document.getElementById("btnEnviarChat");
+    const texto = input.value.trim();
+    if (!texto) return;
+    adicionarBolha("user", texto);
+    input.value = "";
+    btn.disabled = true;
+    try {
+      const resp = await apiFetch("/api/diario/chat", { method: "POST", body: JSON.stringify({ mensagem: texto }) });
+      const data = await resp.json().catch(function(){ return {}; });
+      if (resp.ok){
+        adicionarBolha("assistant", data.resposta || "(sem resposta)");
+      } else {
+        adicionarBolha("assistant", "Não consegui responder agora: " + (data.error || "tente de novo em instantes."));
+      }
+    } catch(e){
+      adicionarBolha("assistant", "Falha de conexão. Tente de novo.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // ---------------- Inicializacao da area logada ----------------
+  function iniciarPaginaLogada(){
+    const hoje = hojeISO();
+    document.getElementById("regData").value = hoje;
+    document.getElementById("tData").value = hoje;
+    document.getElementById("tradesFiltroData").value = hoje;
+    carregarRegistro(hoje);
+    carregarTrades(hoje);
+    carregarHistoricoChat();
+  }
+
+  checarSessao();
+})();
+</script>
+
+</body>
+</html>
