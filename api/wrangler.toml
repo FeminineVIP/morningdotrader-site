@@ -1,3 +1,4 @@
+# Worker da API do Morning do Trader -- deploy automatico via Cloudflare Workers Builds
 name = "morningdotrader-api"
 main = "worker.js"
 compatibility_date = "2026-10-02"
