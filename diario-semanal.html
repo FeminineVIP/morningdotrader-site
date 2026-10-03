@@ -112,6 +112,11 @@
   .chat-form{display:flex; gap:8px; margin-top:14px;}
   .chat-form textarea{flex:1; min-height:48px;}
   .chat-form .btn{width:auto;}
+  .chat-form .btn.mic{background:var(--bg-alt); color:var(--text); border:1px solid var(--border);}
+  .chat-form .btn.mic.gravando{background:var(--red); color:#fff; border-color:var(--red);}
+  .previa{background:var(--bg-alt); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:0.86rem; color:var(--muted); margin-bottom:14px;}
+  .previa b{color:var(--text);}
+  .aviso{color:var(--muted); font-size:0.78rem; line-height:1.5; margin-top:14px;}
 
   footer{padding:30px 0; text-align:center; color:var(--muted); font-size:0.8rem;}
 </style>
@@ -259,16 +264,11 @@
           <input type="number" step="any" id="tSaida">
         </div>
       </div>
-      <div class="grid2">
-        <div class="campo">
-          <label for="tQuantidade">Quantidade (contratos)</label>
-          <input type="number" step="1" id="tQuantidade">
-        </div>
-        <div class="campo">
-          <label for="tResultado">Resultado (R$ ou pontos)</label>
-          <input type="number" step="any" id="tResultado">
-        </div>
+      <div class="campo" style="max-width:260px;">
+        <label for="tQuantidade">Quantidade (contratos)</label>
+        <input type="number" step="1" min="1" id="tQuantidade">
       </div>
+      <div class="previa" id="tPrevia">Preencha ativo, entrada, saída e quantidade para ver o resultado calculado.</div>
       <div class="campo">
         <label for="tMotivo">Motivo da entrada / observação</label>
         <input type="text" id="tMotivo" placeholder="Ex: rompimento de resistência, seguindo fluxo...">
@@ -285,10 +285,25 @@
       </div>
       <table class="tabela" id="tabelaTrades">
         <thead>
-          <tr><th>Horário</th><th>Ativo</th><th>Direção</th><th>Entrada</th><th>Saída</th><th>Qtd</th><th>Resultado</th><th>Motivo</th><th></th></tr>
+          <tr><th>Horário</th><th>Ativo</th><th>Direção</th><th>Entrada</th><th>Saída</th><th>Qtd</th><th>Pontos</th><th>Líquido (R$)</th><th>Motivo</th><th></th></tr>
         </thead>
         <tbody id="corpoTabelaTrades"></tbody>
       </table>
+    </div>
+
+    <div class="card">
+      <h3>Custos por contrato</h3>
+      <p class="nota">Quanto você paga por contrato, ida e volta (corretagem + emolumentos + taxas). É usado para calcular o resultado líquido. Deixe 0 para não descontar custos.</p>
+      <div class="grid2">
+        <div class="campo"><label for="custoWIN">WIN (R$ por contrato)</label><input type="number" step="any" min="0" id="custoWIN"></div>
+        <div class="campo"><label for="custoWDO">WDO (R$ por contrato)</label><input type="number" step="any" min="0" id="custoWDO"></div>
+      </div>
+      <div class="grid2">
+        <div class="campo"><label for="custoIND">IND (R$ por contrato)</label><input type="number" step="any" min="0" id="custoIND"></div>
+        <div class="campo"><label for="custoDOL">DOL (R$ por contrato)</label><input type="number" step="any" min="0" id="custoDOL"></div>
+      </div>
+      <button class="btn auto" id="btnSalvarCustos">Salvar custos</button>
+      <p class="msg" id="msgCustos"></p>
     </div>
   </div>
 
@@ -311,8 +326,13 @@
         <div class="resumo-item"><div class="valor" id="resTotal">—</div><div class="rotulo">Trades</div></div>
         <div class="resumo-item"><div class="valor" id="resWinRate">—</div><div class="rotulo">Taxa de acerto</div></div>
         <div class="resumo-item"><div class="valor" id="resGanhos">—</div><div class="rotulo">Ganhos</div></div>
-        <div class="resumo-item"><div class="valor" id="resAcumulado">—</div><div class="rotulo">Resultado acumulado</div></div>
+        <div class="resumo-item"><div class="valor" id="resPontos">—</div><div class="rotulo">Pontos</div></div>
+        <div class="resumo-item"><div class="valor" id="resBruto">—</div><div class="rotulo">Resultado bruto (R$)</div></div>
+        <div class="resumo-item"><div class="valor" id="resCustos">—</div><div class="rotulo">Custos (R$)</div></div>
+        <div class="resumo-item"><div class="valor" id="resAcumulado">—</div><div class="rotulo">Resultado líquido (R$)</div></div>
+        <div class="resumo-item"><div class="valor" id="resIrrf">—</div><div class="rotulo">IRRF estimado (1%)</div></div>
       </div>
+      <p class="aviso" id="avisoIR" style="display:none;"><b>Aviso:</b> o IR real depende de todas as suas operações no mês, em todas as corretoras e ativos, e o diário só vê o que você lança nele. Por isso o IRRF (1% retido pela corretora sobre o resultado positivo de cada dia) aparece como estimativa, não substitui seu contador.</p>
     </div>
 
     <div class="card">
@@ -343,6 +363,7 @@
       <div class="chat-janela" id="chatJanela"></div>
       <form class="chat-form" id="formChat">
         <textarea id="inputChat" placeholder="Escreva aqui..." required></textarea>
+        <button type="button" class="btn mic" id="btnMic" title="Ditar por voz">Ditar</button>
         <button type="submit" class="btn" id="btnEnviarChat">Enviar</button>
       </form>
     </div>
@@ -577,28 +598,104 @@
   document.getElementById("btnSalvarFech").addEventListener("click", function(){ salvarRegistro(this, "msgRegistroFech"); });
 
   // ---------------- Trades ----------------
+  const VALOR_PONTO = { WIN: 0.2, WDO: 10, IND: 1, DOL: 50 };
+  let custosContrato = { WIN: 0, WDO: 0, IND: 0, DOL: 0 };
+
+  function esc(t){
+    return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
   function formatarResultado(valor){
     const num = Number(valor) || 0;
     return num.toFixed(2);
   }
+  function brl(valor){
+    return "R$ " + (Number(valor) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  // Previa do resultado enquanto o usuario digita (o servidor recalcula ao salvar).
+  function atualizarPrevia(){
+    const ativo = document.getElementById("tAtivo").value;
+    const venda = document.getElementById("tDirecao").value === "venda";
+    const entrada = Number(document.getElementById("tEntrada").value);
+    const saida = Number(document.getElementById("tSaida").value);
+    const qtd = Math.floor(Number(document.getElementById("tQuantidade").value));
+    const caixa = document.getElementById("tPrevia");
+    if (!(entrada > 0) || !(saida > 0) || !(qtd > 0)){
+      caixa.textContent = "Preencha ativo, entrada, saída e quantidade para ver o resultado calculado.";
+      return;
+    }
+    const pontos = (saida - entrada) * (venda ? -1 : 1);
+    const bruto = pontos * qtd * VALOR_PONTO[ativo];
+    const custos = (custosContrato[ativo] || 0) * qtd;
+    caixa.innerHTML = "Pontos: <b>" + pontos.toFixed(2) + "</b> &nbsp;·&nbsp; Bruto: <b>" + brl(bruto)
+      + "</b> &nbsp;·&nbsp; Custos: <b>" + brl(custos) + "</b> &nbsp;·&nbsp; Líquido: <b>" + brl(bruto - custos) + "</b>";
+  }
+  ["tAtivo", "tDirecao", "tEntrada", "tSaida", "tQuantidade"].forEach(function(id){
+    document.getElementById(id).addEventListener("input", atualizarPrevia);
+    document.getElementById(id).addEventListener("change", atualizarPrevia);
+  });
+
+  async function carregarConfig(){
+    try {
+      const resp = await apiFetch("/api/diario/config");
+      const dados = await resp.json().catch(function(){ return {}; });
+      if (resp.ok && dados.custos){
+        custosContrato = dados.custos;
+        ["WIN", "WDO", "IND", "DOL"].forEach(function(a){
+          document.getElementById("custo" + a).value = custosContrato[a] || "";
+        });
+        atualizarPrevia();
+      }
+    } catch(e){}
+  }
+
+  document.getElementById("btnSalvarCustos").addEventListener("click", async function(){
+    const msg = document.getElementById("msgCustos");
+    const btn = this;
+    btn.disabled = true; msg.textContent = "";
+    const custos = {};
+    ["WIN", "WDO", "IND", "DOL"].forEach(function(a){
+      custos[a] = Number(document.getElementById("custo" + a).value) || 0;
+    });
+    try {
+      const resp = await apiFetch("/api/diario/config", { method: "POST", body: JSON.stringify({ custos: custos }) });
+      if (resp.ok){
+        custosContrato = custos;
+        msg.textContent = "Custos salvos. Valem para os próximos trades que você adicionar.";
+        msg.className = "msg ok";
+        atualizarPrevia();
+      } else {
+        msg.textContent = "Não foi possível salvar.";
+        msg.className = "msg erro";
+      }
+    } catch(e){
+      msg.textContent = "Falha de conexão.";
+      msg.className = "msg erro";
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   async function carregarTrades(data){
     const resp = await apiFetch("/api/diario/trades?data=" + encodeURIComponent(data));
     const trades = await resp.json().catch(function(){ return []; });
     const corpo = document.getElementById("corpoTabelaTrades");
     corpo.innerHTML = "";
-    trades.forEach(function(t){
+    (Array.isArray(trades) ? trades : []).forEach(function(t){
       const tr = document.createElement("tr");
       const positivo = Number(t.resultado) > 0;
-      tr.innerHTML = '<td style="text-align:left">' + (t.horario || "") + '</td>'
-        + '<td style="text-align:left">' + t.ativo + '</td>'
-        + '<td style="text-align:left">' + t.direcao + '</td>'
-        + '<td>' + (t.preco_entrada != null ? t.preco_entrada : "—") + '</td>'
-        + '<td>' + (t.preco_saida != null ? t.preco_saida : "—") + '</td>'
-        + '<td>' + (t.quantidade != null ? t.quantidade : "—") + '</td>'
+      tr.innerHTML = '<td style="text-align:left">' + esc(t.horario) + '</td>'
+        + '<td style="text-align:left">' + esc(t.ativo) + '</td>'
+        + '<td style="text-align:left">' + esc(t.direcao) + '</td>'
+        + '<td>' + (t.preco_entrada != null ? esc(t.preco_entrada) : "—") + '</td>'
+        + '<td>' + (t.preco_saida != null ? esc(t.preco_saida) : "—") + '</td>'
+        + '<td>' + (t.quantidade != null ? esc(t.quantidade) : "—") + '</td>'
+        + '<td>' + (t.pontos != null ? formatarResultado(t.pontos) : "—") + '</td>'
         + '<td class="' + (positivo ? "positivo" : "negativo") + '">' + formatarResultado(t.resultado) + '</td>'
-        + '<td style="text-align:left">' + (t.motivo || "") + '</td>'
-        + '<td><button class="excluir" data-id="' + t.id + '" title="Excluir">✕</button></td>';
+        + '<td style="text-align:left">' + esc(t.motivo) + '</td>'
+        + '<td><button class="excluir" data-id="' + esc(t.id) + '" title="Excluir">✕</button></td>';
       corpo.appendChild(tr);
     });
     corpo.querySelectorAll("button.excluir").forEach(function(b){
@@ -629,17 +726,18 @@
           preco_entrada: document.getElementById("tEntrada").value,
           preco_saida: document.getElementById("tSaida").value,
           quantidade: document.getElementById("tQuantidade").value,
-          resultado: document.getElementById("tResultado").value,
           motivo: document.getElementById("tMotivo").value,
         }),
       });
       if (resp.ok){
         msg.textContent = "Trade adicionado.";
         msg.className = "msg ok";
+        ["tEntrada", "tSaida", "tQuantidade", "tMotivo"].forEach(function(id){ document.getElementById(id).value = ""; });
+        atualizarPrevia();
         document.getElementById("tradesFiltroData").value = data;
         carregarTrades(data);
       } else {
-        msg.textContent = "Não foi possível adicionar.";
+        msg.textContent = "Preencha ativo, preço de entrada, preço de saída e quantidade (maior que zero).";
         msg.className = "msg erro";
       }
     } catch(e){
@@ -661,7 +759,12 @@
     document.getElementById("resTotal").textContent = dados.total_trades != null ? dados.total_trades : "—";
     document.getElementById("resWinRate").textContent = dados.win_rate != null ? dados.win_rate + "%" : "—";
     document.getElementById("resGanhos").textContent = dados.ganhos != null ? dados.ganhos : "—";
-    document.getElementById("resAcumulado").textContent = dados.resultado_acumulado != null ? formatarResultado(dados.resultado_acumulado) : "—";
+    document.getElementById("resPontos").textContent = dados.pontos_total != null ? formatarResultado(dados.pontos_total) : "—";
+    document.getElementById("resBruto").textContent = dados.resultado_bruto != null ? brl(dados.resultado_bruto) : "—";
+    document.getElementById("resCustos").textContent = dados.custos_total != null ? brl(dados.custos_total) : "—";
+    document.getElementById("resAcumulado").textContent = dados.resultado_acumulado != null ? brl(dados.resultado_acumulado) : "—";
+    document.getElementById("resIrrf").textContent = dados.irrf_estimado != null ? brl(dados.irrf_estimado) : "—";
+    document.getElementById("avisoIR").style.display = "block";
   });
 
   // ---------------- Importar PDF do relatorio semanal ----------------
@@ -768,6 +871,49 @@
     }
   });
 
+  // ---------------- Ditado por voz (reconhecimento de voz do navegador) ----------------
+  (function(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const btn = document.getElementById("btnMic");
+    if (!SR){ btn.style.display = "none"; return; }
+    let rec = null, gravando = false, base = "";
+    function parar(){
+      gravando = false;
+      btn.classList.remove("gravando");
+      btn.textContent = "Ditar";
+    }
+    btn.addEventListener("click", function(){
+      const input = document.getElementById("inputChat");
+      if (gravando){ rec.stop(); return; }
+      rec = new SR();
+      rec.lang = "pt-BR";
+      rec.continuous = true;
+      rec.interimResults = true;
+      base = input.value.trim() ? input.value.trim() + " " : "";
+      rec.onresult = function(ev){
+        let texto = "";
+        for (let i = 0; i < ev.results.length; i++) texto += ev.results[i][0].transcript;
+        input.value = base + texto;
+      };
+      rec.onend = parar;
+      rec.onerror = function(ev){
+        parar();
+        if (ev.error === "not-allowed" || ev.error === "service-not-allowed"){
+          adicionarBolha("assistant", "O navegador bloqueou o microfone. Libere o acesso ao microfone para este site e tente de novo.");
+        }
+      };
+      try {
+        rec.start();
+        gravando = true;
+        btn.classList.add("gravando");
+        btn.textContent = "Parar";
+      } catch(e){ parar(); }
+    });
+    document.getElementById("formChat").addEventListener("submit", function(){
+      if (gravando && rec) rec.stop();
+    });
+  })();
+
   // ---------------- Inicializacao da area logada ----------------
   function iniciarPaginaLogada(){
     const hoje = hojeISO();
@@ -776,6 +922,7 @@
     document.getElementById("tradesFiltroData").value = hoje;
     carregarRegistro(hoje);
     carregarTrades(hoje);
+    carregarConfig();
     carregarHistoricoChat();
   }
 
