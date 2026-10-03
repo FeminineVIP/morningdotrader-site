@@ -163,30 +163,59 @@
   <!-- ---- Registro do Dia ---- -->
   <div class="painel active" id="painel-registro">
     <div class="card">
-      <h3>Registro de hoje</h3>
-      <p class="nota">Gráfico, suportes/resistências, tendência e observações do dia.</p>
+      <h3>Pré-abertura</h3>
+      <p class="nota">Antes de operar: o que você enxerga no mercado e o plano pro dia. Preencha só o ativo que for operar.</p>
       <div class="campo">
         <label for="regData">Data</label>
         <input type="date" id="regData">
       </div>
       <div class="campo">
-        <label for="regTendencia">Tendência do mercado</label>
-        <input type="text" id="regTendencia" placeholder="Ex: alta, lateral, baixa...">
+        <label for="regTendWIN">WIN — tendência</label>
+        <select id="regTendWIN">
+          <option value="">Não vou operar / sem leitura</option>
+          <option value="Alta">Alta</option>
+          <option value="Baixa">Baixa</option>
+          <option value="Lateral">Lateral</option>
+        </select>
       </div>
       <div class="campo">
-        <label for="regSR">Suportes e resistências</label>
-        <textarea id="regSR" placeholder="Ex: WIN suporte 128.400, resistência 129.100..."></textarea>
+        <label for="regSRWIN">WIN — suportes e resistências</label>
+        <textarea id="regSRWIN" placeholder="Suportes: 185.300 / 186.050 / 187.700&#10;Resistências: 189.050 / 190.000 / 191.500"></textarea>
       </div>
       <div class="campo">
-        <label for="regGrafico">Nota sobre o gráfico (sem upload de imagem nesta versão)</label>
-        <textarea id="regGrafico" placeholder="Descreva o que viu no gráfico pré-abertura"></textarea>
+        <label for="regTendWDO">WDO — tendência</label>
+        <select id="regTendWDO">
+          <option value="">Não vou operar / sem leitura</option>
+          <option value="Alta">Alta</option>
+          <option value="Baixa">Baixa</option>
+          <option value="Lateral">Lateral</option>
+        </select>
       </div>
       <div class="campo">
-        <label for="regObs">Observações do dia</label>
-        <textarea id="regObs" placeholder="Como foi o dia, o que evitar amanhã..."></textarea>
+        <label for="regSRWDO">WDO — suportes e resistências</label>
+        <textarea id="regSRWDO" placeholder="Suportes: 5.114 / 5.122 / 5.144&#10;Resistências: 5.155 / 5.164 / 5.172"></textarea>
       </div>
-      <button class="btn auto" id="btnSalvarRegistro">Salvar registro do dia</button>
-      <p class="msg" id="msgRegistro"></p>
+      <div class="campo">
+        <label for="regGrafico">Cenário e plano do dia</label>
+        <textarea id="regGrafico" placeholder="O que você enxerga antes de operar (cenário, notícias, gatilhos) e o que pretende fazer"></textarea>
+      </div>
+      <button class="btn auto" id="btnSalvarPre">Salvar pré-abertura</button>
+      <p class="msg" id="msgRegistroPre"></p>
+    </div>
+
+    <div class="card">
+      <h3>Fechamento do dia</h3>
+      <p class="nota">Depois do pregão: o que aconteceu de verdade e o que levar para amanhã.</p>
+      <div class="campo">
+        <label for="regComoFoi">Como foi o dia</label>
+        <textarea id="regComoFoi" placeholder="Seguiu o plano? O que aconteceu de fato? Como você se sentiu durante as operações?"></textarea>
+      </div>
+      <div class="campo">
+        <label for="regEvitar">O que evitar ou melhorar amanhã</label>
+        <textarea id="regEvitar" placeholder="Erros que quer não repetir, ajustes pro próximo pregão"></textarea>
+      </div>
+      <button class="btn auto" id="btnSalvarFech">Salvar fechamento</button>
+      <p class="msg" id="msgRegistroFech"></p>
     </div>
   </div>
 
@@ -450,36 +479,88 @@
   }
 
   // ---------------- Registro do Dia ----------------
+  // O registro do dia fica em 4 colunas de texto; aqui o formulario compoe e
+  // le de volta um formato simples por ativo:
+  //   tendencia:             "WIN: Alta | WDO: Baixa"
+  //   suportes_resistencias: "[WIN]\n...texto...\n[WDO]\n...texto..."
+  //   observacoes:           "Como foi o dia: ...\nEvitar amanha: ..."
+  function comporTendencia(){
+    const partes = [];
+    const w = document.getElementById("regTendWIN").value;
+    const d = document.getElementById("regTendWDO").value;
+    if (w) partes.push("WIN: " + w);
+    if (d) partes.push("WDO: " + d);
+    return partes.join(" | ");
+  }
+  function comporSR(){
+    const w = document.getElementById("regSRWIN").value.trim();
+    const d = document.getElementById("regSRWDO").value.trim();
+    const partes = [];
+    if (w) partes.push("[WIN]\n" + w);
+    if (d) partes.push("[WDO]\n" + d);
+    return partes.join("\n");
+  }
+  function comporObs(){
+    const a = document.getElementById("regComoFoi").value.trim();
+    const b = document.getElementById("regEvitar").value.trim();
+    const partes = [];
+    if (a) partes.push("Como foi o dia: " + a);
+    if (b) partes.push("Evitar amanhã: " + b);
+    return partes.join("\n");
+  }
+  function lerTendencia(txt, ativo){
+    const m = new RegExp("(?:^|\\| )" + ativo + ": (Alta|Baixa|Lateral)").exec(txt || "");
+    return m ? m[1] : "";
+  }
+  function lerSR(txt, ativo){
+    const outro = ativo === "WIN" ? "WDO" : "WIN";
+    const m = new RegExp("\\[" + ativo + "\\]\\n([\\s\\S]*?)(?=\\n\\[" + outro + "\\]|$)").exec(txt || "");
+    return m ? m[1] : "";
+  }
+  function lerObs(txt){
+    txt = txt || "";
+    const m = /^Como foi o dia: ([\s\S]*?)(?:\nEvitar amanhã: ([\s\S]*))?$/.exec(txt);
+    if (m) return { comoFoi: m[1] || "", evitar: m[2] || "" };
+    const m2 = /^Evitar amanhã: ([\s\S]*)$/.exec(txt);
+    if (m2) return { comoFoi: "", evitar: m2[1] };
+    return { comoFoi: txt, evitar: "" };
+  }
+
   async function carregarRegistro(data){
     const resp = await apiFetch("/api/diario/registro?data=" + encodeURIComponent(data));
     const reg = await resp.json().catch(function(){ return {}; });
-    document.getElementById("regTendencia").value = reg.tendencia || "";
-    document.getElementById("regSR").value = reg.suportes_resistencias || "";
+    document.getElementById("regTendWIN").value = lerTendencia(reg.tendencia, "WIN");
+    document.getElementById("regTendWDO").value = lerTendencia(reg.tendencia, "WDO");
+    document.getElementById("regSRWIN").value = lerSR(reg.suportes_resistencias, "WIN");
+    document.getElementById("regSRWDO").value = lerSR(reg.suportes_resistencias, "WDO");
     document.getElementById("regGrafico").value = reg.grafico_nota || "";
-    document.getElementById("regObs").value = reg.observacoes || "";
+    const obs = lerObs(reg.observacoes);
+    document.getElementById("regComoFoi").value = obs.comoFoi;
+    document.getElementById("regEvitar").value = obs.evitar;
   }
 
   document.getElementById("regData").addEventListener("change", function(){
     carregarRegistro(this.value);
   });
 
-  document.getElementById("btnSalvarRegistro").addEventListener("click", async function(){
-    const msg = document.getElementById("msgRegistro");
-    const btn = this;
+  // Os dois botoes salvam o registro inteiro (pre-abertura + fechamento),
+  // entao salvar um nao apaga o outro.
+  async function salvarRegistro(btn, msgId){
+    const msg = document.getElementById(msgId);
     btn.disabled = true; msg.textContent = "";
     try {
       const resp = await apiFetch("/api/diario/registro", {
         method: "POST",
         body: JSON.stringify({
           data: document.getElementById("regData").value || hojeISO(),
-          tendencia: document.getElementById("regTendencia").value,
-          suportes_resistencias: document.getElementById("regSR").value,
+          tendencia: comporTendencia(),
+          suportes_resistencias: comporSR(),
           grafico_nota: document.getElementById("regGrafico").value,
-          observacoes: document.getElementById("regObs").value,
+          observacoes: comporObs(),
         }),
       });
       if (resp.ok){
-        msg.textContent = "Registro salvo.";
+        msg.textContent = "Salvo.";
         msg.className = "msg ok";
       } else {
         msg.textContent = "Não foi possível salvar.";
@@ -491,7 +572,9 @@
     } finally {
       btn.disabled = false;
     }
-  });
+  }
+  document.getElementById("btnSalvarPre").addEventListener("click", function(){ salvarRegistro(this, "msgRegistroPre"); });
+  document.getElementById("btnSalvarFech").addEventListener("click", function(){ salvarRegistro(this, "msgRegistroFech"); });
 
   // ---------------- Trades ----------------
   function formatarResultado(valor){
