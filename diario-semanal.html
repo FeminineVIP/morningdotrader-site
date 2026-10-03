@@ -363,10 +363,16 @@
     const sessao = getSessaoSalva();
     if (!sessao){ mostrarArea(false); return; }
     try {
-      const resp = await apiFetch("/api/acesso-status");
+      const resp = await apiFetch("/api/diario/acesso");
       if (resp.ok){
         mostrarArea(true);
         iniciarPaginaLogada();
+      } else if (resp.status === 403){
+        limparSessao();
+        mostrarArea(false);
+        const m = document.getElementById("msgAcesso");
+        m.textContent = "Seu e-mail ainda não tem acesso ao Diário Semanal (acesso restrito por enquanto).";
+        m.className = "msg erro";
       } else {
         limparSessao();
         mostrarArea(false);
