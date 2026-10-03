@@ -325,14 +325,15 @@
       <div class="resumo-grid" id="resumoGrid" style="display:none;">
         <div class="resumo-item"><div class="valor" id="resTotal">—</div><div class="rotulo">Trades</div></div>
         <div class="resumo-item"><div class="valor" id="resWinRate">—</div><div class="rotulo">Taxa de acerto</div></div>
-        <div class="resumo-item"><div class="valor" id="resGanhos">—</div><div class="rotulo">Ganhos</div></div>
         <div class="resumo-item"><div class="valor" id="resPontos">—</div><div class="rotulo">Pontos</div></div>
         <div class="resumo-item"><div class="valor" id="resBruto">—</div><div class="rotulo">Resultado bruto (R$)</div></div>
         <div class="resumo-item"><div class="valor" id="resCustos">—</div><div class="rotulo">Custos (R$)</div></div>
         <div class="resumo-item"><div class="valor" id="resAcumulado">—</div><div class="rotulo">Resultado líquido (R$)</div></div>
-        <div class="resumo-item"><div class="valor" id="resIrrf">—</div><div class="rotulo">IRRF estimado (1%)</div></div>
+        <div class="resumo-item"><div class="valor" id="resIrrf">—</div><div class="rotulo">IRRF retido estimado (1%)</div></div>
+        <div class="resumo-item"><div class="valor" id="resAposIrrf">—</div><div class="rotulo">Líquido após IRRF (R$)</div></div>
       </div>
       <p class="aviso" id="avisoIR" style="display:none;"><b>Aviso:</b> o IR real depende de todas as suas operações no mês, em todas as corretoras e ativos, e o diário só vê o que você lança nele. Por isso o IRRF (1% retido pela corretora sobre o resultado positivo de cada dia) aparece como estimativa, não substitui seu contador.</p>
+      <p class="aviso" id="avisoIR2" style="display:none;">O IRRF é uma antecipação do IR de 20% do mês (DARF), não um custo definitivo. Ele é mostrado descontado do líquido para você enxergar o caixa real dos dias de lucro.</p>
     </div>
 
     <div class="card">
@@ -758,13 +759,14 @@
     document.getElementById("resumoGrid").style.display = "grid";
     document.getElementById("resTotal").textContent = dados.total_trades != null ? dados.total_trades : "—";
     document.getElementById("resWinRate").textContent = dados.win_rate != null ? dados.win_rate + "%" : "—";
-    document.getElementById("resGanhos").textContent = dados.ganhos != null ? dados.ganhos : "—";
     document.getElementById("resPontos").textContent = dados.pontos_total != null ? formatarResultado(dados.pontos_total) : "—";
     document.getElementById("resBruto").textContent = dados.resultado_bruto != null ? brl(dados.resultado_bruto) : "—";
     document.getElementById("resCustos").textContent = dados.custos_total != null ? brl(dados.custos_total) : "—";
     document.getElementById("resAcumulado").textContent = dados.resultado_acumulado != null ? brl(dados.resultado_acumulado) : "—";
     document.getElementById("resIrrf").textContent = dados.irrf_estimado != null ? brl(dados.irrf_estimado) : "—";
+    document.getElementById("resAposIrrf").textContent = dados.resultado_apos_irrf != null ? brl(dados.resultado_apos_irrf) : "—";
     document.getElementById("avisoIR").style.display = "block";
+    document.getElementById("avisoIR2").style.display = "block";
   });
 
   // ---------------- Importar PDF do relatorio semanal ----------------
